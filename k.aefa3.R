@@ -3412,6 +3412,9 @@ k.faking <- function(dname = ..., formula = NULL, covdata = NULL, IRTonly = F, .
           
         } else {
                   try(dataset.mirt <- mirt(data = dataset, model = 1, itemtype = 'gpcm', covdata = covdata, formula = formula, SE = T, SE.type = 'complete', technical = list(SEtol = 1e-10), ...))
+                  if(!dataset.mirt@OptimInfo$converged){
+                    try(dataset.mirt <- mirt(data = dataset, model = 1, covdata = covdata, formula = formula, SE = T, SE.type = 'complete', technical = list(SEtol = 1e-10), ...))
+                  }
                   if(is.na(dataset.mirt@OptimInfo$secondordertest)){
                     stop('fail to estimate standard error')
                   }
@@ -3458,6 +3461,9 @@ k.faking <- function(dname = ..., formula = NULL, covdata = NULL, IRTonly = F, .
           
         } else {
           try(dataset.mirt <- mirt(data = dataset, model = 1, itemtype = 'gpcm', covdata = covdata, formula = formula, SE = T, SE.type = 'complete', technical = list(SEtol = 1e-10), ...))
+          if(!dataset.mirt@OptimInfo$converged){
+            try(dataset.mirt <- mirt(data = dataset, model = 1, covdata = covdata, formula = formula, SE = T, SE.type = 'complete', technical = list(SEtol = 1e-10), ...))
+          }
           if(is.na(dataset.mirt@OptimInfo$secondordertest)){
             stop('fail to estimate standard error')
           }
