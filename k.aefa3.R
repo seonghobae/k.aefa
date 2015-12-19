@@ -3411,7 +3411,10 @@ k.faking <- function(dname = ..., formula = NULL, covdata = NULL, IRTonly = F, .
           IRTnormal <- data.frame(dataset.response$Zh)
           
         } else {
-                  try(dataset.mirt <- fastFIFA(x = dataset, covdata = covdata, formula = formula, ...))
+                  try(dataset.mirt <- mirt(data = dataset, model = 1, itemtype = 'gpcm', covdata = covdata, formula = formula, SE = T, SE.type = 'complete', technical = list(SEtol = 1e-10), ...))
+                  if(is.na(dataset.mirt@OptimInfo$secondordertest)){
+                    stop('fail to estimate standard error')
+                  }
                   try(dataset <- imputeMissing(dataset.mirt, QMC = T, Theta = fscores(dataset.mirt, full.scores = T, MI = 100, QMC = T, method = 'MAP'), MI = 100))
                   try(dataset.mirt <- fastFIFA(x = dataset, covdata = covdata, formula = formula, ...))
                   try(dataset.response <- personfit(dataset.mirt, method='MAP', QMC = T, Theta = fscores(dataset.mirt, full.scores = T, MI = 100, QMC = T, method = 'MAP'), MI = 100))
@@ -3454,7 +3457,10 @@ k.faking <- function(dname = ..., formula = NULL, covdata = NULL, IRTonly = F, .
           IRTnormal <- data.frame(dataset.response$Zh)
           
         } else {
-          try(dataset.mirt <- fastFIFA(x = dataset, covdata = covdata, formula = formula, ...))
+          try(dataset.mirt <- mirt(data = dataset, model = 1, itemtype = 'gpcm', covdata = covdata, formula = formula, SE = T, SE.type = 'complete', technical = list(SEtol = 1e-10), ...))
+          if(is.na(dataset.mirt@OptimInfo$secondordertest)){
+            stop('fail to estimate standard error')
+          }
           try(dataset <- imputeMissing(dataset.mirt, QMC = T, Theta = fscores(dataset.mirt, full.scores = T, MI = 100, QMC = T, method = 'MAP'), MI = 100))
           try(dataset.mirt <- fastFIFA(x = dataset, covdata = covdata, formula = formula, ...))
           try(dataset.response <- personfit(dataset.mirt, method='MAP', QMC = T, Theta = fscores(dataset.mirt, full.scores = T, MI = 100, QMC = T, method = 'MAP'), MI = 100))
