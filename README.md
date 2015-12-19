@@ -1,5 +1,5 @@
 # k.aefa
-Kwangwoon Automated Exploratory Factor Anlaysis (k.aefa): automatically find optimal number of factors with various exploratory factoring methods since September, 2013.
+Kwangwoon Automated Exploratory Factor Anlaysis (k.aefa): automatically find optimal number of factors with various exploratory factoring methods since September, 2013. in 2016, it turns nearby 3!
 
 ## What can I do using this source code?
 Just find optimal factor numbers in context of exploratory factor analysis. With some functions, they have some useful toys for psychologists like aberrant data point detection and delection with fully automated by statistical criteria, and *FULLY AUTOMATION* of Exploratory Factor Analysis what include check violence of item interdependence assumption in IRT and SEM, automatically variable delection after automatically model estimations.
