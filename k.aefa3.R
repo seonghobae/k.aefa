@@ -3420,7 +3420,7 @@ k.faking <- function(dname = ..., formula = NULL, covdata = NULL, IRTonly = F, .
                   }
                   try(dataset <- imputeMissing(dataset.mirt, QMC = T, Theta = fscores(dataset.mirt, full.scores = T, MI = 100, QMC = T, method = 'MAP'), MI = 100))
                   try(dataset.mirt <- fastFIFA(x = dataset, covdata = covdata, formula = formula, ...))
-                  try(dataset.response <- personfit(dataset.mirt, method='MAP', QMC = T, Theta = fscores(dataset.mirt, full.scores = T, MI = 100, QMC = T, method = 'MAP'), MI = 100))
+                  try(dataset.response <- personfit(dataset.mirt, method='MAP', QMC = TRUE))
         }
         
         
@@ -3469,7 +3469,7 @@ k.faking <- function(dname = ..., formula = NULL, covdata = NULL, IRTonly = F, .
           }
           try(dataset <- imputeMissing(dataset.mirt, QMC = T, Theta = fscores(dataset.mirt, full.scores = T, MI = 100, QMC = T, method = 'MAP'), MI = 100))
           try(dataset.mirt <- fastFIFA(x = dataset, covdata = covdata, formula = formula, ...))
-          try(dataset.response <- personfit(dataset.mirt, method='MAP', QMC = T, Theta = fscores(dataset.mirt, full.scores = T, MI = 100, QMC = T, method = 'MAP'), MI = 100))
+          try(dataset.response <- personfit(dataset.mirt, method='MAP', QMC = TRUE))
 
         }
         
