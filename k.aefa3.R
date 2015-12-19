@@ -3484,7 +3484,7 @@ k.faking <- function(dname = ..., formula = NULL, covdata = NULL, IRTonly = F, .
 }
 
 
-aberrantZero <- function(data = ..., ...){
+aberrantZero <- function(data = ..., covdata = ..., formula = ..., ...){
   
   tempData <- data
   colnames(tempData) <- paste0("testVars", 1:ncol(tempData))
