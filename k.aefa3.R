@@ -3405,10 +3405,7 @@ k.faking <- function(dname = ..., formula = NULL, covdata = NULL, IRTonly = F, .
         if(sum(is.na(dataset)) == 0){
           dataset.mirt <- fastFIFA(x = dataset, covdata = covdata, formula = formula, ...)
           dataset.response <- personfit(dataset.mirt, method='MAP', QMC = T)
-          
-          print(hist(dataset.response$Zh))
-          dataset.response$Zh <- dataset.response$Zh > -2 #(if abnormal, dataset.response$Zh < -2 is right! : See Hyeongjun Kim (2015) @ SNU)
-          IRTnormal <- data.frame(dataset.response$Zh)
+ 
           
         } else {
                   try(dataset.mirt <- mirt(data = dataset, model = 1, itemtype = 'gpcm', covdata = covdata, formula = formula, SE = T, SE.type = 'complete', technical = list(SEtol = 1e-10), ...))
@@ -3423,6 +3420,10 @@ k.faking <- function(dname = ..., formula = NULL, covdata = NULL, IRTonly = F, .
                   try(dataset.response <- personfit(dataset.mirt, method='MAP', QMC = TRUE))
         }
         
+        
+        print(hist(dataset.response$Zh))
+        dataset.response$Zh <- dataset.response$Zh > -2 #(if abnormal, dataset.response$Zh < -2 is right! : See Hyeongjun Kim (2015) @ SNU)
+        IRTnormal <- data.frame(dataset.response$Zh)
         
         # reflect results
         if(HMM_result@homogeneous == TRUE){
@@ -3455,9 +3456,7 @@ k.faking <- function(dname = ..., formula = NULL, covdata = NULL, IRTonly = F, .
           dataset.mirt <- fastFIFA(x = dataset, covdata = covdata, formula = formula, ...)
           dataset.response <- personfit(dataset.mirt, method='MAP', QMC = T)
           
-          print(hist(dataset.response$Zh))
-          dataset.response$Zh <- dataset.response$Zh > -2 #(if abnormal, dataset.response$Zh < -2 is right! : See Hyeongjun Kim (2015) @ SNU)
-          IRTnormal <- data.frame(dataset.response$Zh)
+
           
         } else {
           try(dataset.mirt <- mirt(data = dataset, model = 1, itemtype = 'gpcm', covdata = covdata, formula = formula, SE = T, SE.type = 'complete', technical = list(SEtol = 1e-10), ...))
@@ -3472,6 +3471,10 @@ k.faking <- function(dname = ..., formula = NULL, covdata = NULL, IRTonly = F, .
           try(dataset.response <- personfit(dataset.mirt, method='MAP', QMC = TRUE))
 
         }
+      
+      print(hist(dataset.response$Zh))
+      dataset.response$Zh <- dataset.response$Zh > -2 #(if abnormal, dataset.response$Zh < -2 is right! : See Hyeongjun Kim (2015) @ SNU)
+      IRTnormal <- data.frame(dataset.response$Zh)
         
       if(sum(is.na(dataset)) == 0){
         output <- data.frame(IRTnormal)
