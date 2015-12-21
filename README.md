@@ -12,3 +12,29 @@ The other one is Morden True-score Theory based model approaches; (Non-Compensat
 
 ## Why are you made this project?
 This project made and updated for personal convinence during survey data analysis using gathering Likert rating scale style survey forms since September 2013. but some imported packages requires the GPL 2 or GPL 3 licence. So I decided open this source code even skeleton code status; not a library. I'll improve this just a source code to library.
+
+## How can use it?
+```R
+  # load source code
+  library(RCurl)
+  destfile = "k.aefa3.R"
+  x = getBinaryURL("https://raw.githubusercontent.com/seonghobae/k.aefa/master/k.aefa3.R",
+                    followlocation = TRUE, ssl.verifypeer = FALSE)
+  writeBin(x, destfile, useBytes = TRUE)
+  source(paste("k.aefa3.R", sep = ""))
+  rm(destfile, x)
+  
+  # find optimal factor numbers
+  mod1 <- fastFIFA(your_data_frame)
+  
+  # doing fully automated exploratory factor analysis
+  mod2 <- surveyFA(your_data_frame)
+  
+  # find optimal factor numbers with covariates (latent regression of fixed effects)
+  mod3 <- fastFIFA(your_data_frame, covdata = your_demographic_data_frame,
+                  formula = ~1 + your + variable + names + in + demographic + data + frame)
+  
+  # doing fully automated exploratory factor analysis with covariates (latent regression of fixed effects)
+  mod4 <- surveyFA(your_data_frame, covdata = your_demographic_data_frame,
+                  formula = ~1 + your + variable + names + in + demographic + data + frame)
+```
