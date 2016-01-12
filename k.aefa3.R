@@ -4739,8 +4739,8 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
     # optimizer config
     if(length(covdata) == 0){ # if no covariate variables
       if(forceGRSM == T | assumingFake == T | masterThesis == T){
-        estimationMETHOD <- 'QMCEM'
-        optimINPUT <- 'nlminb'
+        estimationMETHOD <- 'MHRM'
+        optimINPUT <- NULL
         optimCTRL  <- NULL  #list(control = list(trace = F))
       } else if(i < 2){
         if(unstable == T){
