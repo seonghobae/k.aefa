@@ -4858,7 +4858,8 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       if(SE == T){ # if grsm, Standard error estimation was unsuccessful.
         
       } else {
-        if((max(describe(x)$range) - min(describe(x)$range)) == 0 | forceGRSM == T | assumingFake == T | masterThesis == T){
+        #if((max(describe(x)$range) - min(describe(x)$range)) == 0 | forceGRSM == T | assumingFake == T | masterThesis == T){
+        if(forceGRSM == T | assumingFake == T | masterThesis == T){
           x <- data.frame(x)
           
           if(length(which(describe(x)$max > median(describe(x)$max))) != 0){ # preventing weird input (e.g: 6 in 5 point scale)
