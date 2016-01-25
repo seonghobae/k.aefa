@@ -5086,13 +5086,13 @@ surveyFA <- function(data = ..., tech = F, ...) {
     }
     
     # evaluation of factor structure (stage 2) -- evaluating cross loadings and very small loadngs
-    exclude_rownum1 <- which(rowSums(abs(rotF_geomin[1:ncol(rotF_geomin)]) > 0.4) >=2) # cross loadings based delection
+    exclude_rownum1 <- which(rowSums(abs(rotF_geomin[1:ncol(rotF_geomin)]) >= 0.4) >=2) # cross loadings based delection
     if(length(exclude_rownum1) != 0){
-      exclude_rownum1_low <- which(rownames(rotF_geomin) %in% names(which(min(rowSums(rotF_geomin[which(rowSums(abs(rotF_geomin) > .4) > 1),])) == rowSums(rotF_geomin[which(rowSums(abs(rotF_geomin) > .4) > 1),]))) == TRUE)
+      exclude_rownum1_low <- which(rownames(rotF_geomin) %in% names(which(min(rowSums(rotF_geomin[which(rowSums(abs(rotF_geomin) >= .4) > 1),])) == rowSums(rotF_geomin[which(rowSums(abs(rotF_geomin) > .4) > 1),]))) == TRUE)
     }    
-    exclude_rownum2 <- which(h2 < (.3)^2) # communality based delection
+    exclude_rownum2 <- which(h2 <= (.3)^2) # communality based delection
     exclude_rownum2_low <- which(h2 == min(h2))
-    exclude_rownum3 <- which(rowSums(abs(rotF_geomin[1:ncol(rotF_geomin)]) < 0.4) == ncol(rotF_geomin)) # fail to load any factors
+    exclude_rownum3 <- which(rowSums(abs(rotF_geomin[1:ncol(rotF_geomin)]) <= 0.4) == ncol(rotF_geomin)) # fail to load any factors
     exclude_rownum3_low <- which(rowSums(abs(rotF_geomin[1:ncol(rotF_geomin)])) == min(rowSums(abs(rotF_geomin[1:ncol(rotF_geomin)]))))
     
     #     exclude_rownum <- as.numeric(paste(c(exclude_rownum1, exclude_rownum2, exclude_rownum3))) # list of doing delection
