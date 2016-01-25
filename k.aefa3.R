@@ -5045,6 +5045,9 @@ surveyFA <- function(data = ..., tech = F, ...) {
       #print(summary(result))
     }
     
+    if(exists('rotF_geomin')){
+      try(rm(rotF_geomin))
+    }
     
     if(ncol(result@Fit$F)==1){
       rotF_geomin <- data.frame(result@Fit$F)
@@ -5064,7 +5067,7 @@ surveyFA <- function(data = ..., tech = F, ...) {
       h2 <- data.frame(result@Fit$h2)
     }
     
-    
+    # failover
     if(i > 1){
       exclude_rownum1 <- NULL
       exclude_rownum1_low <- NULL
