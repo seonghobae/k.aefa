@@ -4728,7 +4728,7 @@ k.fixdata <- function(data, start, end, bioend){
 }
 
 # surveyFA addon
-fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T, forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F, ...){
+fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T, forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F, forceMHRM = F, ...){
   for(i in 1:100){
     if (i == 1){
       message('\nfactor number: ', paste0(i))
@@ -4738,13 +4738,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
     
     # optimizer config
     if(length(covdata) == 0){ # if no covariate variables
-      if(forceGRSM == T | assumingFake == T | masterThesis == T){
+      if(forceMHRM == T | forceGRSM == T | assumingFake == T | masterThesis == T){
         estimationMETHOD <- 'MHRM'
         optimINPUT <- NULL
         optimCTRL  <- NULL  #list(control = list(trace = F))
       } else if(i < 2){
         if(unstable == T){
-          estimationMETHOD <- 'BL'
+          estimationMETHOD <- 'QMCEM'
           optimINPUT <- NULL
           optimCTRL  <- NULL  #list(control = list(trace = F))
         } else {
@@ -4773,7 +4773,8 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       covdataINPUT <- covdata
       formulaINPUT <- formula
       
-      if(forceGRSM == T | assumingFake == T | masterThesis == T){
+      if(forceMHRM == T | forceGRSM == T | assumingFake == T | masterThesis == T){
+        message('MHRM currently not supported with latent regressors')
         estimationMETHOD <- 'QMCEM'
         optimINPUT <- 'nlminb'
         optimCTRL  <- NULL  #list(control = list(trace = F))
