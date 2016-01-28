@@ -4974,7 +4974,7 @@ surveyFA <- function(data = ..., tech = F, ...) {
   fa_covdata <- data.frame(data)
 
   # evaluation of IRT itemfit
-  message('\nStage 1 of calcuation: Item Fit Based Evaluation')
+  message('\nStage 1 of calcuation: Item Fit Evaluation (testing for item local independence assumption)')
   
   
   ncol_stage2 <- ncol(fa_covdata)
@@ -5003,10 +5003,15 @@ surveyFA <- function(data = ..., tech = F, ...) {
   }
   
   
-  if(exists("test2")) { # patch for mirt function bug...
-
+  if(exists("test2")) {
+      test2 <- test2[1:result@Data$nitems,]
       test2$cal <- test2$S_X2/test2$df.S_X2
-      test2 <- subset(test2, test2$infit >= 1.3 | test2$infit <= 0.7 | test2$outfit >= 1.3 | test2$outfit <= 0.7 | test2$Zh < -2 | test2$cal >= 3)
+      if(exists('test2$infit') == T | exists('test2$outfit') == T){
+        test2 <- test2[which(test2$infit >= 1.3 | test2$infit <= 0.7 | test2$outfit >= 1.3 | test2$outfit <= 0.7 | test2$cal >= 3),]
+      } else {
+        test2 <- test2[which(test2$cal >= 3),]
+      }
+      test2 <- subset(test2, test2$infit >= 1.3 | test2$infit <= 0.7 | test2$outfit >= 1.3 | test2$outfit <= 0.7 | test2$cal >= 3)
 
   } else {
     test2 <- data.frame()
