@@ -1525,7 +1525,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
       }
       
       
-      result <- mirt(fa_covdata, i, TOL = 1e-3, accelerate = 'squarem', SE = T, itemtype=itemtype, calcNull=T, method = "MHRM", rotate = 'geominQ', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999), control = list(maxit=100000))
+      result <- mirt::mirt(fa_covdata, i, TOL = 1e-3, accelerate = 'squarem', SE = T, itemtype=itemtype, calcNull=T, method = "MHRM", rotate = 'geominQ', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999), control = list(maxit=100000))
       #
       #message(" \n ")
       #message("\n\n IRT coefficients")
@@ -1696,9 +1696,9 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
           } else {
             itemtype <- NULL
           }
-          result_onemore <- mirt(fa_covdata, i, TOL = 1e-3, accelerate = 'squarem', SE = T, itemtype=itemtype, calcNull=T, method = "MHRM", rotate = 'geominQ', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999), control = list(maxit=100000))
+          result_onemore <- mirt::mirt(fa_covdata, i, TOL = 1e-3, accelerate = 'squarem', SE = T, itemtype=itemtype, calcNull=T, method = "MHRM", rotate = 'geominQ', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999), control = list(maxit=100000))
           
-          #result <- mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
+          #result <- mirt::mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
           #message(" \n ")
           #message("\n\n IRT coefficients")
           #print(coef(result))
@@ -1781,8 +1781,8 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
           } else {
             itemtype <- NULL
           }
-          result_twomore <- mirt(fa_covdata, i, TOL = 1e-3, accelerate = 'squarem', SE = T, itemtype=itemtype, calcNull=T, method = "MHRM", rotate = 'geominQ', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999), control = list(maxit=100000))
-          #result <- mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
+          result_twomore <- mirt::mirt(fa_covdata, i, TOL = 1e-3, accelerate = 'squarem', SE = T, itemtype=itemtype, calcNull=T, method = "MHRM", rotate = 'geominQ', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999), control = list(maxit=100000))
+          #result <- mirt::mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
           #message(" \n ")
           #message("\n\n IRT coefficients")
           #print(coef(result))
@@ -1865,8 +1865,8 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
           } else {
             itemtype <- NULL
           }
-          result_threemore <- mirt(fa_covdata, i, TOL = 1e-3, accelerate = 'squarem', SE = T, itemtype=itemtype, calcNull=T, method = "MHRM", rotate = 'geominQ', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999), control = list(maxit=100000))
-          #result <- mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
+          result_threemore <- mirt::mirt(fa_covdata, i, TOL = 1e-3, accelerate = 'squarem', SE = T, itemtype=itemtype, calcNull=T, method = "MHRM", rotate = 'geominQ', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999), control = list(maxit=100000))
+          #result <- mirt::mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
           #message(" \n ")
           #message("\n\n IRT coefficients")
           #print(coef(result))
@@ -1935,8 +1935,8 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
           } else {
             itemtype <- NULL
           }
-          result_fourmore <- mirt(fa_covdata, i, TOL = 1e-3, accelerate = 'squarem', SE = T, itemtype=itemtype, calcNull=T, method = "MHRM", rotate = 'geominQ', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999), control = list(maxit=100000))
-          #result <- mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
+          result_fourmore <- mirt::mirt(fa_covdata, i, TOL = 1e-3, accelerate = 'squarem', SE = T, itemtype=itemtype, calcNull=T, method = "MHRM", rotate = 'geominQ', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999), control = list(maxit=100000))
+          #result <- mirt::mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
           #message(" \n ")
           #message("\n\n IRT coefficients")
           #print(coef(result))
@@ -2005,8 +2005,8 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
           } else {
             itemtype <- NULL
           }
-          result_fivemore <- mirt(fa_covdata, i, TOL = 1e-3, accelerate = 'squarem', SE = T, itemtype=itemtype, calcNull=T, method = "MHRM", rotate = 'geominQ', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999), control = list(maxit=100000))
-          #result <- mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
+          result_fivemore <- mirt::mirt(fa_covdata, i, TOL = 1e-3, accelerate = 'squarem', SE = T, itemtype=itemtype, calcNull=T, method = "MHRM", rotate = 'geominQ', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999), control = list(maxit=100000))
+          #result <- mirt::mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
           #message(" \n ")
           #message("\n\n IRT coefficients")
           #print(coef(result))
@@ -2403,7 +2403,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
       randTheta <- raneff$Theta
       
       
-      result <- mirt(fa_covdata, i, itemtype=itemtype, calcNull=T, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
+      result <- mirt::mirt(fa_covdata, i, itemtype=itemtype, calcNull=T, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
       #
       #message(" \n ")
       #message("\n\n IRT coefficients")
@@ -2494,7 +2494,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
         raneff <- randef(ranmod)
         randTheta <- raneff$Theta
         
-        result <- mirt(fa_covdata, i, itemtype=itemtype, calcNull=T, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
+        result <- mirt::mirt(fa_covdata, i, itemtype=itemtype, calcNull=T, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
         
         message(" \n ")
         message("\n\n IRT coefficients")
@@ -2532,7 +2532,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
         raneff <- randef(ranmod)
         randTheta <- raneff$Theta
         
-        result <- mirt(fa_covdata, i, itemtype=itemtype, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
+        result <- mirt::mirt(fa_covdata, i, itemtype=itemtype, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
         
         message(" \n ")
         message("\n\n IRT coefficients")
@@ -2570,9 +2570,9 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
         randTheta <- raneff$Theta
         
         
-        result_onemore <- mirt(fa_covdata, i, itemtype=itemtype, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
+        result_onemore <- mirt::mirt(fa_covdata, i, itemtype=itemtype, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
         
-        #result <- mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
+        #result <- mirt::mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
         #message(" \n ")
         #message("\n\n IRT coefficients")
         #print(coef(result))
@@ -2645,8 +2645,8 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
         raneff <- randef(ranmod)
         randTheta <- raneff$Theta
         
-        result_twomore <- mirt(fa_covdata, i, itemtype=itemtype, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
-        #result <- mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
+        result_twomore <- mirt::mirt(fa_covdata, i, itemtype=itemtype, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
+        #result <- mirt::mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
         #message(" \n ")
         #message("\n\n IRT coefficients")
         #print(coef(result))
@@ -2718,8 +2718,8 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
         raneff <- randef(ranmod)
         randTheta <- raneff$Theta
         
-        result_threemore <- mirt(fa_covdata, i, itemtype=itemtype, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
-        #result <- mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
+        result_threemore <- mirt::mirt(fa_covdata, i, itemtype=itemtype, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
+        #result <- mirt::mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
         #message(" \n ")
         #message("\n\n IRT coefficients")
         #print(coef(result))
@@ -2791,8 +2791,8 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
         raneff <- randef(ranmod)
         randTheta <- raneff$Theta
         
-        result_fourmore <- mirt(fa_covdata, i, itemtype=itemtype, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
-        #result <- mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
+        result_fourmore <- mirt::mirt(fa_covdata, i, itemtype=itemtype, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
+        #result <- mirt::mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
         #message(" \n ")
         #message("\n\n IRT coefficients")
         #print(coef(result))
@@ -2863,8 +2863,8 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
         raneff <- randef(ranmod)
         randTheta <- raneff$Theta
         
-        result_fivemore <- mirt(fa_covdata, i, itemtype=itemtype, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
-        #result <- mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
+        result_fivemore <- mirt::mirt(fa_covdata, i, itemtype=itemtype, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
+        #result <- mirt::mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
         #message(" \n ")
         #message("\n\n IRT coefficients")
         #print(coef(result))
@@ -2935,8 +2935,8 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
         raneff <- randef(ranmod)
         randTheta <- raneff$Theta
         
-        result_sixmore <- mirt(fa_covdata, i, itemtype=itemtype, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
-        #result <- mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
+        result_sixmore <- mirt::mirt(fa_covdata, i, itemtype=itemtype, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
+        #result <- mirt::mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
         #message(" \n ")
         #message("\n\n IRT coefficients")
         #print(coef(result))
@@ -3007,8 +3007,8 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
         raneff <- randef(ranmod)
         randTheta <- raneff$Theta
         
-        result_sevenmore <- mirt(fa_covdata, i, itemtype=itemtype, calcNull=T, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
-        #result <- mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
+        result_sevenmore <- mirt::mirt(fa_covdata, i, itemtype=itemtype, calcNull=T, rotate = 'geominQ', method = 'QMCEM', technical=list(NCYCLES=500000, symmetric_SEM = F, MAXQUAD=9999999999999, customTheta = randTheta), maxit=100000)
+        #result <- mirt::mirt(fa_covdata, i, rotate = 'geominQ', calcNull = TRUE, technical=list(NCYCLES=500000, symmetric_SEM = F,  MAXQUAD=9999999999999), itemtype=irtmodel)
         #message(" \n ")
         #message("\n\n IRT coefficients")
         #print(coef(result))
@@ -3408,9 +3408,9 @@ k.faking <- function(dname = ..., formula = NULL, covdata = NULL, IRTonly = F, .
  
           
         } else {
-                  try(dataset.mirt <- mirt(data = dataset, model = 1, itemtype = 'gpcm', covdata = covdata, formula = formula, SE = T, SE.type = 'complete', technical = list(SEtol = 1e-10), ...))
+                  try(dataset.mirt <- mirt::mirt(data = dataset, model = 1, itemtype = 'gpcm', covdata = covdata, formula = formula, SE = T, SE.type = 'complete', technical = list(SEtol = 1e-10), ...))
                   if(dataset.mirt@OptimInfo$converged == FALSE){
-                    try(dataset.mirt <- mirt(data = dataset, model = 1, covdata = covdata, formula = formula, SE = T, SE.type = 'complete', technical = list(SEtol = 1e-10), ...))
+                    try(dataset.mirt <- mirt::mirt(data = dataset, model = 1, covdata = covdata, formula = formula, SE = T, SE.type = 'complete', technical = list(SEtol = 1e-10), ...))
                   }
                   if(is.na(dataset.mirt@OptimInfo$secondordertest)){
                     stop('fail to estimate standard error')
@@ -3459,9 +3459,9 @@ k.faking <- function(dname = ..., formula = NULL, covdata = NULL, IRTonly = F, .
 
           
         } else {
-          try(dataset.mirt <- mirt(data = dataset, model = 1, itemtype = 'gpcm', covdata = covdata, formula = formula, SE = T, SE.type = 'complete', technical = list(SEtol = 1e-10), ...))
+          try(dataset.mirt <- mirt::mirt(data = dataset, model = 1, itemtype = 'gpcm', covdata = covdata, formula = formula, SE = T, SE.type = 'complete', technical = list(SEtol = 1e-10), ...))
           if(dataset.mirt@OptimInfo$converged == FALSE){
-            try(dataset.mirt <- mirt(data = dataset, model = 1, covdata = covdata, formula = formula, SE = T, SE.type = 'complete', technical = list(SEtol = 1e-10), ...))
+            try(dataset.mirt <- mirt::mirt(data = dataset, model = 1, covdata = covdata, formula = formula, SE = T, SE.type = 'complete', technical = list(SEtol = 1e-10), ...))
           }
           if(is.na(dataset.mirt@OptimInfo$secondordertest)){
             stop('fail to estimate standard error')
@@ -4802,7 +4802,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
     if((sum(is.na(x)) != 0) && SE.type == 'crossprod'){
       SE <- T
       if(length(covdata) == 0){
-        SE.type <- 'BL'
+        SE.type <- 'Richardson'
       } else {
         SE.type <- 'complete'
       }
@@ -4837,10 +4837,10 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
     
     if(max(x, na.rm = T) - min(x, na.rm = T) == 1){ # dichotomous items
       
-      try(modTEMP <- mirt(data = x, model = i, itemtype = '2PL', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,  SE.type = SE.type, ... = ...), silent = T)
+      try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '2PL', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,  SE.type = SE.type, ... = ...), silent = T)
       
       if(exists('modTEMP') == F | modTEMP@OptimInfo$converged != 1){
-        try(modTEMP <- mirt(data = x, model = i, itemtype = 'ideal', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,  SE.type = SE.type, ... = ...), silent = T)
+        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'ideal', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,  SE.type = SE.type, ... = ...), silent = T)
       }
       
       if(exists('modTEMP') == F){
@@ -4851,7 +4851,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       
       # forceRasch
       if(forceRasch == T){
-        try(modTEMP <- mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = F)
+        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = F)
         try(return(modTEMP))
       }
       
@@ -4887,11 +4887,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
           message('\nMIRT model: graded rating scale')
           if(i == 1){
             
-            try(modTEMP <- mirt(data = x, model = i, itemtype = 'grsmIRT', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = F)
+            try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsmIRT', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = F)
             
           } else {
             
-            try(modTEMP <- mirt(data = x, model = i, itemtype = 'grsm', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = F)
+            try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsm', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = F)
             
           }
           
@@ -4905,12 +4905,12 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       # nominal model
       if(skipNominal == F){
         message('\nMIRT model: nominal')
-        try(modTEMP <- mirt(data = x, model = i, itemtype = 'nominal', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = F)
+        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'nominal', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = F)
       } else {
         
         if(exists('modTEMP') == F){# | (max(describe(x)$range) - min(describe(x)$range)) != 0){
           message('\nMIRT model: Generalized partial credit')
-          try(modTEMP <- mirt(data = x, model = i, itemtype = 'gpcm', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = T)
+          try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'gpcm', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = T)
         }
         
       }
@@ -4918,13 +4918,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       # generalized partial credit model (non-sequential)
       if(exists('modTEMP') == F | ((modTEMP@OptimInfo$converged != 1) && sum(modTEMP@Model$itemtype == 'grsm') == ncol(modTEMP@Data$data)) | ((modTEMP@OptimInfo$converged != 1) && sum(modTEMP@Model$itemtype == 'grsmIRT') == ncol(modTEMP@Data$data)) | (modTEMP@OptimInfo$converged != 1 && skipNominal == F)){
         message('\nMIRT model: Generalized partial credit')
-        try(modTEMP <- mirt(data = x, model = i, itemtype = 'gpcm', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = T)
+        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'gpcm', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = T)
       }
       
       # graded response model (sequential)
       if(exists('modTEMP') == F | modTEMP@OptimInfo$converged != 1){
         message('\nMIRT model: Graded response')
-        try(modTEMP <- mirt(data = x, model = i, method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = T)
+        try(modTEMP <- mirt::mirt(data = x, model = i, method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = T)
       }
       
       # finally, if can not converge
