@@ -4802,7 +4802,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
     if((sum(is.na(x)) != 0) && SE.type == 'crossprod'){
       SE <- T
       if(length(covdata) == 0){
-        SE.type <- 'Richardson'
+        if(estimationMETHOD == 'MHRM'){ # Richadson (BL) isn't support MHRM estimation method
+          SE.type = 'MHRM'
+          } else {
+          SE.type <- 'Richardson'
+          }
       } else {
         SE.type <- 'complete'
       }
