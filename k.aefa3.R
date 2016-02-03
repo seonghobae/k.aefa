@@ -4958,7 +4958,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       if(modTEMP@Fit$DIC > modOLD@Fit$DIC | modTEMP@OptimInfo$converged != 1 | sum(round(rotMat, 2) >= 1.00) != 0 | sum(modTEMP@Fit$h2 > .999) != 0){ # modTEMP@Fit$AICc > modOLD@Fit$AICc | 
         message('optimal factor numbers: ', paste0(i-1))
         return(modOLD)
-      } else if(sum((colSums(abs(rotMat) > .4) > 2)) != ncol(modTEMP@Fit$F)) {
+      } else if(sum(colSums(round(abs(rotMat), 2) > .4) < 2) != 0) {
         message('optimal factor numbers: ', paste0(i-1))
         return(modOLD)
       }
