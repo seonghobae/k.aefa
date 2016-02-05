@@ -4973,185 +4973,75 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
   }
 }
 
-surveyFA <- function(data = ..., tech = F, ...) {
+surveyFA <- function(data = ..., ...) {
+  surveyFixMod <- fastFIFA(x = data, ...)
   
-  fa_covdata <- data.frame(data)
-
-  # evaluation of IRT itemfit
-  message('\nStage 1 of calcuation: Item Fit Evaluation (testing for item local independence assumption)')
-  
-  
-  ncol_stage2 <- ncol(fa_covdata)
-  if(ncol_stage2 == 0){
-    stop('All items are deleted')
-  } else {
-    message('\nCurrent number of Items: ', paste0(ncol_stage2))
-  }
-  
-  
-  result <- fastFIFA(fa_covdata, ...)
-  
-  message('estimating Theta')
-  if(sum(is.na(result@Data$data)) == 0) {
-    try(test2_fscores <- fscores(object = result, rotate = 'geominQ', full.scores = T, QMC = TRUE, method = 'MAP'))
-  } else {
-    try(test2_fscores <- fscores(object = result, rotate = 'geominQ', full.scores = T, plausible.draws = 100, QMC = TRUE, method = 'MAP', MI = 100))
-  }
-  
-  message('estimating itemfit')
-  
-  if(sum(is.na(result@Data$data)) == 0) {
-    try(test2 <- itemfit(result, method = 'MAP', Theta = test2_fscores, QMC = TRUE, Zh = T), silent = T)
-  } else {
-    try(test2 <- itemfit(result, method = 'MAP', Theta = test2_fscores, impute = 100, QMC = TRUE, Zh = T), silent = T)
-  }
-  
-  
-  if(exists("test2")) {
-      test2 <- test2[1:result@Data$nitems,]
-      test2$cal <- test2$S_X2/test2$df.S_X2
-      if(exists('test2$infit') == T | exists('test2$outfit') == T){
-        test2 <- test2[which(test2$infit >= 1.3 | test2$infit <= 0.7 | test2$outfit >= 1.3 | test2$outfit <= 0.7 | test2$cal >= 3),]
-      } else {
-        test2 <- test2[which(test2$cal >= 3),]
-      }
-      test2 <- subset(test2, test2$infit >= 1.3 | test2$infit <= 0.7 | test2$outfit >= 1.3 | test2$outfit <= 0.7 | test2$cal >= 3)
-
-  } else {
-    test2 <- data.frame()
-    #test2 <- 0
-  }
-  
-  if(nrow(test2)==0){
-    message('Passing........')
-  } else {
-    exclude <- as.character(test2$item)
-    exclude <- as.factor(exclude)
-    exclude <- as.character(exclude)
-    
-    myvars <- names(fa_covdata) %in% c(exclude)
-    fa_covdata <- fa_covdata[!myvars]
-  }
-  
-  
-  message('\nStage 2 of calcuation: Factor Loading Based Evaluation')
-  
-  for(i in 1:10000){    
-    
-    ncol_stage3 <- ncol(fa_covdata)
-    if(ncol_stage3 == 0){
-      stop('All items are deleted')
+  itemFitDone <- FALSE
+  while (!itemFitDone) {
+    if(sum(is.na(surveyFixMod@Data$data)) == 0){
+      surveyFixMod_itemFit <- itemfit(x = surveyFixMod, Zh = T,
+                                      method = 'MAP',
+                                      QMC = T,
+                                      fscores(surveyFixMod, method = 'MAP',
+                                              QMC = T))
     } else {
-      message('\nCurrent number of Items: ', paste0(ncol_stage3))
+      
+      mirtCluster()
+      surveyFixMod_itemFit <- itemfit(x = surveyFixMod, Zh = T,
+                                      impute = 100,
+                                      method = 'MAP',
+                                      QMC = T,
+                                      fscores(surveyFixMod, method = 'MAP',
+                                              QMC = T, impute = 100))
+      
+      mirtCluster(remove = T)
+      
     }
-    
-    if(ncol_stage2 == ncol_stage3){
-      # evaluating model
-      #result <- fastFIFA(fa_covdata, ...)
-      #print(summary(result))
+    message('itemfit')
+    if(length(which(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems] > 3)) != 0){
+      surveyFixMod <- fastFIFA(surveyFixMod@Data$data[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], ...)
+    } else if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -2)) != 0){
+      surveyFixMod <- fastFIFA(surveyFixMod@Data$data[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], ...)
     } else {
-      # evaluating model
-      result <- fastFIFA(fa_covdata, ...)
-      #print(summary(result))
+      itemFitDone <- TRUE
     }
+  }
+  
+  noAberrant <- k.faking(surveyFixMod@Data$data, IRTonly = T)
+  surveyFixMod <- fastFIFA(surveyFixMod@Data$data[which(noAberrant$normal==TRUE),], ...)
+  
+  # autofix
+  fixFactorStructure_Done <- FALSE
+  surveyFixMod_Workout <- surveyFixMod
+  while (!fixFactorStructure_Done) {
     
-    if(exists('rotF_geomin')){
-      try(rm(rotF_geomin))
-    }
+    LowCommunalities <- surveyFixMod_Workout@Fit$h2[which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)]
     
-    if(ncol(result@Fit$F)==1){
-      rotF_geomin <- data.frame(result@Fit$F)
-      h2 <- data.frame(result@Fit$h2)
+    if(ncol(surveyFixMod_Workout@Fit$F) == 1){
+      Fmatrix <- surveyFixMod_Workout@Fit$F
     } else {
-      # getting factor loadings
-      message('Rotating Factor Solution now')
-      rotF_geomin <- geominQ(result@Fit$F, maxit = 100000)
-      rotF_geomin <- as.data.frame(rotF_geomin$loadings)
-      if(sum(is.na(rotF_geomin)) != 0){
-        rotF_geomin <- bentlerQ(result@Fit$F, maxit = 100000)
-        rotF_geomin <- as.data.frame(rotF_geomin$loadings)
-      }
-      if(tech == T){
-        print(rotF_geomin)
-      }
-      h2 <- data.frame(result@Fit$h2)
+      Fmatrix <- GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings
     }
     
-    # failover
-    if(i > 1){
-      exclude_rownum1 <- NULL
-      exclude_rownum1_low <- NULL
-      exclude_rownum2 <- NULL
-      exclude_rownum2_low <- NULL
-      exclude_rownum3 <- NULL
-      exclude_rownum3_low <- NULL
-      exclude <- NULL
-      exclude_rownum_low <- NULL
-      myvars <- NULL
+    NoLoadings <- surveyFixMod_Workout@Fit$h2[which(rowSums(abs(round(Fmatrix, 2)) < .4) == ncol(surveyFixMod_Workout@Fit$F))]
+    
+    
+    # h2 have to >= .3
+    if(LowCommunalities < .3^2){
       
-      if(length(exclude_rownum1) != 0){
-        try(rm(exclude_rownum1, exclude_rownum2, exclude_rownum2_low, exclude_rownum3, exclude_rownum3_low, exclude, exclude_rownum_low, myvars), silent = T)
-        
-      } else {
-        try(rm(exclude_rownum1, exclude_rownum1_low, exclude_rownum2, exclude_rownum2_low, exclude_rownum3, exclude_rownum3_low, exclude, exclude_rownum_low, myvars), silent = T)
-        
+      surveyFixMod_New <- fastFIFA(surveyFixMod_Workout@Data$data[,-which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)], forceMHRM = T)
+      surveyFixMod_Workout <- surveyFixMod_New
+    } else if(length(NoLoadings) != 0){
+      if(as.logical(length(names(which(NoLoadings == min(NoLoadings))) != 0))){
+        surveyFixMod_New <- fastFIFA(surveyFixMod_Workout@Data$data[,!colnames(surveyFixMod_Workout@Data$data) %in% names(which(NoLoadings == min(NoLoadings)))], forceMHRM = T)
+        surveyFixMod_Workout <- surveyFixMod_New
       }
-    }
-    
-    # evaluation of factor structure (stage 2) -- evaluating cross loadings and very small loadngs
-    exclude_rownum1 <- which(rowSums(abs(rotF_geomin[1:ncol(rotF_geomin)]) >= 0.4) >=2) # cross loadings based delection
-    if(length(exclude_rownum1) != 0){
-      exclude_rownum1_low <- which(rownames(rotF_geomin) %in% names(which(min(rowSums(rotF_geomin[which(rowSums(abs(rotF_geomin) >= .4) > 1),])) == rowSums(rotF_geomin[which(rowSums(abs(rotF_geomin) > .4) > 1),]))) == TRUE)
-    }    
-    exclude_rownum2 <- which(h2 <= (.3)^2) # communality based delection
-    exclude_rownum2_low <- which(h2 == min(h2))
-    exclude_rownum3 <- which(rowSums(abs(rotF_geomin[1:ncol(rotF_geomin)]) <= 0.4) == ncol(rotF_geomin)) # fail to load any factors
-    exclude_rownum3_low <- which(rowSums(abs(rotF_geomin[1:ncol(rotF_geomin)])) == min(rowSums(abs(rotF_geomin[1:ncol(rotF_geomin)]))))
-    
-    #     exclude_rownum <- as.numeric(paste(c(exclude_rownum1, exclude_rownum2, exclude_rownum3))) # list of doing delection
-    
-    if(length(exclude_rownum3) > 0){
-      message('[WARN] No loadings to any factor(s) occured!')
-      exclude_rownum_low <- as.numeric(paste(c(exclude_rownum3_low))) # list of doing delection
-      #       message(paste0(exclude_rownum_low))
-    } else if(length(exclude_rownum1) > 0){
-      message('[WARN] Cross Loadings occured!')
-      exclude_rownum_low <- as.numeric(paste(c(exclude_rownum1_low))) # list of doing delection
-    } else if(length(exclude_rownum2) > 0){
-      message('[WARN] Communality problem occured!')
-      exclude_rownum_low <- as.numeric(paste(c(exclude_rownum2_low))) # list of doing delection
     } else {
-      message('[Done!]')
-      exclude_rownum_low <- NULL
-      #       exclude_rownum_low <- as.numeric(paste(c(exclude_rownum1_low, exclude_rownum2_low, exclude_rownum3_low))) # list of doing delection
+      fixFactorStructure_Done <- TRUE
     }
-    
-    #     exclude_rownum <- as.numeric(paste(c(exclude_rownum1, exclude_rownum3))) # list of doing delection
-    
-    # the start of variable delection
-    if(length(exclude_rownum_low) > 0) { # if number of delection is non-zero
-      exclude <- vector() # make vectors
-      #       j <- 0 # set to zero exclude list counter
-      
-      #       for(i in c(exclude_rownum)){ # saving list of delection variable
-      #       j <- j + 1
-      #print(j)
-      #message('Trying to extract ', paste0(i), ' factor solution') -- for debug code
-      #         print(names(fa_covdata)[i])
-      exclude <- names(data.frame(result@Data$data))[c(exclude_rownum_low)]
-      message(paste0(exclude))
-      #         exclude[j] <- names(fa_covdata)[c(exclude_rownum_low)]
-      #       }
-      
-      myvars <- names(data.frame(result@Data$data)) %in% c(exclude)
-      fa_covdata <- data.frame(result@Data$data)[!myvars]
-      
-    } else { # (length(exclude_rownum == 0))
-      # try(print(findM2(result, calcNull = T, Theta = fscores(result, full.scores = T, plausible.draws = 100, rotate = "geominQ", MI = 100, QMC = TRUE, method = 'MAP'), impute = 100)), silent = T)
-      #cat('number of iteration : paste0(a))
-      return(result)
-    }
-    
     
   }
+  
+  return(surveyFixMod_Workout)
+  
 }
