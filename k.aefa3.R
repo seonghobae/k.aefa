@@ -5011,7 +5011,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
   if(length(covdata) == 0){
     surveyFixMod <- fastFIFA(surveyFixMod@Data$data[which(noAberrant$normal==TRUE),], covdata = covdata, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, ...)
   } else {
-    surveyFixMod <- fastFIFA(surveyFixMod@Data$data[which(noAberrant$normal==TRUE),], covdata = covdata[which(noAberrant$normal==TRUE),], covdata = covdata, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, ...)
+    covdata_workout <- covdata
+    surveyFixMod <- fastFIFA(surveyFixMod@Data$data[which(noAberrant$normal==TRUE),], covdata = covdata_workout[which(noAberrant$normal==TRUE),], covdata = covdata, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, ...)
   }
   
   # autofix
