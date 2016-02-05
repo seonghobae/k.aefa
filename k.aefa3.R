@@ -5008,7 +5008,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
   }
   
   noAberrant <- k.faking(surveyFixMod@Data$data, IRTonly = T, covdata = covdata, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, ...)
-  if(length(covdata) == 0){
+  if(length(covdata) == 0){ # anyway, covdata is NULL
     surveyFixMod <- fastFIFA(surveyFixMod@Data$data[which(noAberrant$normal==TRUE),], covdata = covdata, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, ...)
   } else {
     covdata_workout <- covdata
@@ -5034,11 +5034,11 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
     # h2 have to >= .3
     if(LowCommunalities < .3^2){
       
-      surveyFixMod_New <- fastFIFA(surveyFixMod_Workout@Data$data[,-which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)], covdata = covdata, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, ...)
+      surveyFixMod_New <- fastFIFA(surveyFixMod_Workout@Data$data[,-which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)], covdata = attr(surveyFixMod_Workout@ParObjects$lrPars, 'df'), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, ...)
       surveyFixMod_Workout <- surveyFixMod_New
     } else if(length(NoLoadings) != 0){
       if(as.logical(length(names(which(NoLoadings == min(NoLoadings))) != 0))){
-        surveyFixMod_New <- fastFIFA(surveyFixMod_Workout@Data$data[,!colnames(surveyFixMod_Workout@Data$data) %in% names(which(NoLoadings == min(NoLoadings)))], covdata = covdata, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, ...)
+        surveyFixMod_New <- fastFIFA(surveyFixMod_Workout@Data$data[,!colnames(surveyFixMod_Workout@Data$data) %in% names(which(NoLoadings == min(NoLoadings)))], covdata = attr(surveyFixMod_Workout@ParObjects$lrPars, 'df'), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, ...)
         surveyFixMod_Workout <- surveyFixMod_New
       }
     } else {
