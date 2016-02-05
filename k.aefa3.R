@@ -4973,7 +4973,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
   }
 }
 
-surveyFA <- function(data = ..., ...) {
+surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T, forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F, forceMHRM = F, ...) {
   surveyFixMod <- fastFIFA(x = data, ...)
   
   itemFitDone <- FALSE
@@ -5008,7 +5008,11 @@ surveyFA <- function(data = ..., ...) {
   }
   
   noAberrant <- k.faking(surveyFixMod@Data$data, IRTonly = T)
-  surveyFixMod <- fastFIFA(surveyFixMod@Data$data[which(noAberrant$normal==TRUE),], ...)
+  if(length(covdata) == 0){
+    surveyFixMod <- fastFIFA(surveyFixMod@Data$data[which(noAberrant$normal==TRUE),], ...)
+  } else {
+    surveyFixMod <- fastFIFA(surveyFixMod@Data$data[which(noAberrant$normal==TRUE),], covdata = covdata[which(noAberrant$normal==TRUE),], ...)
+  }
   
   # autofix
   fixFactorStructure_Done <- FALSE
