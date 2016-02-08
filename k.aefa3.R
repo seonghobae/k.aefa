@@ -5027,7 +5027,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
     }
     
     if(printFactorStructureRealtime == T){
-      message('\Realtime Factor Structure after iteration')
+      message('\nRealtime Factor Structure after iteration')
       print(round(GPArotation::geominQ(surveyFixMod@Fit$F, maxit = 10000)$loadings, 2))
     }
   }
@@ -5045,7 +5045,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
   }
   
   if(printFactorStructureRealtime == T){
-    message('\Realtime Factor Structure after iteration')
+    message('\nRealtime Factor Structure after iteration')
     print(round(GPArotation::geominQ(surveyFixMod@Fit$F, maxit = 10000)$loadings, 2))
   }
   
@@ -5075,7 +5075,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
       surveyFixMod_Workout <- surveyFixMod_New
       
       if(printFactorStructureRealtime == T){
-        message('\Realtime Factor Structure after iteration')
+        message('\nRealtime Factor Structure after iteration')
         print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
       }
       
@@ -5085,7 +5085,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
         surveyFixMod_Workout <- surveyFixMod_New
         
         if(printFactorStructureRealtime == T){
-          message('\Realtime Factor Structure after iteration')
+          message('\nRealtime Factor Structure after iteration')
           print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
         }
         
