@@ -5028,7 +5028,11 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
     
     if(printFactorStructureRealtime == T){
       message('\nRealtime Factor Structure after iteration')
-      print(round(GPArotation::geominQ(surveyFixMod@Fit$F, maxit = 10000)$loadings, 2))
+      if(ncol(surveyFixMod@Fit$F)==1){
+        print(round(surveyFixMod@Fit$F))
+      } else {
+        print(round(GPArotation::geominQ(surveyFixMod@Fit$F, maxit = 10000)$loadings, 2))
+      }
     }
   }
   
@@ -5046,7 +5050,11 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
   
   if(printFactorStructureRealtime == T){
     message('\nRealtime Factor Structure after iteration')
-    print(round(GPArotation::geominQ(surveyFixMod@Fit$F, maxit = 10000)$loadings, 2))
+    if(ncol(surveyFixMod@Fit$F)==1){
+      print(round(surveyFixMod@Fit$F))
+    } else {
+      print(round(GPArotation::geominQ(surveyFixMod@Fit$F, maxit = 10000)$loadings, 2))
+    }
   }
   
   # autofix
@@ -5076,7 +5084,11 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
       
       if(printFactorStructureRealtime == T){
         message('\nRealtime Factor Structure after iteration')
-        print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+        if(ncol(surveyFixMod_Workout@Fit$F)==1){
+          print(round(surveyFixMod_Workout@Fit$F))
+        } else {
+          print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+        }
       }
       
     } else if(length(NoLoadings) != 0){
@@ -5086,7 +5098,11 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
         
         if(printFactorStructureRealtime == T){
           message('\nRealtime Factor Structure after iteration')
-          print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+          if(ncol(surveyFixMod_Workout@Fit$F)==1){
+            print(round(surveyFixMod_Workout@Fit$F))
+          } else {
+            print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+          }
         }
         
       }
@@ -5098,7 +5114,11 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
   
   if(printFactorStructureRealtime == T){
     message('\nFinal Factor Structure')
-    print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+    if(ncol(surveyFixMod_Workout@Fit$F)==1){
+      print(round(surveyFixMod_Workout@Fit$F))
+    } else {
+      print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+    }
   }
   return(surveyFixMod_Workout)
   
