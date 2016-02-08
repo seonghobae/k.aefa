@@ -5029,7 +5029,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
     if(printFactorStructureRealtime == T){
       message('\nRealtime Factor Structure after iteration')
       if(ncol(surveyFixMod@Fit$F)==1){
-        print(round(surveyFixMod@Fit$F))
+        print(round(surveyFixMod@Fit$F, 2))
       } else {
         print(round(GPArotation::geominQ(surveyFixMod@Fit$F, maxit = 10000)$loadings, 2))
       }
@@ -5051,7 +5051,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
   if(printFactorStructureRealtime == T){
     message('\nRealtime Factor Structure after iteration')
     if(ncol(surveyFixMod@Fit$F)==1){
-      print(round(surveyFixMod@Fit$F))
+      print(round(surveyFixMod@Fit$F, 2))
     } else {
       print(round(GPArotation::geominQ(surveyFixMod@Fit$F, maxit = 10000)$loadings, 2))
     }
@@ -5085,7 +5085,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
       if(printFactorStructureRealtime == T){
         message('\nRealtime Factor Structure after iteration')
         if(ncol(surveyFixMod_Workout@Fit$F)==1){
-          print(round(surveyFixMod_Workout@Fit$F))
+          print(round(surveyFixMod_Workout@Fit$F, 2))
         } else {
           print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
         }
@@ -5099,7 +5099,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
         if(printFactorStructureRealtime == T){
           message('\nRealtime Factor Structure after iteration')
           if(ncol(surveyFixMod_Workout@Fit$F)==1){
-            print(round(surveyFixMod_Workout@Fit$F))
+            print(round(surveyFixMod_Workout@Fit$F, 2))
           } else {
             print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
           }
@@ -5115,7 +5115,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
   if(printFactorStructureRealtime == T){
     message('\nFinal Factor Structure')
     if(ncol(surveyFixMod_Workout@Fit$F)==1){
-      print(round(surveyFixMod_Workout@Fit$F))
+      print(round(surveyFixMod_Workout@Fit$F, 2))
     } else {
       print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
     }
