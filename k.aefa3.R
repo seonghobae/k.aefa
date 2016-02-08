@@ -5097,7 +5097,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
   }
   
   if(printFactorStructureRealtime == T){
-    message('\Final Factor Structure')
+    message('\nFinal Factor Structure')
     print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
   }
   return(surveyFixMod_Workout)
