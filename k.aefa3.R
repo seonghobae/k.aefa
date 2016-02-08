@@ -4983,10 +4983,22 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
 }
 
 surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T, forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F, forceMHRM = F, ...) {
+  message('---------------------------------------------------------')
+  message(' k.aefa: kwangwoon automated exploratory factor analysis ')
+  message('---------------------------------------------------------\n')
+  
+  message('Calculating Initial Factor model')
+  iteration_num <- 1
+  message('Iteration: ', iteration_num, '\n')
   surveyFixMod <- fastFIFA(x = data, covdata = covdata, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, ...)
   
   itemFitDone <- FALSE
   while (!itemFitDone) {
+    
+    message('\nChecking item local independence assumption')
+    iteration_num <- iteration_num + 1
+    message('Iteration: ', iteration_num, '\n')
+    
     if(sum(is.na(surveyFixMod@Data$data)) == 0){
       surveyFixMod_itemFit <- itemfit(x = surveyFixMod, Zh = T,
                                       method = 'MAP',
@@ -5006,7 +5018,6 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
       mirtCluster(remove = T)
       
     }
-    message('itemfit')
     if(sum(is.na(surveyFixMod_itemFit$p.S_X2)) == 0 && length(which(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems] > 3)) != 0){
       surveyFixMod <- fastFIFA(surveyFixMod@Data$data[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], covdata = covdata, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, ...)
     } else if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -2)) != 0){
@@ -5015,6 +5026,10 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
       itemFitDone <- TRUE
     }
   }
+  
+  message('\nChecking aberrant responses')
+  iteration_num <- iteration_num + 1
+  message('Iteration: ', iteration_num, '\n')
   
   noAberrant <- k.faking(surveyFixMod@Data$data, IRTonly = T, covdata = covdata, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, ...)
   if(length(covdata) == 0){ # anyway, covdata is NULL
@@ -5028,6 +5043,9 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
   fixFactorStructure_Done <- FALSE
   surveyFixMod_Workout <- surveyFixMod
   while (!fixFactorStructure_Done) {
+    message('\nFixing Factor Model')
+    iteration_num <- iteration_num + 1
+    message('Iteration: ', iteration_num, '\n')
     
     LowCommunalities <- surveyFixMod_Workout@Fit$h2[which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)]
     
