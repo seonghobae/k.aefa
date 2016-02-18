@@ -4844,13 +4844,17 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       if(nrow(x) >= 2000){
         message('\nMIRT model: Noncompensatory 4PL')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PL', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,  SE.type = SE.type, ... = ...), silent = T)
-        if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        if(exists('modTEMP')){
+          if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        }
         
         if(exists('modTEMP') == F){
           
           message('\nMIRT model: Noncompensatory 3PL')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PL', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,  SE.type = SE.type, ... = ...), silent = T)
-          if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          }
         }
       }
       
@@ -4858,21 +4862,27 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         
         message('\nMIRT model: ideal point')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'ideal', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,  SE.type = SE.type, ... = ...), silent = T)
-        if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        if(exists('modTEMP')){
+          if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        }
       }
       
       if(exists('modTEMP') == F){
         
         message('\nMIRT model: Noncompensatory 2PL')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '2PL', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,  SE.type = SE.type, ... = ...), silent = T)
-        if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        if(exists('modTEMP')){
+          if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        }
       }
       
       if(exists('modTEMP') == F | modTEMP@OptimInfo$converged != 1){
         
         message('\nMIRT model: Partially compensatory 2PL')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'partcomp', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,  SE.type = SE.type, ... = ...), silent = T)
-        if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        if(exists('modTEMP')){
+          if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        }
       }
       
       if(exists('modTEMP') == F){
@@ -4921,11 +4931,15 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
           if(i == 1){
             
             try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsmIRT', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = F)
-            if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+            if(exists('modTEMP')){
+              if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+            }
           } else {
             
             try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsm', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = F)
-            if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+            if(exists('modTEMP')){
+              if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+            }
           }
           
           if(modTEMP@OptimInfo$converged == 1){
@@ -4939,21 +4953,27 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       if(skipNominal == F){
         message('\nMIRT model: nominal response')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'nominal', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = F)
-        if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        if(exists('modTEMP')){
+          if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        }
       }
       
       # generalized partial credit model (non-sequential)
       if(exists('modTEMP') == F){
         message('\nMIRT model: Generalized partial credit')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'gpcm', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = F)
-        if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        if(exists('modTEMP')){
+          if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        }
       }
       
       # graded response model (sequential)
       if(exists('modTEMP') == F){
         message('\nMIRT model: Graded response')
         try(modTEMP <- mirt::mirt(data = x, model = i, method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = T)
-        if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        if(exists('modTEMP')){
+          if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        }
       }
       
       # finally, if can not converge
