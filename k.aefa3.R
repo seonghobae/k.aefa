@@ -4804,9 +4804,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       if(length(covdata) == 0){
         if(estimationMETHOD == 'MHRM'){ # Richadson (BL) isn't support MHRM estimation method
           SE.type <- 'MHRM'
-          } else {
+        } else {
           SE.type <- 'Richardson'
-          }
+        }
       } else {
         SE.type <- 'complete'
       }
@@ -4887,7 +4887,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         try(return(modTEMP))
       }
       
-    # forceGRSM (polytomous)
+      # forceGRSM (polytomous)
       # for detecting fake responses
       if(SE == T){ # if grsm, Standard error estimation was unsuccessful.
         
@@ -4933,11 +4933,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
           }
         }
       }
-
-    # polytomous
+      
+      # polytomous
       # nominal model
       if(skipNominal == F){
-        message('\nMIRT model: nominal')
+        message('\nMIRT model: nominal response')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'nominal', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = F)
         if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
       }
