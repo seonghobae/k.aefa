@@ -4923,6 +4923,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
           }
         }
+      }
         
         if(exists('modTEMP') == F){
           
