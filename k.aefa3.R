@@ -5023,7 +5023,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
                                               QMC = T))
     } else {
       
-      mirtCluster()
+      #mirtCluster()
       surveyFixMod_itemFit <- itemfit(x = surveyFixMod, Zh = T,
                                       impute = 100,
                                       method = 'MAP',
@@ -5031,7 +5031,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
                                       fscores(surveyFixMod, method = 'MAP',
                                               QMC = T, impute = 100))
       
-      mirtCluster(remove = T)
+      #mirtCluster(remove = T)
       
     }
     if(sum(is.na(surveyFixMod_itemFit$p.S_X2)) == 0 && length(which(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems] > 3)) != 0){
