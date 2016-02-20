@@ -4949,8 +4949,10 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         
     } else { # polytomous items
       
-      # forceRasch
+      # forceRasch (PCM)
       if(forceRasch == T){
+        message('\nMIRT model: Partial Credit')
+        
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD, accelerate = accelerateINPUT, calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT, removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE, SE.type = SE.type, ...), silent = F)
         try(return(modTEMP))
       }
