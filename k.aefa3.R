@@ -4832,6 +4832,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       TOLINPUT <- NULL
       SEtolINPUT <- 1e-9
       symmetric_SEMINPUT <- TRUE
+      SE.type <- 'MHRM'
       
       message('TOL: ', 'default', ' / SEtol: ', SEtolINPUT, ' / SE.type: ', SE.type, ' / Accelerator: ',
               accelerateINPUT, ' / Symmetric SEM: ', symmetric_SEMINPUT)
