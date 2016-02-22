@@ -5204,7 +5204,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
                                       method = 'MAP',
                                       QMC = T,
                                       fscores(surveyFixMod, method = 'MAP',
-                                              QMC = T, impute = 100))
+                                              QMC = T))
       
       #mirtCluster(remove = T)
       
