@@ -4808,7 +4808,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
           SE.type <- 'Richardson'
         }
       } else {
-        SE.type <- 'complete'
+        if(estimationMETHOD == 'MHRM'){ # Richadson (BL) isn't support MHRM estimation method
+          SE.type <- 'MHRM'
+        } else {
+          SE.type <- 'complete'
+        }
       }
     }
     
