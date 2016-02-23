@@ -3383,8 +3383,9 @@ fastHMM <- function(dat = ..., ...){
   }
 }
 
-k.faking <- function(dname = ..., formula = NULL, covdata = NULL, IRTonly = F, ...) { # for aberrant & faking response detection
-  dataset <- dname
+k.faking <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T, forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F, forceMHRM = F, printFactorStructureRealtime = F, itemkeys = NULL, survey.weights = NULL, IRTonly = F, ...) { # for aberrant & faking response detection
+  dataset <- data
+  dname <- data
   
   if(IRTonly == F){
     for(j in 1:1000){
@@ -3403,14 +3404,14 @@ k.faking <- function(dname = ..., formula = NULL, covdata = NULL, IRTonly = F, .
         
         # person-fit test in IRT
         if(sum(is.na(dataset)) == 0){
-          dataset.mirt <- fastFIFA(x = dataset, covdata = covdata, formula = formula, ...)
+          dataset.mirt <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
           dataset.response <- personfit(dataset.mirt, method='MAP', QMC = T)
  
           
         } else {
-          dataset.mirt <- fastFIFA(x = dataset, covdata = covdata, formula = formula, ...)
+          dataset.mirt <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
           dataset_temp <- imputeMissing(x = dataset.mirt, Theta = fscores(dataset.mirt, method = 'MAP', QMC = T), QMC = T, impute = 100)
-          dataset.mirt2 <- fastFIFA(x = dataset_temp, covdata = covdata, formula = formula, ...)
+          dataset.mirt2 <- fastFIFA(x = as.data.frame(dataset_temp), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
           dataset.response <- personfit(dataset.mirt2, method='MAP', QMC = T)
         }
         
@@ -3494,7 +3495,7 @@ aberrantZero <- function(data = ..., covdata = ..., formula = ..., ...){
   for(i in 1:100000){
     
     if(i == 1){
-      mod <- k.faking(dname = tempData, ...) # TRUE search
+      mod <- k.faking(data = tempData, ...) # TRUE search
     } else {
       
       mod_old <- mod
@@ -3502,7 +3503,7 @@ aberrantZero <- function(data = ..., covdata = ..., formula = ..., ...){
       
       message('current number of samples: ', (nrow(mod_old[mod_old$normal == T,1:ncol(mod_old)-1]))) # count TRUE samples
       print(apply(mod_old[mod_old$normal == T,1:ncol(mod_old)-1], 2, table)) # count TRUE sample patterns
-      mod <- k.faking(dname = mod_old[mod_old$normal == T,1:ncol(mod_old)-1], ...) # recalculate using TRUE SAMPLE ONLY
+      mod <- k.faking(data = mod_old[mod_old$normal == T,1:ncol(mod_old)-1], ...) # recalculate using TRUE SAMPLE ONLY
       
       if(nrow(mod) == nrow(mod_old)) { # if no difference between mod and mod_old
         # message('final normal cases: ', paste0(rownames(mod_old)))
