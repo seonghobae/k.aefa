@@ -3404,14 +3404,14 @@ k.faking <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
         
         # person-fit test in IRT
         if(sum(is.na(dataset)) == 0){
-          dataset.mirt <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
+          dataset.mirt <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
           dataset.response <- personfit(dataset.mirt, method='MAP', QMC = T)
  
           
         } else {
-          dataset.mirt <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
+          dataset.mirt <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
           dataset_temp <- imputeMissing(x = dataset.mirt, Theta = fscores(dataset.mirt, method = 'MAP', QMC = T), QMC = T, impute = 100)
-          dataset.mirt2 <- fastFIFA(x = as.data.frame(dataset_temp), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
+          dataset.mirt2 <- fastFIFA(x = as.data.frame(dataset_temp), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
           dataset.response <- personfit(dataset.mirt2, method='MAP', QMC = T)
         }
         
@@ -3448,14 +3448,14 @@ k.faking <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
     for(j in 1:1000){
       # person-fit test in IRT
       if(sum(is.na(dataset)) == 0){
-        dataset.mirt <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
+        dataset.mirt <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
         dataset.response <- personfit(dataset.mirt, method='MAP', QMC = T)
         
         
       } else {
-        dataset.mirt <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
+        dataset.mirt <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
         dataset_temp <- imputeMissing(x = dataset.mirt, Theta = fscores(dataset.mirt, method = 'MAP', QMC = T), QMC = T, impute = 100)
-        dataset.mirt2 <- fastFIFA(x = as.data.frame(dataset_temp), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
+        dataset.mirt2 <- fastFIFA(x = as.data.frame(dataset_temp), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
         dataset.response <- personfit(dataset.mirt2, method='MAP', QMC = T)
       }
       
@@ -5188,7 +5188,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
   message('Calculating Initial Factor model')
   iteration_num <- 1
   message('Iteration: ', iteration_num, '\n')
-  surveyFixMod <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
+  surveyFixMod <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
   
   itemFitDone <- FALSE
   while (!itemFitDone) {
@@ -5251,7 +5251,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
   surveyFixModRAW <- data.frame(mirt::extract.mirt(surveyFixMod, 'data'))
   surveyFixModCOV <- data.frame(attr(surveyFixMod@ParObjects$lrPars, "df"))
   
-  noAberrant <- k.faking(surveyFixModRAW, IRTonly = T, itemkeys = itemkeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
+  noAberrant <- k.faking(surveyFixModRAW, IRTonly = T, itemkeys = itemkeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
   if(length(covdata) == 0){ # anyway, covdata is NULL
     surveyFixMod <- fastFIFA(surveyFixModRAW[which(noAberrant$normal==TRUE),], itemkeys = itemkeys[which(noAberrant$normal==TRUE),], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights[which(noAberrant$normal==TRUE)], ...)
   } else {
