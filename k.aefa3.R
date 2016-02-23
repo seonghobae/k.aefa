@@ -4957,7 +4957,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       }
       
       if(exists('modTEMP') == F){
-        stop('Fail to find Factor solutions')
+        if(i == 1){
+          stop('Fail to find Factor solutions: Model didn\'t converge.')
+        } else {
+          return(modOLD)
+        }
       }
       
     } else if(length(itemkeys) != 0){ # 2-4PLNRM
@@ -5017,7 +5021,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       }
       
       if(exists('modTEMP') == F){
-        stop('Fail to find Factor solutions')
+        if(i == 1){
+          stop('Fail to find Factor solutions: Model didn\'t converge.')
+        } else {
+          return(modOLD)
+        }
       }
         
     } else { # polytomous items
@@ -5141,7 +5149,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       
       # finally, if can not converge
       if(exists('modTEMP') == F){
-        stop('Fail to find Factor solutions: Model didn\'t converge.')
+        if(i == 1){
+          stop('Fail to find Factor solutions: Model didn\'t converge.')
+        } else {
+          return(modOLD)
+        }
       }
     }
     
