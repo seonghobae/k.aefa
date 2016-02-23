@@ -5264,7 +5264,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
   surveyFixModRAW <- data.frame(mirt::extract.mirt(surveyFixMod, 'data'))
   surveyFixModCOV <- data.frame(attr(surveyFixMod@ParObjects$lrPars, "df"))
   
-  noAberrant <- k.faking(surveyFixModRAW, IRTonly = T, itemkeys = itemkeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
+  noAberrant <- k.faking(surveyFixModRAW, IRTonly = T, itemkeys = itemkeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
   if(length(covdata) == 0){ # anyway, covdata is NULL
     surveyFixMod <- fastFIFA(surveyFixModRAW[which(noAberrant$normal==TRUE),], itemkeys = itemkeys[which(noAberrant$normal==TRUE),], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights[which(noAberrant$normal==TRUE)], ...)
   } else {
