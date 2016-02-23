@@ -5008,6 +5008,19 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       }
       
       if(exists('modTEMP') == F){
+        message('\nMIRT model: Nominal response without keys')
+        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'nominal', method = estimationMETHOD,
+                                  accelerate = accelerateINPUT, calcNull = T,
+                                  technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                                   removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT,
+                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                  SE.type = SE.type, survey.weights = survey.weights, key = NULL, ...), silent = F)
+        if(exists('modTEMP')){
+          if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        }
+      }
+      
+      if(exists('modTEMP') == F){
         if(i == 1){
           stop('Fail to find Factor solutions: Model didn\'t converge.')
         } else {
