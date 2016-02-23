@@ -3446,36 +3446,28 @@ k.faking <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
     }
   } else {
     for(j in 1:1000){
-        # person-fit test in IRT
-        if(sum(is.na(dataset)) == 0){
-          dataset.mirt <- fastFIFA(x = dataset, covdata = covdata, formula = formula, ...)
-          dataset.response <- personfit(dataset.mirt, method='MAP', QMC = T)
-          
-
-          
-        } else {
-          try(dataset.mirt <- mirt::mirt(data = dataset, model = 1, itemtype = 'gpcm', covdata = covdata, formula = formula, SE = T, SE.type = 'complete', technical = list(SEtol = 1e-10), ...))
-          if(dataset.mirt@OptimInfo$converged == FALSE){
-            try(dataset.mirt <- mirt::mirt(data = dataset, model = 1, covdata = covdata, formula = formula, SE = T, SE.type = 'complete', technical = list(SEtol = 1e-10), ...))
-          }
-          if(is.na(dataset.mirt@OptimInfo$secondordertest)){
-            stop('fail to estimate standard error')
-          }
-          try(dataset <- imputeMissing(dataset.mirt, QMC = T, Theta = fscores(dataset.mirt, full.scores = T, MI = 100, QMC = T, method = 'MAP'), MI = 100))
-          try(dataset.mirt <- fastFIFA(x = dataset, covdata = covdata, formula = formula, ...))
-          try(dataset.response <- personfit(dataset.mirt, method='MAP', QMC = TRUE))
-
-        }
+      # person-fit test in IRT
+      if(sum(is.na(dataset)) == 0){
+        dataset.mirt <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
+        dataset.response <- personfit(dataset.mirt, method='MAP', QMC = T)
+        
+        
+      } else {
+        dataset.mirt <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
+        dataset_temp <- imputeMissing(x = dataset.mirt, Theta = fscores(dataset.mirt, method = 'MAP', QMC = T), QMC = T, impute = 100)
+        dataset.mirt2 <- fastFIFA(x = as.data.frame(dataset_temp), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
+        dataset.response <- personfit(dataset.mirt2, method='MAP', QMC = T)
+      }
       
       print(hist(dataset.response$Zh))
       dataset.response$Zh <- dataset.response$Zh > -2 #(if abnormal, dataset.response$Zh < -2 is right! : See Hyeongjun Kim (2015) @ SNU)
       IRTnormal <- data.frame(dataset.response$Zh)
         
-      if(sum(is.na(dataset)) == 0){
+      # if(sum(is.na(dataset)) == 0){
         output <- data.frame(IRTnormal)
-      } else {
-        stop('Please use HMM')
-      }
+      # } else {
+        # stop('Please use HMM')
+      # }
           
         
         names(output) <- "normal"
