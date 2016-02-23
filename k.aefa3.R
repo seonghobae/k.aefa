@@ -5199,33 +5199,36 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
   
   itemFitDone <- FALSE
   while (!itemFitDone) {
-    
-    message('\nChecking item local independence assumption')
-    iteration_num <- iteration_num + 1
-    message('Iteration: ', iteration_num, '\n')
-    
-    if(sum(is.na(surveyFixMod@Data$data)) == 0){
-      surveyFixMod_itemFit <- itemfit(x = surveyFixMod, Zh = T,
-                                      method = 'MAP',
-                                      QMC = T,
-                                      fscores(surveyFixMod, method = 'MAP',
-                                              QMC = T))
-    } else {
-      
-      #mirtCluster()
-      surveyFixMod_itemFit <- itemfit(x = surveyFixMod, Zh = T,
-                                      impute = 100,
-                                      method = 'MAP',
-                                      QMC = T,
-                                      fscores(surveyFixMod, method = 'MAP',
-                                              QMC = T))
-      
-      #mirtCluster(remove = T)
-      
-    }
     surveyFixModRAW <- data.frame(mirt::extract.mirt(surveyFixMod, 'data'))
     surveyFixModCOV <- data.frame(attr(surveyFixMod@ParObjects$lrPars, "df"))
+
     if(ncol(surveyFixModRAW) >= 3){
+      
+      
+      message('\nChecking item local independence assumption')
+      iteration_num <- iteration_num + 1
+      message('Iteration: ', iteration_num, '\n')
+      
+      if(sum(is.na(surveyFixMod@Data$data)) == 0){
+        surveyFixMod_itemFit <- itemfit(x = surveyFixMod, Zh = T,
+                                        method = 'MAP',
+                                        QMC = T,
+                                        fscores(surveyFixMod, method = 'MAP',
+                                                QMC = T))
+      } else {
+        
+        #mirtCluster()
+        surveyFixMod_itemFit <- itemfit(x = surveyFixMod, Zh = T,
+                                        impute = 100,
+                                        method = 'MAP',
+                                        QMC = T,
+                                        fscores(surveyFixMod, method = 'MAP',
+                                                QMC = T))
+        
+        #mirtCluster(remove = T)
+        
+      }
+      
       if(sum(is.na(surveyFixMod_itemFit$p.S_X2)) == 0 && length(which(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems] > 3)) != 0){
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
       } else if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -2.58)) != 0){
