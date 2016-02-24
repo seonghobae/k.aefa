@@ -30,11 +30,14 @@ This project made and updated for personal convinence during survey data analysi
   # doing fully automated exploratory factor analysis
   mod2 <- surveyFA(your_data_frame)
   
-  # find optimal factor numbers with covariates (latent regression of fixed effects)
+  # find optimal factor numbers with person covariates (latent regression of fixed effects)
   mod3 <- fastFIFA(your_data_frame, covdata = your_demographic_data_frame,
                   formula = ~1 + your + variable + names + in + demographic + data + frame)
   
-  # doing fully automated exploratory factor analysis with covariates (latent regression of fixed effects)
+  # doing fully automated exploratory factor analysis with person covariates (latent regression of fixed effects)
   mod4 <- surveyFA(your_data_frame, covdata = your_demographic_data_frame,
                   formula = ~1 + your + variable + names + in + demographic + data + frame)
+                  
+  # doing fully automated exploratory factor analysis with survey weights
+  mod5 <- surveyFA(your_data_frame, survey.weights = your_survey_weights_where_get_from_Finite_population)
 ```
