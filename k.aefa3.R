@@ -4772,7 +4772,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         optimINPUT <- 'nlminb'
         optimCTRL  <- NULL  #list(control = list(trace = F))
       } else if(length(survey.weights) != 0) {
-        estimationMETHOD <- 'EM'
+        estimationMETHOD <- 'QMCEM'
         optimINPUT <- 'nlminb'
         optimCTRL  <- NULL  #list(control = list(trace = F))
       } else if(i < 2){
