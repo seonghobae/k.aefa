@@ -5224,7 +5224,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
                                                 QMC = T))
       } else {
         
-        #mirtCluster()
+        mirtCluster()
         surveyFixMod_itemFit <- itemfit(x = surveyFixMod, Zh = T,
                                         impute = 100,
                                         method = 'MAP',
@@ -5232,7 +5232,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
                                         fscores(surveyFixMod, method = 'MAP',
                                                 QMC = T))
         
-        #mirtCluster(remove = T)
+        mirtCluster(remove = T)
         
       }
       
