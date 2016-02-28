@@ -3417,7 +3417,7 @@ k.faking <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
         
         
         print(hist(dataset.response$Zh))
-        dataset.response$Zh <- dataset.response$Zh > -2 #(if abnormal, dataset.response$Zh < -2 is right! : See Hyeongjun Kim (2015) @ SNU)
+        dataset.response$Zh <- dataset.response$Zh > -2.58 #(if abnormal, dataset.response$Zh < -2 is right! : See Hyeongjun Kim (2015) @ SNU)
         IRTnormal <- data.frame(dataset.response$Zh)
         
         # reflect results
