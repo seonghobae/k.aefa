@@ -5299,7 +5299,11 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
     iteration_num <- iteration_num + 1
     message('Iteration: ', iteration_num, '\n')
     
-    LowCommunalities <- surveyFixMod_Workout@Fit$h2[which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)]
+    tempG <- mirt::extract.mirt(surveyFixMod_Workout, 'itemtype')
+    if(sum(tempG != 'Rasch') != 0){
+      LowCommunalities <- surveyFixMod_Workout@Fit$h2[which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)]
+    }
+    
     
     if(ncol(surveyFixMod_Workout@Fit$F) == 1){
       Fmatrix <- surveyFixMod_Workout@Fit$F
@@ -5311,7 +5315,9 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
     
     
     # h2 have to >= .3
-    if(LowCommunalities < .3^2){
+    if(sum(tempG != 'Rasch') == 0){
+      fixFactorStructure_Done <- TRUE
+    } else if(LowCommunalities < .3^2){
       
       surveyFixMod_New <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)], itemkeys = itemkeys[-which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
       surveyFixMod_Workout <- surveyFixMod_New
