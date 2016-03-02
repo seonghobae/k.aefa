@@ -185,8 +185,8 @@ findM2 <- function(mirtModel, increase = 15000, iterations = 1000, ...){
     if(i > 1){
       # decision-making
       if(abs((fitStats$RMSEA_5 - fitStats.old$RMSEA_5)) < .001 && 
-           abs((fitStats$TLI - fitStats.old$TLI)) < .001 && 
-           abs((fitStats$CFI - fitStats.old$CFI)) < .001)
+         abs((fitStats$TLI - fitStats.old$TLI)) < .001 && 
+         abs((fitStats$CFI - fitStats.old$CFI)) < .001)
         return(fitStats)
     }
     
@@ -564,7 +564,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
           if(estimator == 'pml' | estimator == 'PML'){
             Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue")))
             Model_Fit <- round(Model_Fit, 4)
-#             Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
+            #             Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
             message('Done...\n')
           } else {
             Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi.scaled", "tli.scaled", "rmsea.scaled", "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled", "rmsea.pvalue.scaled", "wrmr", "chisq.scaled", "df.scaled", "pvalue.scaled")))
@@ -606,7 +606,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
               if(estimator == 'pml' | estimator == 'PML'){
                 Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue")))
                 Model_Fit <- round(Model_Fit, 4)
-#                 Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
+                #                 Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
                 message('Done...\n')
               } else {
                 Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi.scaled", "tli.scaled", "rmsea.scaled", "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled", "rmsea.pvalue.scaled", "wrmr", "chisq.scaled", "df.scaled", "pvalue.scaled")))
@@ -672,7 +672,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
               if(estimator == 'pml' | estimator == 'PML'){
                 Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue")))
                 Model_Fit <- round(Model_Fit, 4)
-#                 Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
+                #                 Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
                 message('Done...\n')
               } else {
                 Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi.scaled", "tli.scaled", "rmsea.scaled", "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled", "rmsea.pvalue.scaled", "wrmr", "chisq.scaled", "df.scaled", "pvalue.scaled")))
@@ -714,7 +714,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
                   if(estimator == 'pml' | estimator == 'PML'){
                     Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue")))
                     Model_Fit <- round(Model_Fit, 4)
-#                     Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
+                    #                     Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
                     message('Done...\n')
                   } else {
                     Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi.scaled", "tli.scaled", "rmsea.scaled", "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled", "rmsea.pvalue.scaled", "wrmr", "chisq.scaled", "df.scaled", "pvalue.scaled")))
@@ -780,7 +780,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
                   if(estimator == 'pml' | estimator == 'PML'){
                     Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue")))
                     Model_Fit <- round(Model_Fit, 4)
-#                     Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
+                    #                     Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
                     message('Done...\n')
                   } else {
                     Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi.scaled", "tli.scaled", "rmsea.scaled", "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled", "rmsea.pvalue.scaled", "wrmr", "chisq.scaled", "df.scaled", "pvalue.scaled")))
@@ -872,7 +872,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
           if(estimator == 'pml' | estimator == 'PML'){
             Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue")))
             Model_Fit <- round(Model_Fit, 4)
-#             Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
+            #             Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
             message('Done...\n')
           } else {
             Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi.scaled", "tli.scaled", "rmsea.scaled", "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled", "rmsea.pvalue.scaled", "wrmr", "chisq.scaled", "df.scaled", "pvalue.scaled")))
@@ -914,7 +914,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
               if(estimator == 'pml' | estimator == 'PML'){
                 Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue")))
                 Model_Fit <- round(Model_Fit, 4)
-#                 Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
+                #                 Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
                 message('Done...\n')
               } else {
                 Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi.scaled", "tli.scaled", "rmsea.scaled", "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled", "rmsea.pvalue.scaled", "wrmr", "chisq.scaled", "df.scaled", "pvalue.scaled")))
@@ -980,7 +980,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
               if(estimator == 'pml' | estimator == 'PML'){
                 Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue")))
                 Model_Fit <- round(Model_Fit, 4)
-#                 Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
+                #                 Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
                 message('Done...\n')
               } else {
                 Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi.scaled", "tli.scaled", "rmsea.scaled", "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled", "rmsea.pvalue.scaled", "wrmr", "chisq.scaled", "df.scaled", "pvalue.scaled")))
@@ -1022,7 +1022,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
                   if(estimator == 'pml' | estimator == 'PML'){
                     Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue")))
                     Model_Fit <- round(Model_Fit, 4)
-#                     Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
+                    #                     Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
                     message('Done...\n')
                   } else {
                     Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi.scaled", "tli.scaled", "rmsea.scaled", "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled", "rmsea.pvalue.scaled", "wrmr", "chisq.scaled", "df.scaled", "pvalue.scaled")))
@@ -1088,7 +1088,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
                   if(estimator == 'pml' | estimator == 'PML'){
                     Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue")))
                     Model_Fit <- round(Model_Fit, 4)
-#                     Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
+                    #                     Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
                     message('Done...\n')
                   } else {
                     Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi.scaled", "tli.scaled", "rmsea.scaled", "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled", "rmsea.pvalue.scaled", "wrmr", "chisq.scaled", "df.scaled", "pvalue.scaled")))
@@ -1155,7 +1155,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
               if(estimator == 'pml' | estimator == 'PML'){
                 Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue")))
                 Model_Fit <- round(Model_Fit, 4)
-#                 Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
+                #                 Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
                 message('Done...\n')
               } else {
                 Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi.scaled", "tli.scaled", "rmsea.scaled", "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled", "rmsea.pvalue.scaled", "wrmr", "chisq.scaled", "df.scaled", "pvalue.scaled")))
@@ -1221,7 +1221,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
               if(estimator == 'pml' | estimator == 'PML'){
                 Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue")))
                 Model_Fit <- round(Model_Fit, 4)
-#                 Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
+                #                 Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
                 message('Done...\n')
               } else {
                 Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi.scaled", "tli.scaled", "rmsea.scaled", "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled", "rmsea.pvalue.scaled", "wrmr", "chisq.scaled", "df.scaled", "pvalue.scaled")))
@@ -1263,7 +1263,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
                   if(estimator == 'pml' | estimator == 'PML'){
                     Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue")))
                     Model_Fit <- round(Model_Fit, 4)
-#                     Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
+                    #                     Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
                     message('Done...\n')
                   } else {
                     Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi.scaled", "tli.scaled", "rmsea.scaled", "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled", "rmsea.pvalue.scaled", "wrmr", "chisq.scaled", "df.scaled", "pvalue.scaled")))
@@ -1329,7 +1329,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
                   if(estimator == 'pml' | estimator == 'PML'){
                     Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue")))
                     Model_Fit <- round(Model_Fit, 4)
-#                     Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
+                    #                     Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
                     message('Done...\n')
                   } else {
                     Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi.scaled", "tli.scaled", "rmsea.scaled", "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled", "rmsea.pvalue.scaled", "wrmr", "chisq.scaled", "df.scaled", "pvalue.scaled")))
@@ -1371,7 +1371,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
                       if(estimator == 'pml' | estimator == 'PML'){
                         Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue")))
                         Model_Fit <- round(Model_Fit, 4)
-#                         Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
+                        #                         Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
                         message('Done...\n')
                       } else {
                         Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi.scaled", "tli.scaled", "rmsea.scaled", "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled", "rmsea.pvalue.scaled", "wrmr", "chisq.scaled", "df.scaled", "pvalue.scaled")))
@@ -1437,7 +1437,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
                       if(estimator == 'pml' | estimator == 'PML'){
                         Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue")))
                         Model_Fit <- round(Model_Fit, 4)
-#                         Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
+                        #                         Model_Fit[is.na(Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi", "tli", "rmsea", "rmsea.ci.lower", "rmsea.ci.upper", "rmsea.pvalue", "wrmr", "chisq", "df", "pvalue"))))] <- .98
                         message('Done...\n')
                       } else {
                         Model_Fit <- data.frame(fitmeasures(unrotated, c("cfi.scaled", "tli.scaled", "rmsea.scaled", "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled", "rmsea.pvalue.scaled", "wrmr", "chisq.scaled", "df.scaled", "pvalue.scaled")))
@@ -1550,8 +1550,8 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
         anova_fit <- anova(result_old, result)
         print(anova_fit)
         message("\n\n")
-#         if((anova_fit[1,1] < anova_fit[2,1]) + (anova_fit[1,2] < anova_fit[2,2]) + (anova_fit[1,3] < anova_fit[2,3]) + (anova_fit[1,4] < anova_fit[2,4]) + (anova_fit[1,5] > anova_fit[2,5]) >= 4 | (anova_fit[2,8] > .5)){
-          if((anova_fit[1,3] < anova_fit[2,3]) >= 1 | (anova_fit[2,8] > .5)){
+        #         if((anova_fit[1,1] < anova_fit[2,1]) + (anova_fit[1,2] < anova_fit[2,2]) + (anova_fit[1,3] < anova_fit[2,3]) + (anova_fit[1,4] < anova_fit[2,4]) + (anova_fit[1,5] > anova_fit[2,5]) >= 4 | (anova_fit[2,8] > .5)){
+        if((anova_fit[1,3] < anova_fit[2,3]) >= 1 | (anova_fit[2,8] > .5)){
           # Breaking for Over factor specification
           message("\nError Occured: SABIC is bigger than previous factor model. Returning previous model result.")
           
@@ -1619,11 +1619,11 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
             message("Communality >= 1"); print(sum(communality >= 1))
             message("\n\n Warning: This model is heywood case(s) occured!\n")
             #           return(result_old)
-                       if(i==1) {
-                         warning('Solution may not be interprintable')
-                       } else {
-            result <- result_old # intead of return(result_old) (old method)
-                       }
+            if(i==1) {
+              warning('Solution may not be interprintable')
+            } else {
+              result <- result_old # intead of return(result_old) (old method)
+            }
             
             message(" \n ")
             message("\n\n IRT coefficients")
@@ -1641,11 +1641,11 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
           if(sum(communality >= 1) >= 1) {
             message("\n\n Warning: This model is heywood case(s) occured!\n")
             #           return(result_old)
-                       if(i==1) {
-                         warning('Solution may not be interprintable')
-                       } else {
-            result <- result_old # intead of return(result_old) (old method)
-                       }
+            if(i==1) {
+              warning('Solution may not be interprintable')
+            } else {
+              result <- result_old # intead of return(result_old) (old method)
+            }
             
             message(" \n ")
             message("\n\n IRT coefficients")
@@ -1656,7 +1656,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
             return(result)
           }
         }
-
+        
         
         # Model fit check
         
@@ -2474,7 +2474,7 @@ k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = 
         if(i==1) {
           
         } else {
-#           i = i-1
+          #           i = i-1
         }
         
         if(!exists(as.character(substitute(irtmodel)))) {
@@ -3406,7 +3406,7 @@ k.faking <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
         if(sum(is.na(dataset)) == 0){
           dataset.mirt <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
           dataset.response <- personfit(dataset.mirt, method='MAP', QMC = T)
- 
+          
           
         } else {
           dataset.mirt <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
@@ -3462,21 +3462,21 @@ k.faking <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
       print(hist(dataset.response$Zh))
       dataset.response$Zh <- dataset.response$Zh > -2 #(if abnormal, dataset.response$Zh < -2 is right! : See Hyeongjun Kim (2015) @ SNU)
       IRTnormal <- data.frame(dataset.response$Zh)
-        
+      
       # if(sum(is.na(dataset)) == 0){
-        output <- data.frame(IRTnormal)
+      output <- data.frame(IRTnormal)
       # } else {
-        # stop('Please use HMM')
+      # stop('Please use HMM')
       # }
-          
-        
-        names(output) <- "normal"
-        row.names(output) <- row.names(dataset)
-        result <- data.frame(dataset, output)
-        return(result)
-      }
-        
-      }
+      
+      
+      names(output) <- "normal"
+      row.names(output) <- row.names(dataset)
+      result <- data.frame(dataset, output)
+      return(result)
+    }
+    
+  }
 }
 
 
@@ -3502,7 +3502,7 @@ aberrantZero <- function(data = ..., covdata = ..., formula = ..., ...){
         return(rownames(mod_old))
       }
     }
-
+    
   }
 }
 
@@ -4207,29 +4207,29 @@ betaFA <- function(data = ..., ...) {
   message('\nCurrent number of Items: ', paste0(ncol_stage1))
   result <- k.aefa(fa_covdata, estimator='mirt', ...)
   
-#   test <- data.frame(coef(result))
-#   b <- abs(test[1, grep("a[0-9]$", colnames(test))]) >= .5 # F. B. Baker (2001; p. 159; .5 <= a < 2)
-#   
-#   test <- test[1, colnames(b)] # replace
-#   
-#   c <- vector() # saving names
-#   d <- 0 # name counter
-#   require(stringr)
-#   
-#   for(i in 1:length(colnames(b))) {
-#     if((abs(test[i]) >= .5) == TRUE){
-#       d <- d+1
-#       c[d] <- str_sub(colnames(test[i]), end = -4)
-#     } else {
-#       
-#     }
-#   }
+  #   test <- data.frame(coef(result))
+  #   b <- abs(test[1, grep("a[0-9]$", colnames(test))]) >= .5 # F. B. Baker (2001; p. 159; .5 <= a < 2)
+  #   
+  #   test <- test[1, colnames(b)] # replace
+  #   
+  #   c <- vector() # saving names
+  #   d <- 0 # name counter
+  #   require(stringr)
+  #   
+  #   for(i in 1:length(colnames(b))) {
+  #     if((abs(test[i]) >= .5) == TRUE){
+  #       d <- d+1
+  #       c[d] <- str_sub(colnames(test[i]), end = -4)
+  #     } else {
+  #       
+  #     }
+  #   }
   
   find_a_lower <- which(data.frame(MDISC(result)) >= .5)
-#   find_a_upper <- which(data.frame(MDISC(result)) < 2.00) # F. B. Baker (2001; p. 159; .5 <= a < 2)
-#   find_a <- c(find_a_lower)#, find_a_upper)
+  #   find_a_upper <- which(data.frame(MDISC(result)) < 2.00) # F. B. Baker (2001; p. 159; .5 <= a < 2)
+  #   find_a <- c(find_a_lower)#, find_a_upper)
   
-    fa_covdata_temp <- data.frame(fa_covdata[,find_a_lower])
+  fa_covdata_temp <- data.frame(fa_covdata[,find_a_lower])
   
   #   #test <- vector()
   #   test <- try(mod2values(result), silent = T)
@@ -4365,7 +4365,7 @@ betaFA <- function(data = ..., ...) {
     exclude_rownum3 <- which(rowSums(abs(rotF_geomin[1:ncol(rotF_geomin)]) < 0.4) == ncol(rotF_geomin)) # fail to load any factors
     exclude_rownum3_low <- which(rowSums(abs(rotF_geomin[1:ncol(rotF_geomin)])) == min(rowSums(abs(rotF_geomin[1:ncol(rotF_geomin)]))))
     
-#     exclude_rownum <- as.numeric(paste(c(exclude_rownum1, exclude_rownum2, exclude_rownum3))) # list of doing delection
+    #     exclude_rownum <- as.numeric(paste(c(exclude_rownum1, exclude_rownum2, exclude_rownum3))) # list of doing delection
     
     if(length(exclude_rownum3) > 0){
       message('[WARN] No loadings to any factor(s) occured!')
@@ -4380,7 +4380,7 @@ betaFA <- function(data = ..., ...) {
     } else {
       message('[Done!]')
       exclude_rownum_low <- NULL
-#       exclude_rownum_low <- as.numeric(paste(c(exclude_rownum1_low, exclude_rownum2_low, exclude_rownum3_low))) # list of doing delection
+      #       exclude_rownum_low <- as.numeric(paste(c(exclude_rownum1_low, exclude_rownum2_low, exclude_rownum3_low))) # list of doing delection
     }
     
     #     exclude_rownum <- as.numeric(paste(c(exclude_rownum1, exclude_rownum3))) # list of doing delection
@@ -4388,10 +4388,10 @@ betaFA <- function(data = ..., ...) {
     # the start of variable delection
     if(length(exclude_rownum_low) > 0) { # if number of delection is non-zero
       exclude <- vector() # make vectors
-#       j <- 0 # set to zero exclude list counter
+      #       j <- 0 # set to zero exclude list counter
       
       #       for(i in c(exclude_rownum)){ # saving list of delection variable
-#       j <- j + 1
+      #       j <- j + 1
       #print(j)
       #message('Trying to extract ', paste0(i), ' factor solution') -- for debug code
       #         print(names(fa_covdata)[i])
@@ -4601,7 +4601,7 @@ lavaan2likertFA <- function(model = ..., data = ..., ...) {
 }
 
 k.lca <- function(data) {
-    message(paste0("Kwangwoon Automated Exploratory Factor Analysis [k.aefa] 3 -- under GNU GPL 2 license.\nk.lca: automated latent class analysis\n"))
+  message(paste0("Kwangwoon Automated Exploratory Factor Analysis [k.aefa] 3 -- under GNU GPL 2 license.\nk.lca: automated latent class analysis\n"))
   for(i in 1:1000) {
     message(paste0("trying to extract ", i, " classes"))
     
@@ -4624,9 +4624,9 @@ k.lca <- function(data) {
     }
     
     try(mod_ <- mdirt(data, i, itemtype = itemtypeINPUT, nruns = 100, GenRandomPars = F, return_max = T, QMC = T, technical = list(NCYCLES = 500)), silent = T)
-#     if(exists('mod_') == F){ # failover
-#       try(mod_ <- mdirt(data, i, itemtype = itemtypeINPUT, nruns = 100, GenRandomPars = T, return_max = T, QMC = T, optimizer = 'solnp', technical = list(NCYCLES = 500)), silent = T)
-#     }
+    #     if(exists('mod_') == F){ # failover
+    #       try(mod_ <- mdirt(data, i, itemtype = itemtypeINPUT, nruns = 100, GenRandomPars = T, return_max = T, QMC = T, optimizer = 'solnp', technical = list(NCYCLES = 500)), silent = T)
+    #     }
     if(i==1){
       
     } else {
@@ -4664,9 +4664,9 @@ findCluster_iter <- function(data){
 }
 
 findCluster <- function(data){
-
+  
   mod <- findCluster_iter(data)
-    
+  
   print(plot(mod, facet_items = FALSE))
   print(plot(mod))
   
@@ -4844,6 +4844,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       }
     }
     
+    # removeEmptyRows config
+    if(length(covdata) != 0){
+      removeEmptyRowsConf <- FALSE
+    } else {
+      removeEmptyRowsConf <- TRUE
+    }
+    
     if(max(x, na.rm = T) - min(x, na.rm = T) == 1){ # dichotomous items
       
       if(nrow(x) >= 2000){
@@ -4851,7 +4858,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PL', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT,
+                                                   removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
         if(exists('modTEMP')){
@@ -4864,7 +4871,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                     removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
           if(exists('modTEMP')){
@@ -4878,7 +4885,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PLu', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                     removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
           if(exists('modTEMP')){
@@ -4892,7 +4899,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'PC3PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                     removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
           if(exists('modTEMP')){
@@ -4907,7 +4914,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'ideal', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT,
+                                                   removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
         if(exists('modTEMP')){
@@ -4921,7 +4928,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '2PL', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT,
+                                                   removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
         if(exists('modTEMP')){
@@ -4935,7 +4942,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'PC2PL', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT,
+                                                   removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
         if(exists('modTEMP')){
@@ -4957,7 +4964,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PLNRM', method = estimationMETHOD,
                                   key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT,
+                                                   removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
         if(exists('modTEMP')){
@@ -4970,14 +4977,14 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PLNRM', method = estimationMETHOD,
                                     key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                     removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
           }
         }
-
+        
         
         if(exists('modTEMP') == F){
           
@@ -4985,7 +4992,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PLuNRM', method = estimationMETHOD,
                                     key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                     removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
           if(exists('modTEMP')){
@@ -5000,7 +5007,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '2PLNRM', method = estimationMETHOD,
                                   key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT,
+                                                   removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
         if(exists('modTEMP')){
@@ -5013,7 +5020,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'nominal', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT,
+                                                   removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, key = NULL, ...), silent = F)
         if(exists('modTEMP')){
@@ -5028,7 +5035,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
           return(modOLD)
         }
       }
-        
+      
     } else { # polytomous items
       
       # forceRasch (PCM)
@@ -5038,7 +5045,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT,
+                                                   removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, ...), silent = F)
         try(return(modTEMP))
@@ -5080,7 +5087,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
             try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsmIRT', method = estimationMETHOD,
                                       accelerate = accelerateINPUT, calcNull = T,
                                       technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                       removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT,
+                                                       removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                       SE.type = SE.type, survey.weights = survey.weights, ...), silent = F)
             if(exists('modTEMP')){
@@ -5091,7 +5098,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
             try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsm', method = estimationMETHOD,
                                       accelerate = accelerateINPUT, calcNull = T,
                                       technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                       removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT,
+                                                       removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                       SE.type = SE.type, survey.weights = survey.weights, ...), silent = F)
             if(exists('modTEMP')){
@@ -5112,7 +5119,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'nominal', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT,
+                                                   removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, ...), silent = F)
         if(exists('modTEMP')){
@@ -5126,7 +5133,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'gpcm', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = T), TOL = TOLINPUT, covdata = covdataINPUT,
+                                                   removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, ...), silent = F)
         if(exists('modTEMP')){
@@ -5139,7 +5146,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         message('\nMIRT model: Graded response')
         try(modTEMP <- mirt::mirt(data = x, model = i, method = estimationMETHOD, accelerate = accelerateINPUT,
                                   calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT,
-                                                                 SEtol = SEtolINPUT, removeEmptyRows = T),
+                                                                 SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf),
                                   TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
                                   optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, ...), silent = T)
@@ -5208,7 +5215,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
   while (!itemFitDone) {
     surveyFixModRAW <- data.frame(mirt::extract.mirt(surveyFixMod, 'data'))
     surveyFixModCOV <- data.frame(attr(surveyFixMod@ParObjects$lrPars, "df"))
-
+    
     if(ncol(surveyFixModRAW) > 3){
       
       
@@ -5251,7 +5258,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
     } else {
       itemFitDone <- TRUE
     }
-
+    
     
     if(printFactorStructureRealtime == T){
       message('\nRealtime Factor Structure after iteration')
