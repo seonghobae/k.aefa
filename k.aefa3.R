@@ -4601,7 +4601,7 @@ lavaan2likertFA <- function(model = ..., data = ..., ...) {
 }
 
 k.lca <- function(data) {
-  message(paste0("Kwangwoon Automated Exploratory Factor Analysis [k.aefa] 3 -- under GNU GPL 2 license.\nk.lca: automated latent class analysis\n"))
+    message(paste0("Kwangwoon Automated Exploratory Factor Analysis [k.aefa] 3 -- under GNU GPL 2 license.\nk.lca: automated latent class analysis\n"))
   for(i in 1:1000) {
     message(paste0("trying to extract ", i, " classes"))
     
@@ -4623,10 +4623,10 @@ k.lca <- function(data) {
       itemtypeINPUT <- 'nlca'
     }
     
-    try(mod_ <- mdirt(data, i, itemtype = itemtypeINPUT, nruns = 100, GenRandomPars = F, return_max = T, QMC = T, technical = list(NCYCLES = 500)), silent = T)
-    #     if(exists('mod_') == F){ # failover
-    #       try(mod_ <- mdirt(data, i, itemtype = itemtypeINPUT, nruns = 100, GenRandomPars = T, return_max = T, QMC = T, optimizer = 'solnp', technical = list(NCYCLES = 500)), silent = T)
-    #     }
+    try(mod_ <- mdirt(data, i, itemtype = itemtypeINPUT, nruns = 100, GenRandomPars = F, return_max = T, QMC = T, technical = list(NCYCLES = 50000)), silent = T)
+#     if(exists('mod_') == F){ # failover
+#       try(mod_ <- mdirt(data, i, itemtype = itemtypeINPUT, nruns = 100, GenRandomPars = T, return_max = T, QMC = T, optimizer = 'solnp', technical = list(NCYCLES = 500)), silent = T)
+#     }
     if(i==1){
       
     } else {
