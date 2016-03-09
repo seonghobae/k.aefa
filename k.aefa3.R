@@ -195,6 +195,19 @@ findM2 <- function(mirtModel, increase = 15000, iterations = 1000, ...){
   
 }
 
+## fixTYPO for likert scaling
+fixTYPO <- function(cleaningData){
+  if((length(which(median(psych::describe(cleaningData)$rnage) != psych::describe(cleaningData)$range)) != 0) | length(which(median(psych::describe(cleaningData)$max) != psych::describe(cleaningData)$max)) != 0){
+    for(ii in which(describe(cleaningData)$max > median(describe(cleaningData)$max))){
+      cleaningData[,ii] <- mapvalues(cleaningData[,ii], describe(cleaningData[,which(describe(cleaningData)$max > median(describe(cleaningData)$max))])$max, NA)
+    }
+    for(ii in which(describe(cleaningData)$min < median(describe(cleaningData)$min))){
+      cleaningData[,ii] <- mapvalues(cleaningData[,ii], describe(cleaningData[,which(describe(cleaningData)$min < median(describe(cleaningData)$min))])$min, NA)
+    }
+  }
+  return(cleaningData)
+}
+
 ## Kwangwoon AEFA
 k.aefa <- function(dataset, request_factors = ..., estimator = ..., variables = ..., fscore = ..., group = ..., demographic_range = ..., irtmodel = ..., se = ..., test = ..., control = ..., ...) {
   
