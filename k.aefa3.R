@@ -5106,6 +5106,15 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
             if(exists('modTEMP')){
               if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
             }
+            
+            if(exists('modTEMP') == F){
+              if(i == 1){
+                stop('Fail to find Factor solutions: Model didn\'t converge.')
+              } else {
+                return(modOLD)
+              }
+            }
+            
           } else {
             
             try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsm', method = estimationMETHOD,
@@ -5117,6 +5126,15 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
             if(exists('modTEMP')){
               if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
             }
+            
+            if(exists('modTEMP') == F){
+              if(i == 1){
+                stop('Fail to find Factor solutions: Model didn\'t converge.')
+              } else {
+                return(modOLD)
+              }
+            }
+            
           }
           
           if(modTEMP@OptimInfo$converged == 1){
