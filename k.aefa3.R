@@ -4613,81 +4613,78 @@ lavaan2likertFA <- function(model = ..., data = ..., ...) {
   return(likertfa_result)
 }
 
-k.lca <- function(data) {
-    message(paste0("Kwangwoon Automated Exploratory Factor Analysis [k.aefa] 3 -- under GNU GPL 2 license.\nk.lca: automated latent class analysis\n"))
-  for(i in 1:1000) {
-    message(paste0("trying to extract ", i, " classes"))
+fastCluster <- function(data = data,
+                        nruns = 100,
+                        return_max = T,
+                        group = NULL,
+                        GenRandomPars = F,
+                        verbose = F,
+                        caseLable = NULL){
+  
+  message('removing data noises')
+  STOP_CAL <- FALSE
+  while(!STOP_CAL){
+    init_cases <- nrow(data)
+    normalData <- k.faking(data, IRTonly = T, skipNominal = F)
+    data <- data[normalData$normal == T,]
+    data <- data[which(psych::describe(data)$range != 0)]
+    if(init_cases == nrow(data)){
+      STOP_CAL <- TRUE
+    }
+  }
+  
+  # itemtype decision
+  itemtype <- vector()
+  for(i in 1:ncol(data)){
+    if((range(na.omit(data[i]))[2] - range(na.omit(data[i]))[1] == 1) == TRUE){
+      itemtype[i] <- 'lca'
+    } else {
+      itemtype[i] <- 'nlca'
+    }
+  }
+  
+  # manupulation check (temp)
+  print(row.names(data))
+  print(itemtype)
+  
+  # calculation
+  for(i in 1:ncol(data)){
     
-    if(i>1){
-      mod_old <- mod_
-      log_old <- mod_@Fit$logLik
-      aic_old <- mod_@Fit$AIC
-      bic_old <- mod_@Fit$BIC
-      aicc_old <- mod_@Fit$AICc
-      sabic_old <- mod_@Fit$SABIC
-      dic_old <- mod_@Fit$DIC
-      
-      rm(mod_)
+    if(exists('clusterModel')){
+      clusterModel_OLD <- clusterModel
+      rm(clusterModel)
     }
     
-    if(max(data, na.rm = T) - min(data, na.rm = T) == 1){
-      itemtypeINPUT <- 'lca'
-    } else {
-      itemtypeINPUT <- 'nlca'
+    if(!exists('clusterModel')){
+      clusterModel <- mirt::mdirt(data = data, model = i, itemtype = itemtype, nruns = nruns, return_max = T, group = group, GenRandomPars = GenRandomPars, verbose = verbose)
+    }
+    if(!exists('clusterModel') && i > 2){ # failover
+      return(clusterModel_OLD)
     }
     
-    try(mod_ <- mdirt(data, i, itemtype = itemtypeINPUT, nruns = 100, GenRandomPars = F, return_max = T, QMC = T, technical = list(NCYCLES = 50000)), silent = T)
-#     if(exists('mod_') == F){ # failover
-#       try(mod_ <- mdirt(data, i, itemtype = itemtypeINPUT, nruns = 100, GenRandomPars = T, return_max = T, QMC = T, optimizer = 'solnp', technical = list(NCYCLES = 500)), silent = T)
-#     }
-    if(i==1){
-      
-    } else {
-      if(dic_old < mod_@Fit$DIC | mod_@OptimInfo$converged == F | exists('mod_') == F ){
-        
-        if(mod_@Model$nfact == 1){ # failover
-          if(itemtypeINPUT == 'nlca'){
-            itemtypeINPUT <- 'lca'
+    if(exists('clusterModel')){
+      if(exists('clusterModel_OLD')){
+        if(clusterModel@Fit$DIC > clusterModel_OLD@Fit$DIC){
+          
+          print(plot(clusterModel_OLD, facet_items = FALSE))
+          print(plot(clusterModel_OLD))
+          
+          fs <- fscores(clusterModel_OLD, QMC = T)
+          
+          class_prob <- data.frame(apply(fs, 1, function(x) sample(1:clusterModel_OLD@Model$nfact, 1, prob=x)))
+          colnames(class_prob) <- "Class"
+          
+          if(length(caseLable) != 0){
+            return(data.frame(caseLable[row.names(data),], class_prob, data))
           } else {
-            itemtypeINPUT <- 'nlca'
+            return(class_prob, data)
           }
           
-          try(mod_ <- mdirt(data, i, itemtype = itemtypeINPUT, nruns = 100, GenRandomPars = T, return_max = T, QMC = T, technical = list(NCYCLES = 1000)))
-          
-          if(mod_@Model$nfact != 1){
-            mod_old <- mod_
-          }
         }
-        
-        return(mod_old)
       }
     }
+    
   }
-}
-
-findCluster_iter <- function(data){
-  for(i in 1:100){
-    mod <- k.lca(data)
-    if(as.integer(mod@Model$nfact) >= as.integer(round(nrow(mod@Data$data)/200, 0))){
-      return(mod)
-    } else {
-      rm(mod)
-    }
-  }
-}
-
-findCluster <- function(data){
-  
-  mod <- findCluster_iter(data)
-  
-  print(plot(mod, facet_items = FALSE))
-  print(plot(mod))
-  
-  fs <- fscores(mod)
-  
-  class_prob <- data.frame(apply(fs, 1, function(x) sample(1:mod@Model$nfact, 1, prob=x)))
-  colnames(class_prob) <- "Class"
-  return(class_prob)
 }
 
 k.sampling <- function(data, n){
