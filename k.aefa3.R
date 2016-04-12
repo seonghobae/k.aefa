@@ -4665,22 +4665,26 @@ fastCluster <- function(data = data,
     if(exists('clusterModel')){
       if(exists('clusterModel_OLD')){
         if(clusterModel@Fit$DIC > clusterModel_OLD@Fit$DIC){
-          
-          print(plot(clusterModel_OLD, facet_items = FALSE))
-          print(plot(clusterModel_OLD))
-          
-          fs <- fscores(clusterModel_OLD, QMC = T)
-          
-          class_prob <- data.frame(apply(fs, 1, function(x) sample(1:clusterModel_OLD@Model$nfact, 1, prob=x)))
-          colnames(class_prob) <- "Class"
-          
-          if(length(caseLable) != 0){
-            return(data.frame(caseLable[row.names(data),], class_prob, data))
-          } else {
-            return(class_prob, data)
-          }
-          
+          finalModel <- clusterModel_OLD
+        } else if(ncol(data) == i){
+          finalModel <- clusterModel
         }
+        
+        # decision make
+        print(plot(finalModel, facet_items = FALSE))
+        print(plot(finalModel))
+        
+        fs <- fscores(finalModel, QMC = T)
+        
+        class_prob <- data.frame(apply(fs, 1, function(x) sample(1:finalModel@Model$nfact, 1, prob=x)))
+        colnames(class_prob) <- "Class"
+        
+        if(length(caseLable) != 0){
+          return(data.frame(caseLable[row.names(data),], class_prob, data))
+        } else {
+          return(class_prob, data)
+        }
+        
       }
     }
     
