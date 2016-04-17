@@ -4618,7 +4618,7 @@ fastCluster <- function(data = data,
                         return_max = T,
                         group = NULL,
                         GenRandomPars = F,
-                        verbose = F,
+                        verbose = T,
                         caseLable = NULL){
   
   message('removing data noises')
@@ -4648,46 +4648,52 @@ fastCluster <- function(data = data,
   print(itemtype)
   
   # calculation
-  for(i in 1:ncol(data)){
-    
-    if(exists('clusterModel')){
+
+    stopLoop <- FALSE
+    i <- 0
+    while (!stopLoop) {
+      i <- i + 1
+      message('cluster: ', i)
+      try(clusterModel <- mirt::mdirt(data = data, model = i, itemtype = itemtype,
+                                      nruns = nruns, return_max = T, group = group,
+                                      GenRandomPars = GenRandomPars, verbose = verbose))
+      
+      if(exists('clusterModel_OLD') == T && exists('clusterModel') == T){
+        if(clusterModel@Fit$DIC > clusterModel_OLD@Fit$DIC | clusterModel@OptimInfo$converged != 1){
+          message('optimal cluster numbers: ', paste0(i-1))
+          finalModel <- clusterModel_OLD
+          stopLoop <- TRUE
+        }
+      }
+      
+      if(i == ncol(data)){
+        finalModel <- clusterModel
+        stopLoop <- TRUE
+      }
+      
       clusterModel_OLD <- clusterModel
       rm(clusterModel)
     }
-    
-    if(!exists('clusterModel')){
-      clusterModel <- mirt::mdirt(data = data, model = i, itemtype = itemtype, nruns = nruns, return_max = T, group = group, GenRandomPars = GenRandomPars, verbose = verbose)
-    }
-    if(!exists('clusterModel') && i > 2){ # failover
-      return(clusterModel_OLD)
-    }
-    
-    if(exists('clusterModel')){
-      if(exists('clusterModel_OLD')){
-        if(clusterModel@Fit$DIC > clusterModel_OLD@Fit$DIC){
-          finalModel <- clusterModel_OLD
-        } else if(ncol(data) == i){
-          finalModel <- clusterModel
-        }
-        
-        # decision make
-        print(plot(finalModel, facet_items = FALSE))
-        print(plot(finalModel))
-        
-        fs <- fscores(finalModel, QMC = T)
-        
-        class_prob <- data.frame(apply(fs, 1, function(x) sample(1:finalModel@Model$nfact, 1, prob=x)))
-        colnames(class_prob) <- "Class"
-        
-        if(length(caseLable) != 0){
-          return(data.frame(caseLable[row.names(data),], class_prob, data))
-        } else {
-          return(class_prob, data)
-        }
-        
-      }
-    }
-    
+  
+  
+  # decision make
+  print(plot(finalModel, facet_items = FALSE))
+  print(plot(finalModel))
+  
+  fs <- fscores(finalModel, QMC = T)
+  
+  class_prob <- data.frame(apply(fs, 1, function(x) sample(1:finalModel@Model$nfact, 1, prob=x)))
+  colnames(class_prob) <- "Class"
+  
+  fitIndices <- try(findM2(finalModel), silent = T)
+  if(exists('fitIndices')){
+    print(fitIndices)
+  }
+  
+  if(length(caseLable) != 0){
+    return(data.frame(caseLable[row.names(data),], class_prob, data))
+  } else {
+    return(data.frame(class_prob, data))
   }
 }
 
