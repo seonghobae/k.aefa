@@ -4619,19 +4619,30 @@ fastCluster <- function(data = data,
                         group = NULL,
                         GenRandomPars = F,
                         verbose = T,
-                        caseLable = NULL){
+                        caseLable = NULL,
+                        cleaningOnce = T){
   
   message('removing data noises')
-  STOP_CAL <- FALSE
-  while(!STOP_CAL){
+  if(cleaningOnce == T){
+    
     init_cases <- nrow(data)
     normalData <- k.faking(data, IRTonly = T, skipNominal = F)
     data <- data[normalData$normal == T,]
     data <- data[which(psych::describe(data)$range != 0)]
-    if(init_cases == nrow(data)){
-      STOP_CAL <- TRUE
+    
+  } else {
+    STOP_CAL <- FALSE
+    while(!STOP_CAL){
+      init_cases <- nrow(data)
+      normalData <- k.faking(data, IRTonly = T, skipNominal = F)
+      data <- data[normalData$normal == T,]
+      data <- data[which(psych::describe(data)$range != 0)]
+      if(init_cases == nrow(data)){
+        STOP_CAL <- TRUE
+      }
     }
   }
+
   
   # itemtype decision
   itemtype <- vector()
