@@ -4622,7 +4622,8 @@ fastCluster <- function(data = data,
                         GenRandomPars = F,
                         verbose = T,
                         caseLable = NULL,
-                        cleaningOnce = T){
+                        cleaningOnce = T,
+                        forceNLCA = F){
   
   message('removing data noises')
   if(cleaningOnce == T){
@@ -4648,13 +4649,18 @@ fastCluster <- function(data = data,
   
   # itemtype decision
   itemtype <- vector()
-  for(i in 1:ncol(data)){
-    if((range(na.omit(data[i]))[2] - range(na.omit(data[i]))[1] == 1) == TRUE){
-      itemtype[i] <- 'lca'
-    } else {
-      itemtype[i] <- 'nlca'
+  if(forceNLCA == T){
+    itemtype <- 'nlca'
+  } else {
+    for(i in 1:ncol(data)){
+      if((range(na.omit(data[i]))[2] - range(na.omit(data[i]))[1] == 1) == TRUE){
+        itemtype[i] <- 'lca'
+      } else {
+        itemtype[i] <- 'nlca'
+      }
     }
   }
+
   
   # manupulation check (temp)
   print(row.names(data))
