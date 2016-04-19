@@ -3466,8 +3466,10 @@ k.faking <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
         
         
       } else {
+        message('imputing missing values')
         dataset.mirt <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
         dataset_temp <- imputeMissing(x = dataset.mirt, Theta = fscores(dataset.mirt, method = 'MAP', QMC = T), QMC = T, impute = 100)
+        message('re-estimating parameters')
         dataset.mirt2 <- fastFIFA(x = as.data.frame(dataset_temp), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
         dataset.response <- personfit(dataset.mirt2, method='MAP', QMC = T)
       }
@@ -4691,7 +4693,11 @@ fastCluster <- function(data = data,
   print(plot(finalModel, facet_items = FALSE))
   print(plot(finalModel))
   
-  fs <- fscores(finalModel, QMC = T)
+  if(is.na(data)){
+    fs <- fscores(finalModel, QMC = T, MI = 100)
+  } else {
+    fs <- fscores(finalModel, QMC = T)
+  }
   
   class_prob <- data.frame(apply(fs, 1, function(x) sample(1:finalModel@Model$nfact, 1, prob=x)))
   colnames(class_prob) <- "Class"
