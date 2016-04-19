@@ -4623,28 +4623,32 @@ fastCluster <- function(data = data,
                         verbose = T,
                         caseLable = NULL,
                         cleaningOnce = T,
+                        skipCleaning = F,
                         forceNLCA = F){
   
-  message('removing data noises')
-  if(cleaningOnce == T){
-    
-    init_cases <- nrow(data)
-    normalData <- k.faking(data, IRTonly = T, skipNominal = F)
-    data <- data[normalData$normal == T,]
-    data <- data[which(psych::describe(data)$range != 0)]
-    
-  } else {
-    STOP_CAL <- FALSE
-    while(!STOP_CAL){
+  if(skipCleaning == F){
+    message('removing data noises')
+    if(cleaningOnce == T){
+      
       init_cases <- nrow(data)
       normalData <- k.faking(data, IRTonly = T, skipNominal = F)
       data <- data[normalData$normal == T,]
       data <- data[which(psych::describe(data)$range != 0)]
-      if(init_cases == nrow(data)){
-        STOP_CAL <- TRUE
+      
+    } else {
+      STOP_CAL <- FALSE
+      while(!STOP_CAL){
+        init_cases <- nrow(data)
+        normalData <- k.faking(data, IRTonly = T, skipNominal = F)
+        data <- data[normalData$normal == T,]
+        data <- data[which(psych::describe(data)$range != 0)]
+        if(init_cases == nrow(data)){
+          STOP_CAL <- TRUE
+        }
       }
     }
   }
+  
 
   
   # itemtype decision
@@ -4678,7 +4682,7 @@ fastCluster <- function(data = data,
                                       GenRandomPars = GenRandomPars, verbose = verbose))
       
       if(exists('clusterModel_OLD') == T && exists('clusterModel') == T){
-        if(clusterModel@Fit$DIC > clusterModel_OLD@Fit$DIC | clusterModel@OptimInfo$converged != 1){
+        if(clusterModel@Fit$DIC > clusterModel_OLD@Fit$DIC){
           message('optimal cluster numbers: ', paste0(i-1))
           finalModel <- clusterModel_OLD
           stopLoop <- TRUE
