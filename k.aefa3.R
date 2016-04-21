@@ -5266,7 +5266,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
   }
 }
 
-surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T, forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F, forceMHRM = F, printFactorStructureRealtime = F, itemkeys = NULL, survey.weights = NULL, ...) {
+surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T, forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F, forceMHRM = F, printFactorStructureRealtime = F, itemkeys = NULL, survey.weights = NULL, autofix = T, ...) {
   message('---------------------------------------------------------')
   message(' k.aefa: kwangwoon automated exploratory factor analysis ')
   message('---------------------------------------------------------\n')
@@ -5292,7 +5292,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
         surveyFixMod_itemFit <- itemfit(x = surveyFixMod, Zh = T,
                                         method = 'MAP',
                                         QMC = T,
-                                        fscores(surveyFixMod, method = 'MAP',
+                                        Theta = fscores(surveyFixMod, method = 'MAP',
                                                 QMC = T))
       } else {
         
@@ -5301,7 +5301,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
                                         impute = 100,
                                         method = 'MAP',
                                         QMC = T,
-                                        fscores(surveyFixMod, method = 'MAP',
+                                        Theta = fscores(surveyFixMod, method = 'MAP',
                                                 QMC = T))
         
         mirtCluster(remove = T)
@@ -5335,77 +5335,65 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
     }
   } # the end of while loop
   
-  message('\nChecking aberrant responses')
-  iteration_num <- iteration_num + 1
-  message('Iteration: ', iteration_num, '\n')
-  
-  surveyFixModRAW <- data.frame(mirt::extract.mirt(surveyFixMod, 'data'))
-  surveyFixModCOV <- data.frame(attr(surveyFixMod@ParObjects$lrPars, "df"))
-  
-  noAberrant <- k.faking(surveyFixModRAW, IRTonly = T, itemkeys = itemkeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
-  if(length(covdata) == 0){ # anyway, covdata is NULL
-    surveyFixMod <- fastFIFA(surveyFixModRAW[which(noAberrant$normal==TRUE),], itemkeys = itemkeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights[which(noAberrant$normal==TRUE)], ...)
-  } else {
-    covdata_workout <- surveyFixModCOV
-    surveyFixMod <- fastFIFA(surveyFixModRAW[which(noAberrant$normal==TRUE),], itemkeys = itemkeys, covdata = covdata_workout[which(noAberrant$normal==TRUE),], formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights[which(noAberrant$normal==TRUE)], ...)
-  }
-  
-  if(printFactorStructureRealtime == T){
-    message('\nRealtime Factor Structure after iteration')
-    if(ncol(surveyFixMod@Fit$F)==1){
-      print(round(surveyFixMod@Fit$F, 2))
-    } else {
-      print(round(GPArotation::geominQ(surveyFixMod@Fit$F, maxit = 10000)$loadings, 2))
-    }
-  }
-  
-  # autofix config
-  fixFactorStructure_Done <- FALSE
-  surveyFixMod_Workout <- surveyFixMod
-  
-  while (!fixFactorStructure_Done) { # start of while loop
-    surveyFixModRAW <- data.frame(mirt::extract.mirt(surveyFixMod_Workout, 'data')) # update data.frame
-    surveyFixModCOV <- data.frame(attr(surveyFixMod_Workout@ParObjects$lrPars, "df"))
+  if(autofix == T){
     
-    message('\nFixing Factor Model')
+    message('\nChecking aberrant responses')
     iteration_num <- iteration_num + 1
     message('Iteration: ', iteration_num, '\n')
     
-    tempG <- mirt::extract.mirt(surveyFixMod_Workout, 'itemtype')
-    if(sum(tempG != 'Rasch') != 0){
-      LowCommunalities <- surveyFixMod_Workout@Fit$h2[which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)]
-    }
+    surveyFixModRAW <- data.frame(mirt::extract.mirt(surveyFixMod, 'data'))
+    surveyFixModCOV <- data.frame(attr(surveyFixMod@ParObjects$lrPars, "df"))
     
-    
-    if(ncol(surveyFixMod_Workout@Fit$F) == 1){
-      Fmatrix <- surveyFixMod_Workout@Fit$F
+    noAberrant <- k.faking(surveyFixModRAW, IRTonly = T, itemkeys = itemkeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
+    if(length(covdata) == 0){ # anyway, covdata is NULL
+      surveyFixMod <- fastFIFA(surveyFixModRAW[which(noAberrant$normal==TRUE),], itemkeys = itemkeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights[which(noAberrant$normal==TRUE)], ...)
     } else {
-      Fmatrix <- GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings
+      covdata_workout <- surveyFixModCOV
+      surveyFixMod <- fastFIFA(surveyFixModRAW[which(noAberrant$normal==TRUE),], itemkeys = itemkeys, covdata = covdata_workout[which(noAberrant$normal==TRUE),], formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights[which(noAberrant$normal==TRUE)], ...)
     }
     
-    NoLoadings <- surveyFixMod_Workout@Fit$h2[which(rowSums(abs(round(Fmatrix, 2)) < .4) == ncol(surveyFixMod_Workout@Fit$F))]
+    if(printFactorStructureRealtime == T){
+      message('\nRealtime Factor Structure after iteration')
+      if(ncol(surveyFixMod@Fit$F)==1){
+        print(round(surveyFixMod@Fit$F, 2))
+      } else {
+        print(round(GPArotation::geominQ(surveyFixMod@Fit$F, maxit = 10000)$loadings, 2))
+      }
+    }
     
+    # autofix config
+    fixFactorStructure_Done <- FALSE
+    surveyFixMod_Workout <- surveyFixMod
     
-    # h2 have to >= .3
-    if(sum(tempG != 'Rasch') == 0){
-      fixFactorStructure_Done <- TRUE
-    } else if(LowCommunalities < .3^2){
+    while (!fixFactorStructure_Done) { # start of while loop
+      surveyFixModRAW <- data.frame(mirt::extract.mirt(surveyFixMod_Workout, 'data')) # update data.frame
+      surveyFixModCOV <- data.frame(attr(surveyFixMod_Workout@ParObjects$lrPars, "df"))
       
-      surveyFixMod_New <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)], itemkeys = itemkeys[-which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
-      surveyFixMod_Workout <- surveyFixMod_New
+      message('\nFixing Factor Model')
+      iteration_num <- iteration_num + 1
+      message('Iteration: ', iteration_num, '\n')
       
-      if(printFactorStructureRealtime == T){
-        message('\nRealtime Factor Structure after iteration')
-        if(ncol(surveyFixMod_Workout@Fit$F)==1){
-          print(round(surveyFixMod_Workout@Fit$F, 2))
-        } else {
-          print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
-        }
+      tempG <- mirt::extract.mirt(surveyFixMod_Workout, 'itemtype')
+      if(sum(tempG != 'Rasch') != 0){
+        LowCommunalities <- surveyFixMod_Workout@Fit$h2[which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)]
       }
       
-    } else if(length(NoLoadings) != 0){ # noloadings
-      if(as.logical(length(names(which(NoLoadings == min(NoLoadings))) != 0))){
-        surveyFixMod_New <- fastFIFA(surveyFixModRAW[,!colnames(surveyFixModRAW) %in% names(which(NoLoadings == min(NoLoadings)))], itemkeys = itemkeys[,!colnames(surveyFixModRAW) %in% names(which(NoLoadings == min(NoLoadings)))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
+      
+      if(ncol(surveyFixMod_Workout@Fit$F) == 1){
+        Fmatrix <- surveyFixMod_Workout@Fit$F
+      } else {
+        Fmatrix <- GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings
+      }
+      
+      NoLoadings <- surveyFixMod_Workout@Fit$h2[which(rowSums(abs(round(Fmatrix, 2)) < .4) == ncol(surveyFixMod_Workout@Fit$F))]
+      
+      
+      # h2 have to >= .3
+      if(sum(tempG != 'Rasch') == 0){
+        fixFactorStructure_Done <- TRUE
+      } else if(LowCommunalities < .3^2){
+        
+        surveyFixMod_New <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)], itemkeys = itemkeys[-which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
         surveyFixMod_Workout <- surveyFixMod_New
         
         if(printFactorStructureRealtime == T){
@@ -5417,21 +5405,38 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
           }
         }
         
+      } else if(length(NoLoadings) != 0){ # noloadings
+        if(as.logical(length(names(which(NoLoadings == min(NoLoadings))) != 0))){
+          surveyFixMod_New <- fastFIFA(surveyFixModRAW[,!colnames(surveyFixModRAW) %in% names(which(NoLoadings == min(NoLoadings)))], itemkeys = itemkeys[,!colnames(surveyFixModRAW) %in% names(which(NoLoadings == min(NoLoadings)))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
+          surveyFixMod_Workout <- surveyFixMod_New
+          
+          if(printFactorStructureRealtime == T){
+            message('\nRealtime Factor Structure after iteration')
+            if(ncol(surveyFixMod_Workout@Fit$F)==1){
+              print(round(surveyFixMod_Workout@Fit$F, 2))
+            } else {
+              print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+            }
+          }
+          
+        }
+      } else {
+        fixFactorStructure_Done <- TRUE
       }
-    } else {
-      fixFactorStructure_Done <- TRUE
-    }
+      
+    } # the end of while loop
     
-  } # the end of while loop
-  
-  if(printFactorStructureRealtime == T){
-    message('\nFinal Factor Structure')
-    if(ncol(surveyFixMod_Workout@Fit$F)==1){
-      print(round(surveyFixMod_Workout@Fit$F, 2))
-    } else {
-      print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+    if(printFactorStructureRealtime == T){
+      message('\nFinal Factor Structure')
+      if(ncol(surveyFixMod_Workout@Fit$F)==1){
+        print(round(surveyFixMod_Workout@Fit$F, 2))
+      } else {
+        print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+      }
     }
+    return(surveyFixMod_Workout)
+  } else {
+    return(surveyFixMod)
   }
-  return(surveyFixMod_Workout)
   
 }
