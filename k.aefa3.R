@@ -5281,7 +5281,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
     surveyFixModRAW <- data.frame(mirt::extract.mirt(surveyFixMod, 'data'))
     surveyFixModCOV <- data.frame(attr(surveyFixMod@ParObjects$lrPars, "df"))
     
-    if(ncol(surveyFixModRAW) > 3){
+    if(ncol(surveyFixModRAW) > 5){
       
       
       message('\nChecking item local independence assumption')
