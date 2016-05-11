@@ -5950,3 +5950,48 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
       }
     }
   }
+
+numericMI <- function(model = ..., data = ..., m = 100, fun = 'sem', estimator = 'MLMV', parameterization = 'delta', chi = 'mplus', ...) {
+  
+  #########################
+  # Multiple              #
+  # Imputation for        #
+  # variables             #
+  # in SEM context        #
+  #########################
+  # Seongho Bae           #
+  # seongho@kw.ac.kr      #
+  # May 6th 2016          #
+  # Under GNU / GPL       #
+  #########################
+  
+  # checking packages for multiple impuation in SEM context
+  if(!require('semTools')) {
+    try(install.packages('semTools', dependencies = TRUE), silent=TRUE)
+  }
+  
+  if(!require('Amelia')) {
+    try(install.packages('Amelia', dependencies = TRUE), silent=TRUE)
+  }
+  
+  if(!require('lavaan')) {
+    try(install.packages('lavaan', dependencies = TRUE), silent=TRUE)
+  }
+  
+  # loading packages for multiple imputation in SEM context
+  library('semTools')
+  library('Amelia')
+  library('lavaan')
+  
+  fit <- sem(model=model, data=data.frame(data)) # extract variable names in model syntax
+  message("sample size (listwise): ", paste0(nrow(data.frame(fit@Data@X))))
+  
+  fit_MI <- runMI(model=model, data=data.frame(data[,attributes(fit)$Model@dimNames[[1]][[1]]]), m=m, fun = fun, estimator = estimator, chi = chi, ...)#, control=list(optim.method="L-BFGS-B"), ...)
+  
+  cat(summary(fit_MI, standardize=T))
+  print(inspect(fit_MI, 'fit'))
+
+  return(fit_MI)
+  message('inspect(fit, "impute")')
+  
+}
