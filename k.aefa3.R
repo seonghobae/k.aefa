@@ -1393,7 +1393,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         
         if(exists('modTEMP') == F){
           
-          message('\nMIRT model: Noncompensatory 3PL with lower or upper asymptote estimated')
+          message('\nMIRT model: Noncompensatory 3PL with upper asymptote estimated')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PLu', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
@@ -1500,7 +1500,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         
         if(exists('modTEMP') == F){
           
-          message('\nMIRT model: Noncompensatory 3PL Nominal response with lower or upper asymptote estimated')
+          message('\nMIRT model: Noncompensatory 3PL Nominal response with upper asymptote estimated')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PLuNRM', method = estimationMETHOD,
                                     key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
