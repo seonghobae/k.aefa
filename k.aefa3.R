@@ -1361,7 +1361,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
     
     if(max(x, na.rm = T) - min(x, na.rm = T) == 1){ # dichotomous items
       
-      if(nrow(x) >= 2000){
+      if(nrow(x) >= 5000){
         message('\nMIRT model: Noncompensatory 4PL')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PL', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
@@ -1467,7 +1467,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       }
       
     } else if(length(itemkeys) != 0){ # 2-4PLNRM
-      if(nrow(x) >= 2000){
+      if(nrow(x) >= 5000){
         message('\nMIRT model: Noncompensatory 4PL Nominal response')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PLNRM', method = estimationMETHOD,
                                   key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
