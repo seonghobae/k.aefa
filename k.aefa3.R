@@ -1224,8 +1224,8 @@ k.fixdata <- function(data, start, end, bioend){
 
 # surveyFA addon
 fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T,
-                     forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F,
-                     forceMHRM = F, itemkeys = NULL, survey.weights = NULL, ...){
+         forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F,
+         forceMHRM = F, itemkeys = NULL, survey.weights = NULL, ...){
   for(i in 1:100){
     if (i == 1){
       message('\nfactor number: ', paste0(i))
@@ -1559,6 +1559,84 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         }
       }
       
+    } else if(sum(psych::describe(x)$range == 1) != 0) { # mixed format
+      if(skipNominal == F){
+        itemtype_mixed <- vector()
+        for(i in 1:ncol(x)){
+          if(psych::describe(x[,i])$range == 1){
+            itemtype_mixed[i] <- 'ideal'
+          } else {
+            itemtype_mixed[i] <- 'nominal'
+          }
+        }
+        message('\nMIRT model: nominal response + ideal response')
+        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = itemtype_mixed, method = estimationMETHOD,
+                                  accelerate = accelerateINPUT, calcNull = T,
+                                  technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                                   removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
+                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
+        if(exists('modTEMP')){
+          if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        }
+      }
+      
+      # generalized partial credit model (non-sequential)
+      if(exists('modTEMP') == F){
+        itemtype_mixed <- vector()
+        for(i in 1:ncol(x)){
+          if(psych::describe(x[,i])$range == 1){
+            if(nrow(x) >= 5000){
+              itemtype_mixed[i] <- '4PL'
+            } else if(nrow(x) >= 2000){
+              itemtype_mixed[i] <- '3PL'
+            } else {
+              itemtype_mixed[i] <- 'ideal'
+            }
+          } else {
+            itemtype_mixed[i] <- 'gpcm'
+          }
+        }
+        message('\nMIRT model: Generalized partial credit + ideal or 3-4PL')
+        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = itemtype_mixed, method = estimationMETHOD,
+                                  accelerate = accelerateINPUT, calcNull = T,
+                                  technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                                   removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
+                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
+        if(exists('modTEMP')){
+          if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        }
+      }
+      
+      # graded response model (sequential)
+      if(exists('modTEMP') == F){
+        itemtype_mixed <- vector()
+        for(i in 1:ncol(x)){
+          if(psych::describe(x[,i])$range == 1){
+            if(nrow(x) >= 5000){
+              itemtype_mixed[i] <- '4PL'
+            } else if(nrow(x) >= 2000){
+              itemtype_mixed[i] <- '3PL'
+            } else {
+              itemtype_mixed[i] <- 'ideal'
+            }
+          } else {
+            itemtype_mixed[i] <- 'graded'
+          }
+        }
+        message('\nMIRT model: Graded response + ideal or 3-4PL')
+        try(modTEMP <- mirt::mirt(data = x, model = i, method = estimationMETHOD, itemtype = itemtype_mixed, accelerate = accelerateINPUT,
+                                  calcNull = T, technical = list(symmetric_SEM = symmetric_SEMINPUT,
+                                                                 SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf),
+                                  TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
+                                  optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
+        if(exists('modTEMP')){
+          if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        }
+      }
+      
     } else { # polytomous items
       
       # forceRasch (PCM)
@@ -1741,6 +1819,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
     }
   }
 }
+
 
 surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T, forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F, forceMHRM = F, printFactorStructureRealtime = F, itemkeys = NULL, survey.weights = NULL, autofix = T, ...) {
   message('---------------------------------------------------------')
