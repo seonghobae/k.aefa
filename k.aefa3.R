@@ -1238,30 +1238,36 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       if(forceMHRM == T | forceGRSM == T | assumingFake == T | masterThesis == T){
         estimationMETHOD <- 'MHRM'
         optimINPUT <- NULL
-        optimCTRL  <- NULL  #list(control = list(trace = F))
+        optimCTRL  <- NULL
+        empiricalhist <- FALSE
       } else if(length(survey.weights) != 0) {
         estimationMETHOD <- 'QMCEM'
         optimINPUT <- 'nlminb'
-        optimCTRL  <- NULL  #list(control = list(trace = F))
+        optimCTRL  <- NULL
+        empiricalhist <- FALSE
       } else if(i < 2){
         if(unstable == T){
           estimationMETHOD <- 'QMCEM'
           optimINPUT <- NULL
-          optimCTRL  <- NULL  #list(control = list(trace = F))
+          optimCTRL  <- NULL
+          empiricalhist <- FALSE
         } else {
           estimationMETHOD <- 'EM'
           optimINPUT <- NULL
-          optimCTRL  <- NULL  #list(control = list(trace = F))
+          optimCTRL  <- NULL
+          empiricalhist <- TRUE
         }
       } else {
         if(unstable == T){
           estimationMETHOD <- 'QMCEM'
           optimINPUT <- NULL
-          optimCTRL  <- NULL  #list(control = list(trace = F))
+          optimCTRL  <- NULL
+          empiricalhist <- FALSE
         } else {
           estimationMETHOD <- 'MHRM'
           optimINPUT <- NULL
           optimCTRL <- NULL
+          empiricalhist <- FALSE
         }
       }
       covdataINPUT <- NULL
@@ -1278,25 +1284,30 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         message('MHRM currently not supported with latent regressors')
         estimationMETHOD <- 'QMCEM'
         optimINPUT <- 'nlminb'
-        optimCTRL  <- NULL  #list(control = list(trace = F))
+        optimCTRL  <- NULL
+        empiricalhist <- FALSE
       } else if(length(survey.weights) != 0) {
         estimationMETHOD <- 'QMCEM'
         optimINPUT <- 'nlminb'
-        optimCTRL  <- NULL  #list(control = list(trace = F))
+        optimCTRL  <- NULL
+        empiricalhist <- FALSE
       } else if(i < 2){
         if(unstable == T){
           estimationMETHOD <- 'QMCEM'
           optimINPUT <- NULL
           optimCTRL <- NULL
+          empiricalhist <- FALSE
         } else {
           estimationMETHOD <- 'EM'
           optimINPUT <- 'nlminb'
           optimCTRL <- NULL
+          empiricalhist <- TRUE
         }
       } else {
         estimationMETHOD <- 'QMCEM'
         optimINPUT <- 'nlminb' # NULL
         optimCTRL <- NULL
+        empiricalhist <- FALSE
       }
       
       message('estimation method: ', paste0(estimationMETHOD))
@@ -1370,12 +1381,12 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                    SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
           }
         }
-
+        
         
         if(exists('modTEMP') == F){
           
@@ -1385,7 +1396,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                    SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
           }
@@ -1399,7 +1410,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                    SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
           }
@@ -1413,7 +1424,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                    SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
           }
@@ -1428,7 +1439,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
         }
@@ -1442,7 +1453,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
         }
@@ -1456,7 +1467,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
         }
@@ -1478,7 +1489,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
         }
@@ -1491,7 +1502,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                    SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
           }
@@ -1506,7 +1517,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                    SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
           }
@@ -1521,7 +1532,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, ... = ...), silent = T)
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
         }
@@ -1534,7 +1545,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, key = NULL, ...), silent = F)
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, key = NULL, ...), silent = F)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
         }
@@ -1559,7 +1570,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, ...), silent = F)
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
         try(return(modTEMP))
       }
       
@@ -1601,7 +1612,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                       technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                        removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                      SE.type = SE.type, survey.weights = survey.weights, ...), silent = F)
+                                      SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
             if(exists('modTEMP')){
               if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
             }
@@ -1621,7 +1632,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                       technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                        removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                      SE.type = SE.type, survey.weights = survey.weights, ...), silent = F)
+                                      SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
             if(exists('modTEMP')){
               if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
             }
@@ -1651,7 +1662,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, ...), silent = F)
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
         }
@@ -1665,7 +1676,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, ...), silent = F)
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
         }
@@ -1679,7 +1690,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                                                  SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf),
                                   TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
                                   optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, ...), silent = T)
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
         }
