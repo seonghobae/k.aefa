@@ -1385,7 +1385,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       
       # forceRasch (dichotomous)
       if(forceRasch == T){
-        message('\nMIRT model: Partial Credit')
+        message('\nMIRT model: Rasch')
         
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
