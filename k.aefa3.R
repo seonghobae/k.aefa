@@ -1935,6 +1935,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
           message('Rasch infit & outfit (.7 ~ 1.3')
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-union(which(max(abs(surveyFixMod_itemFit$z.infit)) == abs(surveyFixMod_itemFit$z.infit)), which(max(abs(surveyFixMod_itemFit$z.outfit)) == abs(surveyFixMod_itemFit$z.outfit)))], itemkeys = itemkeys[-union(which(max(abs(surveyFixMod_itemFit$z.infit)) == abs(surveyFixMod_itemFit$z.infit)), which(max(abs(surveyFixMod_itemFit$z.outfit)) == abs(surveyFixMod_itemFit$z.outfit)))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
           
+        } else {
+          itemFitDone <- TRUE
         }
       } else if(nrow(surveyFixModRAW) < 5000 && sum(is.na(surveyFixMod_itemFit$p.S_X2)) == 0 && length(which(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems] < .01)) != 0){ # Kang, T., & Chen, T. T. (2008). Performance of the Generalized S‐X2 Item Fit Index for Polytomous IRT Models. Journal of Educational Measurement, 45(4), 391-406.; Reise, S. P. (1990). A comparison of item- and person-fit methods of assessing model-data fit in IRT. Applied Psychological Measurement, 14, 127-137.
         message('Kang, T., & Chen, T. T. (2008); Reise, S. P. (1990)')
