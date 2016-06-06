@@ -1897,8 +1897,20 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
       iteration_num <- iteration_num + 1
       message('Iteration: ', iteration_num, '\n')
       
+      if(forceRasch == T){
+        S_X2 <- FALSE
+        Zh <- FALSE
+        infit <- TRUE
+        outfit <- TRUE
+      } else {
+        S_X2 <- TRUE
+        Zh <- TRUE
+        infit <- FALSE
+        outfit <- FALSE
+      }
+      
       if(sum(is.na(surveyFixMod@Data$data)) == 0){
-        surveyFixMod_itemFit <- itemfit(x = surveyFixMod, Zh = T,
+        surveyFixMod_itemFit <- itemfit(x = surveyFixMod, S_X2 = S_X2, Zh = Zh, infit = infit, outfit = outfit,
                                         method = 'MAP',
                                         QMC = T,
                                         Theta = fscores(surveyFixMod, method = 'MAP',
@@ -1906,7 +1918,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
       } else {
         
         mirtCluster()
-        surveyFixMod_itemFit <- itemfit(x = surveyFixMod, Zh = T,
+        surveyFixMod_itemFit <- itemfit(x = surveyFixMod, S_X2 = S_X2, Zh = Zh, infit = infit, outfit = outfit,
                                         impute = 100,
                                         method = 'MAP',
                                         QMC = T,
@@ -1917,7 +1929,14 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
         
       }
       
-      if(nrow(surveyFixModRAW) < 5000 && sum(is.na(surveyFixMod_itemFit$p.S_X2)) == 0 && length(which(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems] < .01)) != 0){ # Kang, T., & Chen, T. T. (2008). Performance of the Generalized S‐X2 Item Fit Index for Polytomous IRT Models. Journal of Educational Measurement, 45(4), 391-406.; Reise, S. P. (1990). A comparison of item- and person-fit methods of assessing model-data fit in IRT. Applied Psychological Measurement, 14, 127-137.
+      if(forceRasch == T){
+        if(length(c(which(surveyFixMod_itemFit$outfit < .7), which(surveyFixMod_itemFit$outfit > 1.3), which(surveyFixMod_itemFit$infit < .7), which(surveyFixMod_itemFit$infit > 1.3))) > 0){
+          
+          message('Rasch infit & outfit (.7 ~ 1.3')
+          surveyFixMod <- fastFIFA(surveyFixModRAW[,-union(which(max(abs(surveyFixMod_itemFit$z.infit)) == abs(surveyFixMod_itemFit$z.infit)), which(max(abs(surveyFixMod_itemFit$z.outfit)) == abs(surveyFixMod_itemFit$z.outfit)))], itemkeys = itemkeys[-union(which(max(abs(surveyFixMod_itemFit$z.infit)) == abs(surveyFixMod_itemFit$z.infit)), which(max(abs(surveyFixMod_itemFit$z.outfit)) == abs(surveyFixMod_itemFit$z.outfit)))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
+          
+        }
+      } else if(nrow(surveyFixModRAW) < 5000 && sum(is.na(surveyFixMod_itemFit$p.S_X2)) == 0 && length(which(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems] < .01)) != 0){ # Kang, T., & Chen, T. T. (2008). Performance of the Generalized S‐X2 Item Fit Index for Polytomous IRT Models. Journal of Educational Measurement, 45(4), 391-406.; Reise, S. P. (1990). A comparison of item- and person-fit methods of assessing model-data fit in IRT. Applied Psychological Measurement, 14, 127-137.
         message('Kang, T., & Chen, T. T. (2008); Reise, S. P. (1990)')
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, ...)
       } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2)) == 0 && length(which(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems] > 4)) != 0){ # Drasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995). Fitting polytomous item response theory models to multiple-choice tests. Applied Psychological Measurement, 19(2), 143-166.
