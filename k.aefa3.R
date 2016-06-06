@@ -1225,7 +1225,7 @@ k.fixdata <- function(data, start, end, bioend){
 # surveyFA addon
 fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T,
                      forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F,
-                     forceMHRM = F, itemkeys = NULL, survey.weights = NULL, ...){
+                     forceMHRM = F, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T, ...){
   for(i in 1:100){
     if (i == 1){
       message('\nfactor number: ', paste0(i))
@@ -1570,7 +1570,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         }
       }
       
-    } else if(sum(psych::describe(x)$range == 1) != 0) { # mixed format (Construct Responses + Multiple Choices)
+    } else if(sum(psych::describe(x)$range == 1) != 0 && allowMixedResponse = T) { # mixed format (Construct Responses + Multiple Choices)
       if(skipNominal == F){
         itemtype_mixed <- vector()
         for(i in 1:ncol(x)){
@@ -1590,6 +1590,34 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
         }
+        
+        if(exists('modTEMP') == F){
+          itemtype_mixed <- vector()
+          for(i in 1:ncol(x)){
+            if(psych::describe(x[,i])$range == 1){
+              if(nrow(x) >= 5000){
+                itemtype_mixed[i] <- '4PL'
+              } else if(nrow(x) >= 2000){
+                itemtype_mixed[i] <- '3PL'
+              } else {
+                itemtype_mixed[i] <- '2PL'
+              }
+            } else {
+              itemtype_mixed[i] <- 'nominal'
+            }
+          }
+          message('\nMIRT model: nominal response + 2PL or 3-4PL')
+          try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = itemtype_mixed, method = estimationMETHOD,
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          }
+        }
+        
       }
       
       # generalized partial credit model (non-sequential)
