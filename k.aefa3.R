@@ -1383,6 +1383,19 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
     
     if(max(x, na.rm = T) - min(x, na.rm = T) == 1){ # dichotomous items
       
+      # forceRasch (dichotomous)
+      if(forceRasch == T){
+        message('\nMIRT model: Partial Credit')
+        
+        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD,
+                                  accelerate = accelerateINPUT, calcNull = T,
+                                  technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                                   removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
+        try(return(modTEMP))
+      }
+      
       if(nrow(x) >= 2000){
         
         if(nrow(x) >= 5000){
