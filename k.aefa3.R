@@ -1225,7 +1225,7 @@ k.fixdata <- function(data, start, end, bioend){
 # surveyFA addon
 fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T,
                      forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F,
-                     forceMHRM = F, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T, ...){
+                     forceMHRM = F, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T, forceUIRT = F, ...){
   for(i in 1:100){
     if (i == 1){
       message('\nfactor number: ', paste0(i))
@@ -1497,6 +1497,10 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         }
       }
       
+      if(forceUIRT == T){
+        return(modTEMP)
+      }
+      
       if(exists('modTEMP') == F){
         if(i == 1){
           stop('Fail to find Factor solutions: Model didn\'t converge.')
@@ -1573,6 +1577,10 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
         }
+      }
+      
+      if(forceUIRT == T){
+        return(modTEMP)
       }
       
       if(exists('modTEMP') == F){
@@ -1826,6 +1834,10 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
         }
+      }
+      
+      if(forceUIRT == T){
+        return(modTEMP)
       }
       
       # finally, if can not converge
