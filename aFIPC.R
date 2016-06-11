@@ -66,7 +66,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
     oldFormModel <- mirt::mirt(data = oldformYData, model = oldFormModelSyntax, itemtype = itemtype, SE = T, SE.type = 'complete', accelerate = 'squarem')
   } else { # try to search priors automatically. if it fail, try to bayesian approaches
     message('with estimate prior distribution using an empirical histogram approach. please be patient.')
-    oldFormModel <- mirt::mirt(data = oldformYData, model = 1, itemtype = itemtype, SE = T, SE.type = 'complete', accelerate = 'squarem', empiricalhist = T, technical = list(NCYCLES = 1e+5), GenRandomPars = T)
+    oldFormModel <- mirt::mirt(data = oldformYData, model = 1, itemtype = itemtype, SE = T, SE.type = 'complete', accelerate = 'squarem', empiricalhist = T, technical = list(NCYCLES = 1e+5), GenRandomPars = F)
     
   }
   
@@ -75,7 +75,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
       message('Estimation failed. estimating new parameters with no prior distribution using quasi-Monte Carlo EM estimation. please be patient.')
       
       try(rm(oldFormModel))
-      try(oldFormModel <- mirt::mirt(data = oldformYData, 1, itemtype = itemtype, SE = T, SE.type = 'complete', method = 'QMCEM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = T))
+      try(oldFormModel <- mirt::mirt(data = oldformYData, 1, itemtype = itemtype, SE = T, SE.type = 'complete', method = 'QMCEM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = F))
     }
     
     if(!oldFormModel@OptimInfo$secondordertest){
@@ -83,7 +83,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
       
       try(rm(oldFormModel))
       while (!exists('oldFormModel')) {
-        try(oldFormModel <- mirt::mirt(data = oldformYData, 1, itemtype = itemtype, SE = T, method = 'MHRM', SE.type = 'MHRM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5, MHRM_SE_draws = 200000), GenRandomPars = T))
+        try(oldFormModel <- mirt::mirt(data = oldformYData, 1, itemtype = itemtype, SE = T, method = 'MHRM', SE.type = 'MHRM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5, MHRM_SE_draws = 200000), GenRandomPars = F))
       }
     }
   }
@@ -127,7 +127,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
     newFormModel <- mirt::mirt(data = newformXData, model = newFormModelSyntax, itemtype = itemtype, SE = T, SE.type = 'complete', accelerate = 'squarem')
   } else {
     message('with estimate prior distribution using an empirical histogram approach. please be patient.')
-    newFormModel <- mirt::mirt(data = newformXData, 1, itemtype = itemtype, SE = T, SE.type = 'complete', empiricalhist = T, accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = T)
+    newFormModel <- mirt::mirt(data = newformXData, 1, itemtype = itemtype, SE = T, SE.type = 'complete', empiricalhist = T, accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = F)
   }
   
   if (tryFitwholeNewItems) {
@@ -136,7 +136,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
       message('Estimation failed. estimating new parameters with no prior distribution using quasi-Monte Carlo EM estimation. please be patient.')
       
       try(rm(newFormModel))
-      try(newFormModel <- mirt::mirt(data = newformXData, 1, itemtype = itemtype, SE = T, method = 'QMCEM', SE.type = 'complete', accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = T))
+      try(newFormModel <- mirt::mirt(data = newformXData, 1, itemtype = itemtype, SE = T, method = 'QMCEM', SE.type = 'complete', accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = F))
     }
     
     if(!newFormModel@OptimInfo$secondordertest){
@@ -144,7 +144,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
       
       try(rm(newFormModel))
       while (!exists('newFormModel')) {
-        try(newFormModel <- mirt::mirt(data = newformXData, 1, itemtype = itemtype, SE = T, method = 'MHRM', SE.type = 'MHRM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5, MHRM_SE_draws = 200000), GenRandomPars = T))
+        try(newFormModel <- mirt::mirt(data = newformXData, 1, itemtype = itemtype, SE = T, method = 'MHRM', SE.type = 'MHRM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5, MHRM_SE_draws = 200000), GenRandomPars = F))
       }
     }
     
@@ -166,10 +166,15 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   OldScaleParms <- mod2values(oldFormModel)
   
   for(i in 1:length(oldformCommonItemNames)){
-    if((length(grep(paste0('^',newformCommonItemNames[i]), colnames(newformXData[colnames(newFormModel@Data$data)]))) == 1) == TRUE && (length(grep(paste0('^',oldformCommonItemNames[i]), colnames(oldformYData[colnames(oldFormModel@Data$data)]))) == 1) == TRUE){
+    if((length(grep(paste0('^',newformCommonItemNames[i],'$'), colnames(newformXData[colnames(newFormModel@Data$data)]))) == 1) == TRUE && (length(grep(paste0('^',oldformCommonItemNames[i],'$'), colnames(oldformYData[colnames(oldFormModel@Data$data)]))) == 1) == TRUE){
       message('applying ', paste0(newformCommonItemNames[i]), ' <<< ', paste0(oldformCommonItemNames[i]), ' as common item use')
       
+      message('   Newform Parms: ', paste0(NewScaleParms[which(NewScaleParms$item == paste0(newformCommonItemNames[i])), "value"], ' '))
+      message('   Oldform Parms: ', paste0(OldScaleParms[which(OldScaleParms$item == paste0(oldformCommonItemNames[i])), "value"], ' '))
+      
       NewScaleParms[which(NewScaleParms$item == paste0(newformCommonItemNames[i])), "value"] <- OldScaleParms[which(OldScaleParms$item == paste0(oldformCommonItemNames[i])), "value"]
+      message('   Linkedform Parms: ', paste0(NewScaleParms[which(NewScaleParms$item == paste0(newformCommonItemNames[i])), "value"], ' '), '\n')
+      
       NewScaleParms[which(NewScaleParms$item == paste0(newformCommonItemNames[i])), "est"] <- FALSE
       
     } else {
