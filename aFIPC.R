@@ -169,8 +169,8 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
     if((length(grep(paste0('^',newformCommonItemNames[i]), colnames(newformXData[colnames(newFormModel@Data$data)]))) == 1) == TRUE && (length(grep(paste0('^',oldformCommonItemNames[i]), colnames(oldformYData[colnames(oldFormModel@Data$data)]))) == 1) == TRUE){
       message('applying ', paste0(newformCommonItemNames[i]), ' <<< ', paste0(oldformCommonItemNames[i]), ' as common item use')
       
-      try(NewScaleParms[which(NewScaleParms$item == paste0(newformCommonItemNames[i])), "value"] <- OldScaleParms[which(OldScaleParms$item == paste0(oldformCommonItemNames[i])), "value"])
-      try(NewScaleParms[which(NewScaleParms$item == paste0(newformCommonItemNames[i])), "est"] <- FALSE)
+      NewScaleParms[which(NewScaleParms$item == paste0(newformCommonItemNames[i])), "value"] <- OldScaleParms[which(OldScaleParms$item == paste0(oldformCommonItemNames[i])), "value"]
+      NewScaleParms[which(NewScaleParms$item == paste0(newformCommonItemNames[i])), "est"] <- FALSE
       
     } else {
       message('skipping ', paste0(newformCommonItemNames[i]), ' <<< ', paste0(oldformCommonItemNames[i]), ' as common item use')
