@@ -1935,9 +1935,14 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
       }
       
       if(forceRasch == T){
-        if(length(c(which(abs(surveyFixMod_itemFit$z.infit) > 1.96), which(abs(surveyFixMod_itemFit$z.outfit) > 1.96), which(surveyFixMod_itemFit$outfit < .7), which(surveyFixMod_itemFit$outfit > 1.3), which(surveyFixMod_itemFit$infit < .7), which(surveyFixMod_itemFit$infit > 1.3))) > 0){
+        if(length(c(union(which(max(abs(surveyFixMod_itemFit$z.infit)) >= 1.96),
+                          which(max(abs(surveyFixMod_itemFit$z.outfit)) >= 1.96)),
+                    union(which(max((surveyFixMod_itemFit$infit)) >= 1.3),
+                          which(max((surveyFixMod_itemFit$outfit)) >= 1.3)),
+                    union(which(min((surveyFixMod_itemFit$infit)) <= .7),
+                          which(min((surveyFixMod_itemFit$outfit)) <= .7)))) > 0){
           
-          message('Rasch infit & outfit (.7 ~ 1.3)')
+          message('Rasch infit & outfit (.7 ~ 1.3): beta version')
           print(surveyFixMod_itemFit)
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(union(which(max(abs(surveyFixMod_itemFit$z.infit)) == abs(surveyFixMod_itemFit$z.infit)),
                                                                  which(max(abs(surveyFixMod_itemFit$z.outfit)) == abs(surveyFixMod_itemFit$z.outfit))),
