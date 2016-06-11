@@ -2044,7 +2044,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
                                                              union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
                                                                    which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))),
                                                              union(which(min((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                                                                   which(min((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
+                                                                   which(min((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
             
           } else {
             itemFitDone <- TRUE
