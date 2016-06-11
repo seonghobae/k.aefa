@@ -1898,43 +1898,83 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
       message('Iteration: ', iteration_num, '\n')
       
       if(forceRasch == T){
-        S_X2 <- FALSE
-        Zh <- FALSE
-        infit <- TRUE
-        outfit <- TRUE
+        if(sum(is.na(surveyFixMod@Data$data)) == 0){
+          try(surveyFixMod_itemFitTest <- itemfit(x = surveyFixMod, S_X2 = T, Zh = T, infit = T,
+                                          method = 'MAP',
+                                          QMC = T,
+                                          Theta = fscores(surveyFixMod, method = 'MAP',
+                                                          QMC = T)))
+        } else {
+          mirtCluster()
+          try(surveyFixMod_itemFitTest <- itemfit(x = surveyFixMod, S_X2 = T, Zh = T, infit = T,
+                                          impute = 100,
+                                          method = 'MAP',
+                                          QMC = T,
+                                          Theta = fscores(surveyFixMod, method = 'MAP',
+                                                          QMC = T)))
+          mirtCluster(remove = T)
+        }
+        
+        if(exists('surveyFixMod_itemFitTest') == T){
+          S_X2 <- TRUE
+          Zh <- TRUE
+          infit <- TRUE
+          activateInfitOnly <- FALSE
+        } else {
+          S_X2 <- FALSE
+          Zh <- FALSE
+          infit <- TRUE
+          activateInfitOnly <- TRUE
+        }
       } else if(length(which(surveyFixMod@Model$itemtype == 'ideal')) != 0) {
         S_X2 <- FALSE
         Zh <- TRUE
         infit <- FALSE
-        outfit <- FALSE
+        activateInfitOnly <- FALSE
       } else {
         S_X2 <- TRUE
         Zh <- TRUE
         infit <- FALSE
-        outfit <- FALSE
+        activateInfitOnly <- FALSE
       }
       
+      # item fit calculation for detection of weird item(s)
       if(sum(is.na(surveyFixMod@Data$data)) == 0){
-        surveyFixMod_itemFit <- itemfit(x = surveyFixMod, S_X2 = S_X2, Zh = Zh, infit = infit, outfit = outfit,
-                                        method = 'MAP',
-                                        QMC = T,
-                                        Theta = fscores(surveyFixMod, method = 'MAP',
-                                                        QMC = T))
+        if (exists('surveyFixMod_itemFitTest')) {
+          surveyFixMod_itemFit <- surveyFixMod_itemFitTest # re use upon calculation
+          rm(surveyFixMod_itemFitTest)
+        } else {
+          
+          surveyFixMod_itemFit <- itemfit(x = surveyFixMod, S_X2 = S_X2, Zh = Zh, infit = infit,
+                                          method = 'MAP',
+                                          QMC = T,
+                                          Theta = fscores(surveyFixMod, method = 'MAP',
+                                                          QMC = T))
+        }
+        
       } else {
-        
-        mirtCluster()
-        surveyFixMod_itemFit <- itemfit(x = surveyFixMod, S_X2 = S_X2, Zh = Zh, infit = infit, outfit = outfit,
-                                        impute = 100,
-                                        method = 'MAP',
-                                        QMC = T,
-                                        Theta = fscores(surveyFixMod, method = 'MAP',
-                                                        QMC = T))
-        
-        mirtCluster(remove = T)
+        if (exists('surveyFixMod_itemFitTest')) {
+          surveyFixMod_itemFit <- surveyFixMod_itemFitTest # re use upon calculation
+          rm(surveyFixMod_itemFitTest)
+        } else {
+          mirtCluster()
+          surveyFixMod_itemFit <- itemfit(x = surveyFixMod, S_X2 = S_X2, Zh = Zh, infit = infit,
+                                          impute = 100,
+                                          method = 'MAP',
+                                          QMC = T,
+                                          Theta = fscores(surveyFixMod, method = 'MAP',
+                                                          QMC = T))
+          
+          mirtCluster(remove = T)
+        }
+
         
       }
       
-      if(forceRasch == T){
+      print(surveyFixMod_itemFit)
+      
+      # item evaluation
+      if(activateInfitOnly == T){ # if can't calculate S-X2 fit when itemtype = 'Rasch'
         if(length(c(union(which(max(abs(surveyFixMod_itemFit$z.infit)) >= 1.96),
                           which(max(abs(surveyFixMod_itemFit$z.outfit)) >= 1.96)),
                     union(which(max((surveyFixMod_itemFit$infit)) >= 1.3),
@@ -1942,14 +1982,13 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
                     union(which(min((surveyFixMod_itemFit$infit)) <= .7),
                           which(min((surveyFixMod_itemFit$outfit)) <= .7)))) > 0){
           
-          message('Rasch infit & outfit (.7 ~ 1.3): beta version')
-          print(surveyFixMod_itemFit)
+          message('\nRasch infit & outfit (.7 ~ 1.3): beta version')
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(union(which(max(abs(surveyFixMod_itemFit$z.infit)) == abs(surveyFixMod_itemFit$z.infit)),
-                                                                 which(max(abs(surveyFixMod_itemFit$z.outfit)) == abs(surveyFixMod_itemFit$z.outfit))),
-                                                           union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                                                                 which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))),
-                                                           union(which(min((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                                                                 which(min((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))],
+                                                             which(max(abs(surveyFixMod_itemFit$z.outfit)) == abs(surveyFixMod_itemFit$z.outfit))),
+                                                       union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
+                                                             which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))),
+                                                       union(which(min((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
+                                                             which(min((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))],
                                    itemkeys = itemkeys[,-c(union(which(max(abs(surveyFixMod_itemFit$z.infit)) == abs(surveyFixMod_itemFit$z.infit)),
                                                                  which(max(abs(surveyFixMod_itemFit$z.outfit)) == abs(surveyFixMod_itemFit$z.outfit))),
                                                            union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
@@ -1960,24 +1999,49 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
         } else {
           itemFitDone <- TRUE
         }
-      } else if(length(which(surveyFixMod@Model$itemtype == 'ideal')) == 0){ # if item type is NOT include 'ideal-point'
+      } else if(length(which(surveyFixMod@Model$itemtype == 'ideal')) == 0){ # normal IRT condition; if item type is NOT include 'ideal-point'
         if(nrow(surveyFixModRAW) < 5000 && sum(is.na(surveyFixMod_itemFit$p.S_X2)) == 0 && length(which(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems] < .01)) != 0){ # Kang, T., & Chen, T. T. (2008). Performance of the Generalized S‐X2 Item Fit Index for Polytomous IRT Models. Journal of Educational Measurement, 45(4), 391-406.; Reise, S. P. (1990). A comparison of item- and person-fit methods of assessing model-data fit in IRT. Applied Psychological Measurement, 14, 127-137.
-          message('Kang, T., & Chen, T. T. (2008); Reise, S. P. (1990)')
+          message('\nKang, T., & Chen, T. T. (2008); Reise, S. P. (1990)')
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, ...)
         } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2)) == 0 && length(which(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems] >= 3)) != 0){ # Drasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995). Fitting polytomous item response theory models to multiple-choice tests. Applied Psychological Measurement, 19(2), 143-166.
-          message('Drasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995)')
+          message('\nDrasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995)')
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, ...)
         } else if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -2.58)) != 0){ # Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
-          message('Drasgow, F., Levine, M. V., & Williams, E. A. (1985)')
+          message('\nDrasgow, F., Levine, M. V., & Williams, E. A. (1985)')
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, ...)
+        } else if (forceRasch == T) {
+          if(length(c(union(which(max(abs(surveyFixMod_itemFit$z.infit)) >= 1.96),
+                            which(max(abs(surveyFixMod_itemFit$z.outfit)) >= 1.96)),
+                      union(which(max((surveyFixMod_itemFit$infit)) >= 1.3),
+                            which(max((surveyFixMod_itemFit$outfit)) >= 1.3)),
+                      union(which(min((surveyFixMod_itemFit$infit)) <= .7),
+                            which(min((surveyFixMod_itemFit$outfit)) <= .7)))) > 0){
+            
+            message('\nRasch infit & outfit (.7 ~ 1.3): beta version')
+            surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(union(which(max(abs(surveyFixMod_itemFit$z.infit)) == abs(surveyFixMod_itemFit$z.infit)),
+                                                               which(max(abs(surveyFixMod_itemFit$z.outfit)) == abs(surveyFixMod_itemFit$z.outfit))),
+                                                         union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
+                                                               which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))),
+                                                         union(which(min((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
+                                                               which(min((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))],
+                                     itemkeys = itemkeys[,-c(union(which(max(abs(surveyFixMod_itemFit$z.infit)) == abs(surveyFixMod_itemFit$z.infit)),
+                                                                   which(max(abs(surveyFixMod_itemFit$z.outfit)) == abs(surveyFixMod_itemFit$z.outfit))),
+                                                             union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
+                                                                   which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))),
+                                                             union(which(min((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
+                                                                   which(min((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, ...)
+            
+          } else {
+            itemFitDone <- TRUE
+          }
         } else {
           itemFitDone <- TRUE
         }
-      } else if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -2.58)) != 0){ # ideal only; Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
-        message('Drasgow, F., Levine, M. V., & Williams, E. A. (1985)')
+      } else if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -2.58)) != 0){ # if item type ideal; Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
+        message('\nDrasgow, F., Levine, M. V., & Williams, E. A. (1985)')
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, ...)
       } else {
-        itemFitDone <- TRUE
+          itemFitDone <- TRUE
       }
     } else {
       itemFitDone <- TRUE
