@@ -1408,9 +1408,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-            else if(forceUIRT == T){
-              return(modTEMP)
-            }
           }
         }
         
@@ -1426,9 +1423,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-            else if(forceUIRT == T){
-              return(modTEMP)
-            }
           }
         }
         
@@ -1443,9 +1437,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-            else if(forceUIRT == T){
-              return(modTEMP)
-            }
           }
         }
         
@@ -1460,9 +1451,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-            else if(forceUIRT == T){
-              return(modTEMP)
-            }
           }
         }
       }
@@ -1478,9 +1466,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-          else if(forceUIRT == T){
-            return(modTEMP)
-          }
         }
       }
       
@@ -1495,9 +1480,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-          else if(forceUIRT == T){
-            return(modTEMP)
-          }
         }
       }
       
@@ -1512,9 +1494,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-          else if(forceUIRT == T){
-            return(modTEMP)
-          }
         }
       }
       
@@ -1537,9 +1516,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-          else if(forceUIRT == T){
-            return(modTEMP)
-          }
         }
         
         if(exists('modTEMP') == F){
@@ -1553,9 +1529,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-            else if(forceUIRT == T){
-              return(modTEMP)
-            }
           }
         }
         
@@ -1571,9 +1544,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-            else if(forceUIRT == T){
-              return(modTEMP)
-            }
           }
         }
       }
@@ -1589,9 +1559,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-          else if(forceUIRT == T){
-            return(modTEMP)
-          }
         }
       }
       
@@ -1605,9 +1572,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, key = NULL, ...), silent = F)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-          else if(forceUIRT == T){
-            return(modTEMP)
-          }
         }
       }
       
@@ -1638,9 +1602,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-          else if(forceUIRT == T){
-            return(modTEMP)
-          }
         }
         
         if(exists('modTEMP') == F){
@@ -1667,9 +1628,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-            else if(forceUIRT == T){
-              return(modTEMP)
-            }
           }
         }
         
@@ -1700,9 +1658,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-          else if(forceUIRT == T){
-            return(modTEMP)
-          }
         }
       }
       
@@ -1731,9 +1686,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-          else if(forceUIRT == T){
-            return(modTEMP)
-          }
         } else {
           stop('retry to add forceMHRM = TRUE argument')
         }
@@ -1845,9 +1797,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-          else if(forceUIRT == T){
-            return(modTEMP)
-          }
         }
       }
       
@@ -1862,9 +1811,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-          else if(forceUIRT == T){
-            return(modTEMP)
-          }
         }
       }
       
@@ -1879,9 +1825,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-          else if(forceUIRT == T){
-            return(modTEMP)
-          }
         }
       }
       
@@ -1899,6 +1842,10 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       try(print(plot(modTEMP, type = 'infoSE')))
       try(print(plot(modTEMP, type = 'infotrace', facet_items = TRUE)))
       try(print(plot(modTEMP, type = 'trace')))
+    }
+    
+    if(forceUIRT == T){
+      return(modTEMP)
     }
     
     if(i == 1 && modTEMP@OptimInfo$converged != 1){
@@ -1940,7 +1887,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
   message('Calculating Initial Factor model')
   iteration_num <- 1
   message('Iteration: ', iteration_num, '\n')
-  surveyFixMod <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
+  surveyFixMod <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, ...)
   
   itemFitDone <- FALSE
   while (!itemFitDone) {
@@ -1957,18 +1904,18 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
       if(forceRasch == T | length(which(surveyFixMod@Model$itemtype == 'ideal')) != 0){ # pretest for Rasch and ideal-point; these item type are sometimes can't calculate S_X2 statistic
         if(sum(is.na(surveyFixMod@Data$data)) == 0){
           try(surveyFixMod_itemFitTest <- itemfit(x = surveyFixMod, S_X2 = T, Zh = T, infit = T,
-                                          method = 'MAP',
-                                          QMC = T,
-                                          Theta = fscores(surveyFixMod, method = 'MAP',
-                                                          QMC = T)))
+                                                  method = 'MAP',
+                                                  QMC = T,
+                                                  Theta = fscores(surveyFixMod, method = 'MAP',
+                                                                  QMC = T)))
         } else {
           mirtCluster()
           try(surveyFixMod_itemFitTest <- itemfit(x = surveyFixMod, S_X2 = T, Zh = T, infit = T,
-                                          impute = 100,
-                                          method = 'MAP',
-                                          QMC = T,
-                                          Theta = fscores(surveyFixMod, method = 'MAP',
-                                                          QMC = T)))
+                                                  impute = 100,
+                                                  method = 'MAP',
+                                                  QMC = T,
+                                                  Theta = fscores(surveyFixMod, method = 'MAP',
+                                                                  QMC = T)))
           mirtCluster(remove = T)
         }
         
@@ -2035,7 +1982,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
           
           mirtCluster(remove = T)
         }
-
+        
         
       }
       
@@ -2062,7 +2009,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
                                                            union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
                                                                  which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))),
                                                            union(which(min((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                                                                 which(min((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, ...)
+                                                                 which(min((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, ...)
           
         } else {
           itemFitDone <- TRUE
@@ -2070,13 +2017,13 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
       } else if(activateZhOnly == FALSE){ # normal IRT condition
         if(nrow(surveyFixModRAW) < 5000 && sum(is.na(surveyFixMod_itemFit$p.S_X2)) == 0 && length(which(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems] < .01)) != 0){ # Kang, T., & Chen, T. T. (2008). Performance of the Generalized S‐X2 Item Fit Index for Polytomous IRT Models. Journal of Educational Measurement, 45(4), 391-406.; Reise, S. P. (1990). A comparison of item- and person-fit methods of assessing model-data fit in IRT. Applied Psychological Measurement, 14, 127-137.
           message('\nKang, T., & Chen, T. T. (2008); Reise, S. P. (1990)')
-          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, ...)
+          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, ...)
         } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2)) == 0 && length(which(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems] >= 3)) != 0){ # Drasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995). Fitting polytomous item response theory models to multiple-choice tests. Applied Psychological Measurement, 19(2), 143-166.
           message('\nDrasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995)')
-          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, ...)
+          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, ...)
         } else if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -2.58)) != 0){ # Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
           message('\nDrasgow, F., Levine, M. V., & Williams, E. A. (1985)')
-          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, ...)
+          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, ...)
         } else if (forceRasch == T) {
           if(length(c(union(which(max(abs(surveyFixMod_itemFit$z.infit)) >= 1.96),
                             which(max(abs(surveyFixMod_itemFit$z.outfit)) >= 1.96)),
@@ -2097,7 +2044,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
                                                              union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
                                                                    which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))),
                                                              union(which(min((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                                                                   which(min((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, ...)
+                                                                   which(min((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, ...)
             
           } else {
             itemFitDone <- TRUE
@@ -2107,9 +2054,9 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
         }
       } else if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -2.58)) != 0){ # if can't calculate S-X2 fit when itemtype = 'ideal'; Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
         message('\nDrasgow, F., Levine, M. V., & Williams, E. A. (1985)')
-        surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, ...)
+        surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, ...)
       } else {
-          itemFitDone <- TRUE
+        itemFitDone <- TRUE
       }
     } else {
       itemFitDone <- TRUE
