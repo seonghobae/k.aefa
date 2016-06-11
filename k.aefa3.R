@@ -1408,6 +1408,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+            else if(forceUIRT == T){
+              return(modTEMP)
+            }
           }
         }
         
@@ -1423,6 +1426,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+            else if(forceUIRT == T){
+              return(modTEMP)
+            }
           }
         }
         
@@ -1437,6 +1443,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+            else if(forceUIRT == T){
+              return(modTEMP)
+            }
           }
         }
         
@@ -1451,6 +1460,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+            else if(forceUIRT == T){
+              return(modTEMP)
+            }
           }
         }
       }
@@ -1466,6 +1478,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          else if(forceUIRT == T){
+            return(modTEMP)
+          }
         }
       }
       
@@ -1480,6 +1495,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          else if(forceUIRT == T){
+            return(modTEMP)
+          }
         }
       }
       
@@ -1494,11 +1512,10 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          else if(forceUIRT == T){
+            return(modTEMP)
+          }
         }
-      }
-      
-      if(forceUIRT == T){
-        return(modTEMP)
       }
       
       if(exists('modTEMP') == F){
@@ -1520,6 +1537,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          else if(forceUIRT == T){
+            return(modTEMP)
+          }
         }
         
         if(exists('modTEMP') == F){
@@ -1533,6 +1553,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+            else if(forceUIRT == T){
+              return(modTEMP)
+            }
           }
         }
         
@@ -1548,6 +1571,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+            else if(forceUIRT == T){
+              return(modTEMP)
+            }
           }
         }
       }
@@ -1563,6 +1589,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          else if(forceUIRT == T){
+            return(modTEMP)
+          }
         }
       }
       
@@ -1576,11 +1605,10 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, key = NULL, ...), silent = F)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          else if(forceUIRT == T){
+            return(modTEMP)
+          }
         }
-      }
-      
-      if(forceUIRT == T){
-        return(modTEMP)
       }
       
       if(exists('modTEMP') == F){
@@ -1610,6 +1638,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          else if(forceUIRT == T){
+            return(modTEMP)
+          }
         }
         
         if(exists('modTEMP') == F){
@@ -1636,6 +1667,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+            else if(forceUIRT == T){
+              return(modTEMP)
+            }
           }
         }
         
@@ -1666,6 +1700,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          else if(forceUIRT == T){
+            return(modTEMP)
+          }
         }
       }
       
@@ -1694,6 +1731,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          else if(forceUIRT == T){
+            return(modTEMP)
+          }
         } else {
           stop('retry to add forceMHRM = TRUE argument')
         }
@@ -1805,6 +1845,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          else if(forceUIRT == T){
+            return(modTEMP)
+          }
         }
       }
       
@@ -1819,6 +1862,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          else if(forceUIRT == T){
+            return(modTEMP)
+          }
         }
       }
       
@@ -1833,11 +1879,10 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          else if(forceUIRT == T){
+            return(modTEMP)
+          }
         }
-      }
-      
-      if(forceUIRT == T){
-        return(modTEMP)
       }
       
       # finally, if can not converge
