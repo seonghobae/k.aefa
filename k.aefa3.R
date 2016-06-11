@@ -1935,7 +1935,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
       }
       
       if(forceRasch == T){
-        if(length(c(which(abs(surveyFixMod_itemFit$z.infit) > 2.58), which(abs(surveyFixMod_itemFit$z.outfit) > 2.58), which(surveyFixMod_itemFit$outfit < .7), which(surveyFixMod_itemFit$outfit > 1.3), which(surveyFixMod_itemFit$infit < .7), which(surveyFixMod_itemFit$infit > 1.3))) > 0){
+        if(length(c(which(abs(surveyFixMod_itemFit$z.infit) > 1.96), which(abs(surveyFixMod_itemFit$z.outfit) > 1.96), which(surveyFixMod_itemFit$outfit < .7), which(surveyFixMod_itemFit$outfit > 1.3), which(surveyFixMod_itemFit$infit < .7), which(surveyFixMod_itemFit$infit > 1.3))) > 0){
           
           message('Rasch infit & outfit (.7 ~ 1.3)')
           print(surveyFixMod_itemFit)
