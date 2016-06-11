@@ -1990,26 +1990,29 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
       
       # item evaluation
       if(activateInfitOnly == T){ # if can't calculate S-X2 fit when itemtype = 'Rasch'
-        if(length(c(union(which(max(abs(surveyFixMod_itemFit$z.infit)) >= 1.96),
-                          which(max(abs(surveyFixMod_itemFit$z.outfit)) >= 1.96)),
+        if(length(c(
+                    # union(which(max(abs(surveyFixMod_itemFit$z.infit)) >= 1.96),
+                    #       which(max(abs(surveyFixMod_itemFit$z.outfit)) >= 1.96)),
                     union(which(max((surveyFixMod_itemFit$infit)) >= 1.5),
                           which(max((surveyFixMod_itemFit$outfit)) >= 1.5)),
                     union(which(min((surveyFixMod_itemFit$infit)) <= .5),
                           which(min((surveyFixMod_itemFit$outfit)) <= .5)))) > 0){
           
           message('\nRasch infit & outfit (.5 ~ 1.5): beta version')
-          surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(union(which(max(abs(surveyFixMod_itemFit$z.infit)) == abs(surveyFixMod_itemFit$z.infit)),
-                                                             which(max(abs(surveyFixMod_itemFit$z.outfit)) == abs(surveyFixMod_itemFit$z.outfit))),
+          surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(
+                                                      # union(which(max(abs(surveyFixMod_itemFit$z.infit)) == abs(surveyFixMod_itemFit$z.infit)),
+                                                      #        which(max(abs(surveyFixMod_itemFit$z.outfit)) == abs(surveyFixMod_itemFit$z.outfit))),
                                                        union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
                                                              which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))),
                                                        union(which(min((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
                                                              which(min((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))],
-                                   itemkeys = itemkeys[,-c(union(which(max(abs(surveyFixMod_itemFit$z.infit)) == abs(surveyFixMod_itemFit$z.infit)),
-                                                                 which(max(abs(surveyFixMod_itemFit$z.outfit)) == abs(surveyFixMod_itemFit$z.outfit))),
-                                                           union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                                                                 which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))),
-                                                           union(which(min((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                                                                 which(min((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
+                                   itemkeys = itemkeys[,-c(
+                                     # union(which(max(abs(surveyFixMod_itemFit$z.infit)) == abs(surveyFixMod_itemFit$z.infit)),
+                                     #        which(max(abs(surveyFixMod_itemFit$z.outfit)) == abs(surveyFixMod_itemFit$z.outfit))),
+                                     union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
+                                           which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))),
+                                     union(which(min((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
+                                           which(min((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
           
         } else {
           itemFitDone <- TRUE
@@ -2025,26 +2028,29 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
           message('\nDrasgow, F., Levine, M. V., & Williams, E. A. (1985)')
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
         } else if (forceRasch == T) {
-          if(length(c(union(which(max(abs(surveyFixMod_itemFit$z.infit)) >= 1.96),
-                            which(max(abs(surveyFixMod_itemFit$z.outfit)) >= 1.96)),
-                      union(which(max((surveyFixMod_itemFit$infit)) >= 1.5),
-                            which(max((surveyFixMod_itemFit$outfit)) >= 1.5)),
-                      union(which(min((surveyFixMod_itemFit$infit)) <= .5),
-                            which(min((surveyFixMod_itemFit$outfit)) <= .5)))) > 0){
+          if(length(c(
+            # union(which(max(abs(surveyFixMod_itemFit$z.infit)) >= 1.96),
+            #       which(max(abs(surveyFixMod_itemFit$z.outfit)) >= 1.96)),
+            union(which(max((surveyFixMod_itemFit$infit)) >= 1.5),
+                  which(max((surveyFixMod_itemFit$outfit)) >= 1.5)),
+            union(which(min((surveyFixMod_itemFit$infit)) <= .5),
+                  which(min((surveyFixMod_itemFit$outfit)) <= .5)))) > 0){
             
             message('\nRasch infit & outfit (.5 ~ 1.5): beta version')
-            surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(union(which(max(abs(surveyFixMod_itemFit$z.infit)) == abs(surveyFixMod_itemFit$z.infit)),
-                                                               which(max(abs(surveyFixMod_itemFit$z.outfit)) == abs(surveyFixMod_itemFit$z.outfit))),
-                                                         union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                                                               which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))),
-                                                         union(which(min((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                                                               which(min((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))],
-                                     itemkeys = itemkeys[,-c(union(which(max(abs(surveyFixMod_itemFit$z.infit)) == abs(surveyFixMod_itemFit$z.infit)),
-                                                                   which(max(abs(surveyFixMod_itemFit$z.outfit)) == abs(surveyFixMod_itemFit$z.outfit))),
-                                                             union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                                                                   which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))),
-                                                             union(which(min((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                                                                   which(min((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
+            surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(
+              # union(which(max(abs(surveyFixMod_itemFit$z.infit)) == abs(surveyFixMod_itemFit$z.infit)),
+              #        which(max(abs(surveyFixMod_itemFit$z.outfit)) == abs(surveyFixMod_itemFit$z.outfit))),
+              union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
+                    which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))),
+              union(which(min((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
+                    which(min((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))],
+                                     itemkeys = itemkeys[,-c(
+                                       # union(which(max(abs(surveyFixMod_itemFit$z.infit)) == abs(surveyFixMod_itemFit$z.infit)),
+                                       #        which(max(abs(surveyFixMod_itemFit$z.outfit)) == abs(surveyFixMod_itemFit$z.outfit))),
+                                       union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
+                                             which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))),
+                                       union(which(min((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
+                                             which(min((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
             
           } else {
             itemFitDone <- TRUE
