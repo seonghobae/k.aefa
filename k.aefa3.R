@@ -1583,7 +1583,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         }
       }
       
-    } else if(sum(psych::describe(x)$range == 1) != 0 && allowMixedResponse == T) { # mixed format (Construct Responses + Multiple Choices)
+    } else if((sum(psych::describe(x)$range == 1) != 0) && allowMixedResponse == T) { # mixed format (Construct Responses + Multiple Choices)
       if(skipNominal == F){
         itemtype_mixed <- vector()
         for(i in 1:ncol(x)){
@@ -1708,9 +1708,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       
       # forceGRSM (polytomous)
       # for detecting fake responses
-      if(SE == T){ # if grsm, Standard error estimation was unsuccessful.
+      # if(SE == T){ # if grsm, Standard error estimation was unsuccessful.
         
-      } else {
+      # } else {
         #if((max(describe(x)$range) - min(describe(x)$range)) == 0 | forceGRSM == T | assumingFake == T | masterThesis == T){
         if(forceGRSM == T | assumingFake == T | masterThesis == T){
           x <- data.frame(x)
@@ -1783,7 +1783,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
             skipNominal <- T
           }
         }
-      }
+      # }
       
       # polytomous
       # nominal model
@@ -1901,54 +1901,37 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
       iteration_num <- iteration_num + 1
       message('Iteration: ', iteration_num, '\n')
       
-      if(forceRasch == T | length(which(surveyFixMod@Model$itemtype == 'ideal')) != 0){ # pretest for Rasch and ideal-point; these item type are sometimes can't calculate S_X2 statistic
-        if(sum(is.na(surveyFixMod@Data$data)) == 0){
-          try(surveyFixMod_itemFitTest <- itemfit(x = surveyFixMod, S_X2 = T, Zh = T, infit = T,
-                                                  method = 'MAP',
-                                                  QMC = T,
-                                                  Theta = fscores(surveyFixMod, method = 'MAP',
-                                                                  QMC = T)))
-        } else {
-          mirtCluster()
-          try(surveyFixMod_itemFitTest <- itemfit(x = surveyFixMod, S_X2 = T, Zh = T, infit = T,
-                                                  impute = 100,
-                                                  method = 'MAP',
-                                                  QMC = T,
-                                                  Theta = fscores(surveyFixMod, method = 'MAP',
-                                                                  QMC = T)))
-          mirtCluster(remove = T)
-        }
-        
-        if(exists('surveyFixMod_itemFitTest') == T && forceRasch == T){
-          S_X2 <- TRUE
-          Zh <- TRUE
-          infit <- TRUE
-          activateInfitOnly <- FALSE
-          activateZhOnly <- FALSE
-        } else if(exists('surveyFixMod_itemFitTest') == T && length(which(surveyFixMod@Model$itemtype == 'ideal')) != 0) {
-          S_X2 <- TRUE
-          Zh <- TRUE
-          infit <- FALSE
-          activateInfitOnly <- FALSE
-          activateZhOnly <- FALSE
-          
-        } else if(exists('surveyFixMod_itemFitTest') == F && forceRasch == T) {
-          S_X2 <- FALSE
-          Zh <- FALSE
-          infit <- TRUE
+      if(sum(is.na(surveyFixMod@Data$data)) == 0){
+        try(surveyFixMod_itemFitTest <- itemfit(x = surveyFixMod, S_X2 = T, Zh = T, infit = T,
+                                                method = 'MAP',
+                                                QMC = T,
+                                                Theta = fscores(surveyFixMod, method = 'MAP',
+                                                                QMC = T)))
+      } else {
+        mirtCluster()
+        try(surveyFixMod_itemFitTest <- itemfit(x = surveyFixMod, S_X2 = T, Zh = T, infit = T,
+                                                impute = 100,
+                                                method = 'MAP',
+                                                QMC = T,
+                                                Theta = fscores(surveyFixMod, method = 'MAP',
+                                                                QMC = T)))
+        mirtCluster(remove = T)
+      }
+      if(!exists('surveyFixMod_itemFitTest')){
+        S_X2 <- FALSE
+        Zh <- TRUE
+        infit <- TRUE
+        if (sum(surveyFixMod@Model$itemtype == 'Rasch') != 0) {
           activateInfitOnly <- TRUE
           activateZhOnly <- FALSE
-        } else if (exists('surveyFixMod_itemFitTest') == F && (length(which(surveyFixMod@Model$itemtype == 'ideal')) != 0 | length(which(surveyFixMod@Model$itemtype == 'gpcm')) != 0)) {
-          S_X2 <- FALSE
-          Zh <- TRUE
-          infit <- FALSE
+        } else {
           activateInfitOnly <- FALSE
-          activateZhOnly <- TRUE # 'TRUE' have to assign here ONLY!
+          activateZhOnly <- TRUE
         }
       } else { # for normal conditions (e.g. gpcm, 2-4PL)
         S_X2 <- TRUE
         Zh <- TRUE
-        infit <- FALSE
+        infit <- TRUE
         activateInfitOnly <- FALSE
         activateZhOnly <- FALSE
       }
