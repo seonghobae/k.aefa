@@ -1938,7 +1938,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
           infit <- TRUE
           activateInfitOnly <- TRUE
           activateZhOnly <- FALSE
-        } else if (exists('surveyFixMod_itemFitTest') == F && length(which(surveyFixMod@Model$itemtype == 'ideal')) != 0) {
+        } else if (exists('surveyFixMod_itemFitTest') == F && length(which(surveyFixMod@Model$itemtype == 'ideal')) != 0 && length(which(surveyFixMod@Model$itemtype == 'gpcm')) != 0) {
           S_X2 <- FALSE
           Zh <- TRUE
           infit <- FALSE
