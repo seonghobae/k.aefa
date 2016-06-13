@@ -183,7 +183,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   }
   
   message('\nestimating Linked Form Eq(X) parameters')
-  message('with estimate prior distribution using an Cai\'s (2010) Metropolis-Hastings Robbins-Monro (MHRM) approach. please be patient.')
+  message('with Cai\'s (2010) Metropolis-Hastings Robbins-Monro (MHRM) approach. please be patient.')
   LinkedModelSyntax <- mirt::mirt.model(paste0('F1 = 1-',ncol(newformXData[colnames(newFormModel@Data$data)]),'\n',
                                                'MEAN = F1'))
   LinkedModel <- mirt::mirt(data = newformXData[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, SE = T, SE.type = 'MHRM', method = 'MHRM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5), pars = NewScaleParms, GenRandomPars = F, technical = list(MHRM_SE_draws = 1e+5))
