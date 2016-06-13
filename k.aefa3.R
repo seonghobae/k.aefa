@@ -1243,20 +1243,20 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         NCYCLES <- NULL
       } else if(length(survey.weights) != 0) {
         estimationMETHOD <- 'QMCEM'
-        optimINPUT <- 'nlminb'
+        optimINPUT <- 'NR'
         optimCTRL  <- NULL
         empiricalhist <- FALSE
         NCYCLES <- NULL
       } else if(i < 2){
         if(unstable == T){
           estimationMETHOD <- 'QMCEM'
-          optimINPUT <- NULL
+          optimINPUT <- 'NR'
           optimCTRL  <- NULL
           empiricalhist <- FALSE
           NCYCLES <- NULL
         } else {
           estimationMETHOD <- 'EM'
-          optimINPUT <- NULL
+          optimINPUT <- 'NR'
           optimCTRL  <- NULL
           empiricalhist <- TRUE
           NCYCLES <- 1e+5
@@ -1264,7 +1264,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       } else {
         if(unstable == T){
           estimationMETHOD <- 'QMCEM'
-          optimINPUT <- NULL
+          optimINPUT <- 'NR'
           optimCTRL  <- NULL
           empiricalhist <- FALSE
           NCYCLES <- NULL
@@ -1288,34 +1288,36 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       
       if(forceMHRM == T | forceGRSM == T | assumingFake == T | masterThesis == T){
         message('MHRM currently not supported with latent regressors')
-        estimationMETHOD <- 'QMCEM'
-        optimINPUT <- 'nlminb'
-        optimCTRL  <- NULL
-        empiricalhist <- FALSE
-        NCYCLES <- NULL
+
+          estimationMETHOD <- 'QMCEM'
+          optimINPUT <- 'NR'
+          optimCTRL  <- NULL
+          empiricalhist <- FALSE
+          NCYCLES <- NULL
+        
       } else if(length(survey.weights) != 0) {
         estimationMETHOD <- 'QMCEM'
-        optimINPUT <- 'nlminb'
+        optimINPUT <- 'NR'
         optimCTRL  <- NULL
         empiricalhist <- FALSE
         NCYCLES <- NULL
       } else if(i < 2){
         if(unstable == T){
           estimationMETHOD <- 'QMCEM'
-          optimINPUT <- NULL
+          optimINPUT <- 'NR'
           optimCTRL <- NULL
           empiricalhist <- FALSE
           NCYCLES <- NULL
         } else {
           estimationMETHOD <- 'EM'
-          optimINPUT <- 'nlminb'
+          optimINPUT <- 'NR'
           optimCTRL <- NULL
           empiricalhist <- TRUE
           NCYCLES <- 1e+5
         }
       } else {
         estimationMETHOD <- 'QMCEM'
-        optimINPUT <- 'nlminb' # NULL
+        optimINPUT <- 'NR' # NULL
         optimCTRL <- NULL
         empiricalhist <- FALSE
         NCYCLES <- NULL
