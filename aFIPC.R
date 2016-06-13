@@ -186,7 +186,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   message('with estimate prior distribution using an empirical histogram approach. please be patient.')
   LinkedModelSyntax <- mirt::mirt.model(paste0('F1 = 1-',ncol(newformXData[colnames(newFormModel@Data$data)]),'\n',
                                                'MEAN = F1'))
-  LinkedModel <- mirt::mirt(data = newformXData[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, SE = T, SE.type = 'complete', empiricalhist = T, accelerate = 'squarem', technical = list(NCYCLES = 1e+5), pars = NewScaleParms, GenRandomPars = F)
+  LinkedModel <- mirt::mirt(data = newformXData[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, SE = T, SE.type = 'complete', method = 'MHRM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5), pars = NewScaleParms, GenRandomPars = F)
   
   # if(!LinkedModel@OptimInfo$secondordertest){
   #   message('Estimation failed. estimating new parameters with no prior distribution using quasi-Monte Carlo EM estimation. please be patient.')
