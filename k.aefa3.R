@@ -1288,20 +1288,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       
       if(forceMHRM == T | forceGRSM == T | assumingFake == T | masterThesis == T){
         message('MHRM currently not supported with latent regressors')
-
-        if (i == 1) {
-          estimationMETHOD <- 'EM'
-          optimINPUT <- NULL
-          optimCTRL  <- NULL
-          empiricalhist <- TRUE
-          NCYCLES <- 1e+5
-        } else {
           estimationMETHOD <- 'QMCEM'
           optimINPUT <- NULL
           optimCTRL  <- NULL
           empiricalhist <- FALSE
-          NCYCLES <- NULL
-        }
+          NCYCLES <- 1e+4
         
       } else if(length(survey.weights) != 0) {
         estimationMETHOD <- 'QMCEM'
