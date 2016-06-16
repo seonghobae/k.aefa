@@ -182,6 +182,8 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
     }
   }
   
+  print(NewScaleParms)
+  
   message('\nestimating Linked Form Eq(X) parameters')
   message('with Cai\'s (2010) Metropolis-Hastings Robbins-Monro (MHRM) approach. please be patient.')
   LinkedModelSyntax <- mirt::mirt.model(paste0('F1 = 1-',ncol(newformXData[colnames(newFormModel@Data$data)]),'\n',
