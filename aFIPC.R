@@ -63,10 +63,10 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
     message('with traditional MMLE/EM approach')
     oldFormModelSyntax <- mirt::mirt.model(paste0('F1 = 1-',ncol(oldformYData),'\n',
                                                   'PRIOR = (1-',ncol(oldformYData),', a1, lnorm, 1, 1.6487), ', '(1-',ncol(oldformYData),', g, norm, .22, .08)'))
-    oldFormModel <- mirt::mirt(data = oldformYData, model = oldFormModelSyntax, itemtype = itemtype, SE = T, SE.type = 'complete', accelerate = 'squarem')
+    try(oldFormModel <- mirt::mirt(data = oldformYData, model = oldFormModelSyntax, itemtype = itemtype, SE = T, accelerate = 'squarem'))
   } else { # try to search priors automatically. if it fail, try to bayesian approaches
     message('with estimate prior distribution using an empirical histogram approach. please be patient.')
-    oldFormModel <- mirt::mirt(data = oldformYData, model = 1, itemtype = itemtype, SE = T, SE.type = 'complete', accelerate = 'squarem', empiricalhist = T, technical = list(NCYCLES = 1e+5), GenRandomPars = F)
+    try(oldFormModel <- mirt::mirt(data = oldformYData, model = 1, itemtype = itemtype, SE = T, accelerate = 'squarem', empiricalhist = T, technical = list(NCYCLES = 1e+5), GenRandomPars = F))
     
   }
   
@@ -75,7 +75,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
       message('Estimation failed. estimating new parameters with no prior distribution using quasi-Monte Carlo EM estimation. please be patient.')
       
       try(rm(oldFormModel))
-      try(oldFormModel <- mirt::mirt(data = oldformYData, 1, itemtype = itemtype, SE = T, SE.type = 'complete', method = 'QMCEM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = F))
+      try(oldFormModel <- mirt::mirt(data = oldformYData, 1, itemtype = itemtype, SE = T, method = 'QMCEM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = F))
     }
     
     if(!oldFormModel@OptimInfo$secondordertest){
@@ -83,7 +83,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
       
       try(rm(oldFormModel))
       while (!exists('oldFormModel')) {
-        try(oldFormModel <- mirt::mirt(data = oldformYData, 1, itemtype = itemtype, SE = T, method = 'MHRM', SE.type = 'MHRM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5, MHRM_SE_draws = 200000), GenRandomPars = F))
+        try(oldFormModel <- mirt::mirt(data = oldformYData, 1, itemtype = itemtype, SE = T, method = 'MHRM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5, MHRM_SE_draws = 200000), GenRandomPars = F))
       }
     }
   }
@@ -124,10 +124,10 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
     message('with traditional MMLE/EM approach')
     newFormModelSyntax <- mirt::mirt.model(paste0('F1 = 1-',ncol(newformXData),'\n',
                                                   'PRIOR = (1-',ncol(newformXData),', a1, lnorm, 1, 1.6487), ', '(1-',ncol(newformXData),', g, norm, .22, .08)'))
-    newFormModel <- mirt::mirt(data = newformXData, model = newFormModelSyntax, itemtype = itemtype, SE = T, SE.type = 'complete', accelerate = 'squarem')
+    try(newFormModel <- mirt::mirt(data = newformXData, model = newFormModelSyntax, itemtype = itemtype, SE = T, accelerate = 'squarem'))
   } else {
     message('with estimate prior distribution using an empirical histogram approach. please be patient.')
-    newFormModel <- mirt::mirt(data = newformXData, 1, itemtype = itemtype, SE = T, SE.type = 'complete', empiricalhist = T, accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = F)
+    try(newFormModel <- mirt::mirt(data = newformXData, 1, itemtype = itemtype, SE = T, empiricalhist = T, accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = F))
   }
   
   if (tryFitwholeNewItems) {
@@ -136,7 +136,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
       message('Estimation failed. estimating new parameters with no prior distribution using quasi-Monte Carlo EM estimation. please be patient.')
       
       try(rm(newFormModel))
-      try(newFormModel <- mirt::mirt(data = newformXData, 1, itemtype = itemtype, SE = T, method = 'QMCEM', SE.type = 'complete', accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = F))
+      try(newFormModel <- mirt::mirt(data = newformXData, 1, itemtype = itemtype, SE = T, method = 'QMCEM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = F))
     }
     
     if(!newFormModel@OptimInfo$secondordertest){
@@ -144,7 +144,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
       
       try(rm(newFormModel))
       while (!exists('newFormModel')) {
-        try(newFormModel <- mirt::mirt(data = newformXData, 1, itemtype = itemtype, SE = T, method = 'MHRM', SE.type = 'MHRM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5, MHRM_SE_draws = 200000), GenRandomPars = F))
+        try(newFormModel <- mirt::mirt(data = newformXData, 1, itemtype = itemtype, SE = T, method = 'MHRM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5, MHRM_SE_draws = 200000), GenRandomPars = F))
       }
     }
     
@@ -194,7 +194,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   #   message('Estimation failed. estimating new parameters with no prior distribution using quasi-Monte Carlo EM estimation. please be patient.')
   #   
   #   rm(LinkedModel)
-  #   try(LinkedModel <- mirt::mirt(data = newformXData[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, SE = T, method = 'QMCEM', SE.type = 'complete', accelerate = 'squarem', technical = list(NCYCLES = 1e+5), pars = NewScaleParms, GenRandomPars = F))
+  #   try(LinkedModel <- mirt::mirt(data = newformXData[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, SE = T, method = 'QMCEM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5), pars = NewScaleParms, GenRandomPars = F))
   # }
   # 
   # if(!LinkedModel@OptimInfo$secondordertest){
@@ -202,7 +202,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   #   
   #   rm(LinkedModel)
   #   while (!exists('LinkedModel')) {
-  #     try(LinkedModel <- mirt::mirt(data = newformXData[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, SE = T, method = 'MHRM', SE.type = 'MHRM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5, MHRM_SE_draws = 200000), pars = NewScaleParms, GenRandomPars = T))
+  #     try(LinkedModel <- mirt::mirt(data = newformXData[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, SE = T, method = 'MHRM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5, MHRM_SE_draws = 200000), pars = NewScaleParms, GenRandomPars = T))
   #   }
   # }
   
