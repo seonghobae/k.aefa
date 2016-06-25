@@ -215,6 +215,10 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   ExpectedScoreLinkedform <- mirt::expected.test(x = LinkedModel, Theta = fscores(LinkedModel, method = 'MAP'))
   ExpectedScoreNewform <- mirt::expected.test(x = newFormModel, Theta = fscores(newFormModel, method = 'MAP'))
   
+  # calculate theta
+  ThetaOldform <- fscores(oldFormModel, method = 'MAP')
+  ThetaLinkedform <- fscores(LinkedModel, method = 'MAP')
+  ThetaNewform <- fscores(newFormModel, method = 'MAP')
   
   # save results as object
   modelReturn <- new.env()
@@ -224,6 +228,9 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   modelReturn$ExpectedScoreOldform <- ExpectedScoreOldform
   modelReturn$ExpectedScoreLinkedform <- ExpectedScoreLinkedform
   modelReturn$ExpectedScoreNewform <- ExpectedScoreNewform
+  modelReturn$ThetaOldform <- ThetaOldform
+  modelReturn$ThetaNewform <- ThetaNewform
+  modelReturn$ThetaLinkedform <- ThetaLinkedform
   
   
   return(as.list(modelReturn))
