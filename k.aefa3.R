@@ -1254,7 +1254,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
           optimCTRL  <- NULL
           empiricalhist <- FALSE
           NCYCLES <- NULL
-        } else if (forceNormalEM == F) {
+        } else if (forceNormalEM == T) {
           estimationMETHOD <- 'EM'
           optimINPUT <- NULL
           optimCTRL  <- NULL
@@ -1313,7 +1313,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
           optimCTRL <- NULL
           empiricalhist <- FALSE
           NCYCLES <- NULL
-        } else if (forceNormalEM == F) {
+        } else if (forceNormalEM == T) {
           estimationMETHOD <- 'EM'
           optimINPUT <- NULL
           optimCTRL  <- NULL
