@@ -1225,7 +1225,7 @@ k.fixdata <- function(data, start, end, bioend){
 # surveyFA addon
 fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T,
                      forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F,
-                     forceMHRM = F, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T, forceUIRT = F, skipIdealPoint = F, ...){
+                     forceMHRM = F, forceNormalEM = F, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T, forceUIRT = F, skipIdealPoint = F, ...){
   for(i in 1:100){
     if (i == 1){
       message('\nfactor number: ', paste0(i))
@@ -1254,6 +1254,12 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
           optimCTRL  <- NULL
           empiricalhist <- FALSE
           NCYCLES <- NULL
+        } else if (forceNormalEM == F) {
+          estimationMETHOD <- 'EM'
+          optimINPUT <- NULL
+          optimCTRL  <- NULL
+          empiricalhist <- FALSE
+          NCYCLES <- 1e+5
         } else {
           estimationMETHOD <- 'EM'
           optimINPUT <- NULL
@@ -1288,11 +1294,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       
       if(forceMHRM == T | forceGRSM == T | assumingFake == T | masterThesis == T){
         message('MHRM currently not supported with latent regressors')
-          estimationMETHOD <- 'QMCEM'
-          optimINPUT <- NULL
-          optimCTRL  <- NULL
-          empiricalhist <- FALSE
-          NCYCLES <- 1e+4
+        estimationMETHOD <- 'QMCEM'
+        optimINPUT <- NULL
+        optimCTRL  <- NULL
+        empiricalhist <- FALSE
+        NCYCLES <- 1e+4
         
       } else if(length(survey.weights) != 0) {
         estimationMETHOD <- 'QMCEM'
@@ -1307,6 +1313,12 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
           optimCTRL <- NULL
           empiricalhist <- FALSE
           NCYCLES <- NULL
+        } else if (forceNormalEM == F) {
+          estimationMETHOD <- 'EM'
+          optimINPUT <- NULL
+          optimCTRL  <- NULL
+          empiricalhist <- FALSE
+          NCYCLES <- 1e+5
         } else {
           estimationMETHOD <- 'EM'
           optimINPUT <- NULL
@@ -1710,80 +1722,80 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       # forceGRSM (polytomous)
       # for detecting fake responses
       # if(SE == T){ # if grsm, Standard error estimation was unsuccessful.
-        
+      
       # } else {
-        #if((max(describe(x)$range) - min(describe(x)$range)) == 0 | forceGRSM == T | assumingFake == T | masterThesis == T){
-        if(forceGRSM == T | assumingFake == T | masterThesis == T){
-          x <- data.frame(x)
-          
-          if(length(which(describe(x)$max > median(describe(x)$max))) != 0){ # preventing weird input (e.g: 6 in 5 point scale)
-            for(ii in which(describe(x)$max > median(describe(x)$max))){
-              x[,ii] <- mapvalues(x[,ii], describe(x[,which(describe(x)$max > median(describe(x)$max))])$max, NA)
-            }
-          }
-          
-          x <- x[,which(describe(x)$range == max(describe(x)$range))]
-          k <- vector()
-          for(iii in 1:length(x)){
-            for(j in range(na.omit(x[iii]))[1]:range(na.omit(x[iii]))[2]){
-              if((sum(na.omit(x[iii]) == j) == 0) == TRUE){
-                k[length(k)+1] <- colnames(x[iii])              
-              }
-            }
-          }
-          
-          x <- (x[,!colnames(x) %in% k])
-          for(iiii in 1:ncol(x)){
-            x[,iiii] <- as.integer(x[,iiii])
-          }
-          
-          message('\nMIRT model: graded rating scale')
-          if(i == 1){
-            
-            try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsmIRT', method = estimationMETHOD,
-                                      accelerate = accelerateINPUT, calcNull = T,
-                                      technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                       removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                      formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                      SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
-            if(exists('modTEMP')){
-              if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-            }
-            
-            if(exists('modTEMP') == F){
-              if(i == 1){
-                stop('Fail to find Factor solutions: Model didn\'t converge.')
-              } else {
-                return(modOLD)
-              }
-            }
-            
-          } else {
-            
-            try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsm', method = estimationMETHOD,
-                                      accelerate = accelerateINPUT, calcNull = T,
-                                      technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                       removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                      formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                      SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
-            if(exists('modTEMP')){
-              if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-            }
-            
-            if(exists('modTEMP') == F){
-              if(i == 1){
-                stop('Fail to find Factor solutions: Model didn\'t converge.')
-              } else {
-                return(modOLD)
-              }
-            }
-            
-          }
-          
-          if(modTEMP@OptimInfo$converged == 1){
-            skipNominal <- T
+      #if((max(describe(x)$range) - min(describe(x)$range)) == 0 | forceGRSM == T | assumingFake == T | masterThesis == T){
+      if(forceGRSM == T | assumingFake == T | masterThesis == T){
+        x <- data.frame(x)
+        
+        if(length(which(describe(x)$max > median(describe(x)$max))) != 0){ # preventing weird input (e.g: 6 in 5 point scale)
+          for(ii in which(describe(x)$max > median(describe(x)$max))){
+            x[,ii] <- mapvalues(x[,ii], describe(x[,which(describe(x)$max > median(describe(x)$max))])$max, NA)
           }
         }
+        
+        x <- x[,which(describe(x)$range == max(describe(x)$range))]
+        k <- vector()
+        for(iii in 1:length(x)){
+          for(j in range(na.omit(x[iii]))[1]:range(na.omit(x[iii]))[2]){
+            if((sum(na.omit(x[iii]) == j) == 0) == TRUE){
+              k[length(k)+1] <- colnames(x[iii])              
+            }
+          }
+        }
+        
+        x <- (x[,!colnames(x) %in% k])
+        for(iiii in 1:ncol(x)){
+          x[,iiii] <- as.integer(x[,iiii])
+        }
+        
+        message('\nMIRT model: graded rating scale')
+        if(i == 1){
+          
+          try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsmIRT', method = estimationMETHOD,
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          }
+          
+          if(exists('modTEMP') == F){
+            if(i == 1){
+              stop('Fail to find Factor solutions: Model didn\'t converge.')
+            } else {
+              return(modOLD)
+            }
+          }
+          
+        } else {
+          
+          try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsm', method = estimationMETHOD,
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          }
+          
+          if(exists('modTEMP') == F){
+            if(i == 1){
+              stop('Fail to find Factor solutions: Model didn\'t converge.')
+            } else {
+              return(modOLD)
+            }
+          }
+          
+        }
+        
+        if(modTEMP@OptimInfo$converged == 1){
+          skipNominal <- T
+        }
+      }
       # }
       
       # polytomous
@@ -1880,7 +1892,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
 }
 
 
-surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T, forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F, forceMHRM = F, printFactorStructureRealtime = F, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T, autofix = T, forceUIRT = F, skipIdealPoint = F, ...) {
+surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T, forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F, forceNormalEM = F, forceMHRM = F, printFactorStructureRealtime = F, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T, autofix = T, forceUIRT = F, skipIdealPoint = F, ...) {
   message('---------------------------------------------------------')
   message(' k.aefa: kwangwoon automated exploratory factor analysis ')
   message('---------------------------------------------------------\n')
@@ -1975,16 +1987,16 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
       # item evaluation
       if(activateInfitOnly == T){ # if can't calculate S-X2 fit when itemtype = 'Rasch'
         if(length(c(
-                    union(which(max((surveyFixMod_itemFit$infit)) >= 1.5),
-                          which(max((surveyFixMod_itemFit$outfit)) >= 1.5)))) > 0){
+          union(which(max((surveyFixMod_itemFit$infit)) >= 1.5),
+                which(max((surveyFixMod_itemFit$outfit)) >= 1.5)))) > 0){
           
           message('\nRasch infit & outfit (.5 ~ 1.5): beta version')
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(
-                                                       union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                                                             which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))],
-                                   itemkeys = itemkeys[,-c(
-                                     union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                                           which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
+            union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
+                  which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))],
+            itemkeys = itemkeys[,-c(
+              union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
+                    which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
           
         } else {
           itemFitDone <- TRUE
@@ -2008,9 +2020,9 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
             surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(
               union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
                     which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))],
-                                     itemkeys = itemkeys[,-c(
-                                       union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                                             which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
+              itemkeys = itemkeys[,-c(
+                union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
+                      which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
             
           } else {
             itemFitDone <- TRUE
