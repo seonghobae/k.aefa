@@ -1360,8 +1360,8 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
     if((SE == T && SE.type == 'SEM') == T){
       accelerateINPUT <- 'none'
       TOLINPUT <- NULL
-      SEtolINPUT <- 1e-4
-      symmetric_SEMINPUT <- TRUE
+      SEtolINPUT <- 1e-5
+      symmetric_SEMINPUT <- FALSE
       
       message('TOL: ', 'default', ' / SEtol: ', SEtolINPUT, ' / SE.type: ', SE.type, ' / Accelerator: ',
               accelerateINPUT, ' / Symmetric SEM: ', symmetric_SEMINPUT)
