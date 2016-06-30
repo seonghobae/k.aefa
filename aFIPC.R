@@ -172,7 +172,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
       stop('Estimation failed. Please check test quality.')
     }
   }
-
+  
   
   # do FIPC
   NewScaleParms <- mirt::mod2values(newFormModel)
@@ -182,71 +182,71 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   NewScaleParms[which(NewScaleParms$item == paste0('GROUP')), "est"] <- FALSE
   OldScaleParms[which(OldScaleParms$item == paste0('GROUP')), "est"] <- FALSE
   
-    #IPD
-    if(checkIPD == T){
-      # config
-      IPDgroup <- as.factor(c(rep('oldForm', nrow(oldformYDataK)), rep('newForm', nrow(newformXDataK))))
-      IPDItemCount <- 0
-      IPDItemNamesOldForm <- vector()
-      IPDItemNamesNewForm <- vector()
-      
-      # IPD target item checking
-      for(i in 1:length(oldformCommonItemNames)){
-        if((length(grep(paste0('^',newformCommonItemNames[i],'$'), colnames(newformXDataK[colnames(newFormModel@Data$data)]))) == 1) == TRUE && (length(grep(paste0('^',oldformCommonItemNames[i],'$'), colnames(oldformYDataK[colnames(oldFormModel@Data$data)]))) == 1) == TRUE){
-          IPDItemCount <- IPDItemCount + 1
-          IPDItemNamesOldForm[IPDItemCount] <- names(oldformYDataK[oldformCommonItemNames[i]])
-          IPDItemNamesNewForm[IPDItemCount] <- names(newformXDataK[newformCommonItemNames[i]])
-          
-        } else {
-          
-        }
-      }
-      
-      # IPD Data generation
-      IPDItemList <- data.frame(rbind(IPDItemNamesOldForm, IPDItemNamesNewForm))
-      
-      IPDData <- data.frame(matrix(nrow = length(IPDgroup), ncol = IPDItemCount))
-      colnames(IPDData) <- paste0('X', 1:IPDItemCount)
-      print(IPDItemNamesOldForm)
-      print(IPDItemNamesNewForm)
-      IPDData[1:nrow(oldformYDataK),] <- oldformYDataK[,IPDItemNamesOldForm]
-      IPDData[nrow(oldformYDataK)+1:nrow(newformXDataK),] <- newformXDataK[,IPDItemNamesNewForm]
-      
-      # IPD estimation
-      IPDParmNames <- OldScaleParms$name
-      IPDParmNames <- IPDParmNames[!duplicated(IPDParmNames)]
-      IPDParmNames <- IPDParmNames[-c(grep("^MEAN", IPDParmNames), grep("^COV", IPDParmNames), grep("^ak", IPDParmNames), grep("^d0$", IPDParmNames))]
-      IPDParmNames <- as.character(IPDParmNames)
-      
-      message('Discovering IPD')
-      modIPD_MG <- multipleGroup(IPDData, model = 1, group = IPDgroup,
-                                 itemtype = itemtype, method = 'MHRM', invariance = names(IPDData), technical = list(NCYCLES = 1e+5, removeEmptyRows=TRUE))
-      try(modIPD_DIF <- DIF(modIPD_MG, IPDParmNames, scheme = 'drop_sequential', method = 'MHRM', technical = list(NCYCLES = 1e+5)))
-      if(exists('modIPD_DIF')){
+  #IPD
+  if(checkIPD == T){
+    # config
+    IPDgroup <- as.factor(c(rep('oldForm', nrow(oldformYDataK)), rep('newForm', nrow(newformXDataK))))
+    IPDItemCount <- 0
+    IPDItemNamesOldForm <- vector()
+    IPDItemNamesNewForm <- vector()
+    
+    # IPD target item checking
+    for(i in 1:length(oldformCommonItemNames)){
+      if((length(grep(paste0('^',newformCommonItemNames[i],'$'), colnames(newformXDataK[colnames(newFormModel@Data$data)]))) == 1) == TRUE && (length(grep(paste0('^',oldformCommonItemNames[i],'$'), colnames(oldformYDataK[colnames(oldFormModel@Data$data)]))) == 1) == TRUE){
+        IPDItemCount <- IPDItemCount + 1
+        IPDItemNamesOldForm[IPDItemCount] <- names(oldformYDataK[oldformCommonItemNames[i]])
+        IPDItemNamesNewForm[IPDItemCount] <- names(newformXDataK[newformCommonItemNames[i]])
         
-        modIPD_IPDItem <- names(modIPD_DIF)
-        CommonItemList_NOIPD <- colnames(IPDData)[!colnames(IPDData) %in% modIPD_IPDItem]
-        print(modIPD_DIF)
-        print(CommonItemList_NOIPD)
-        
-        ActualoldFormCommonItem <- vector(length = length(CommonItemList_NOIPD))
-        ActualnewFormCommonItem <- vector(length = length(CommonItemList_NOIPD))
-        for(i in 1:length(CommonItemList_NOIPD)){
-          ActualoldFormCommonItem[i] <- as.character(IPDItemList[CommonItemList_NOIPD][1,i])
-          ActualnewFormCommonItem[i] <- as.character(IPDItemList[CommonItemList_NOIPD][2,i])
-        }
-        
-        message('ActualoldFormCommonItem: ', ActualoldFormCommonItem)
-        message('ActualnewFormCommonItem: ', ActualnewFormCommonItem)
-        
-        oldformCommonItemNames <- ActualoldFormCommonItem
-        newformCommonItemNames <- ActualnewFormCommonItem
-        message('oldformCommonItemNames: ', ActualoldFormCommonItem)
-        message('newformCommonItemNames: ', ActualnewFormCommonItem)
       } else {
-        message('No IPD detected')
+        
       }
     }
+    
+    # IPD Data generation
+    IPDItemList <- data.frame(rbind(IPDItemNamesOldForm, IPDItemNamesNewForm))
+    
+    IPDData <- data.frame(matrix(nrow = length(IPDgroup), ncol = IPDItemCount))
+    colnames(IPDData) <- paste0('X', 1:IPDItemCount)
+    print(IPDItemNamesOldForm)
+    print(IPDItemNamesNewForm)
+    IPDData[1:nrow(oldformYDataK),] <- oldformYDataK[,IPDItemNamesOldForm]
+    IPDData[nrow(oldformYDataK)+1:nrow(newformXDataK),] <- newformXDataK[,IPDItemNamesNewForm]
+    
+    # IPD estimation
+    IPDParmNames <- OldScaleParms$name
+    IPDParmNames <- IPDParmNames[!duplicated(IPDParmNames)]
+    IPDParmNames <- IPDParmNames[-c(grep("^MEAN", IPDParmNames), grep("^COV", IPDParmNames), grep("^ak", IPDParmNames), grep("^d0$", IPDParmNames))]
+    IPDParmNames <- as.character(IPDParmNames)
+    
+    message('Discovering IPD')
+    modIPD_MG <- multipleGroup(IPDData, model = 1, group = IPDgroup,
+                               itemtype = itemtype, method = 'MHRM', invariance = names(IPDData), technical = list(NCYCLES = 1e+5, removeEmptyRows=TRUE))
+    try(modIPD_DIF <- DIF(modIPD_MG, IPDParmNames, scheme = 'drop_sequential', method = 'MHRM', technical = list(NCYCLES = 1e+5)))
+    if(exists('modIPD_DIF')){
+      
+      modIPD_IPDItem <- names(modIPD_DIF)
+      CommonItemList_NOIPD <- colnames(IPDData)[!colnames(IPDData) %in% modIPD_IPDItem]
+      print(modIPD_DIF)
+      print(CommonItemList_NOIPD)
+      
+      ActualoldFormCommonItem <- vector(length = length(CommonItemList_NOIPD))
+      ActualnewFormCommonItem <- vector(length = length(CommonItemList_NOIPD))
+      for(i in 1:length(CommonItemList_NOIPD)){
+        ActualoldFormCommonItem[i] <- as.character(IPDItemList[CommonItemList_NOIPD][1,i])
+        ActualnewFormCommonItem[i] <- as.character(IPDItemList[CommonItemList_NOIPD][2,i])
+      }
+      
+      message('ActualoldFormCommonItem: ', ActualoldFormCommonItem)
+      message('ActualnewFormCommonItem: ', ActualnewFormCommonItem)
+      
+      oldformCommonItemNames <- ActualoldFormCommonItem
+      newformCommonItemNames <- ActualnewFormCommonItem
+      message('oldformCommonItemNames: ', ActualoldFormCommonItem)
+      message('newformCommonItemNames: ', ActualnewFormCommonItem)
+    } else {
+      message('No IPD detected')
+    }
+  }
   
   for(i in 1:length(oldformCommonItemNames)){
     if((length(grep(paste0('^',newformCommonItemNames[i],'$'), colnames(newformXDataK[colnames(newFormModel@Data$data)]))) == 1) == TRUE && (length(grep(paste0('^',oldformCommonItemNames[i],'$'), colnames(oldformYDataK[colnames(oldFormModel@Data$data)]))) == 1) == TRUE){
@@ -271,7 +271,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   message('with Cai\'s (2010) Metropolis-Hastings Robbins-Monro (MHRM) approach. please be patient.')
   LinkedModelSyntax <- mirt::mirt.model(paste0('F1 = 1-',ncol(newformXDataK[colnames(newFormModel@Data$data)]),'\n',
                                                'MEAN = F1'))
-  LinkedModel <- mirt::mirt(data = newformXDataK[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, method = 'MHRM', SE = T, accelerate = 'squarem', TOL = 1e-4, technical = list(NCYCLES = 1e+5, SEtol = 1e-4, MHRM_SE_draws = 1e+5), pars = NewScaleParms, GenRandomPars = F)
+  LinkedModel <- mirt::mirt(data = newformXDataK[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, method = 'MHRM', SE = T, accelerate = 'squarem', TOL = .0005, technical = list(NCYCLES = 1e+6, SEtol = 1e-4, MHRM_SE_draws = 1e+5), pars = NewScaleParms, GenRandomPars = F)
   
   # if(!LinkedModel@OptimInfo$secondordertest){
   #   message('Estimation failed. estimating new parameters with no prior distribution using quasi-Monte Carlo EM estimation. please be patient.')
