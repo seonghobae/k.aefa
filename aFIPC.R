@@ -1,6 +1,6 @@
 source('https://raw.githubusercontent.com/seonghobae/k.aefa/master/k.aefa3.R')
 
-autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNames = ..., oldformCommonItemNames = ..., itemtype = '3PL', newformBILOGprior = NULL, oldformBILOGprior = NULL, tryFitwholeNewItems = T, tryFitwholeOldItems = T, ...){
+autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNames = ..., oldformCommonItemNames = ..., itemtype = '3PL', newformBILOGprior = NULL, oldformBILOGprior = NULL, tryFitwholeNewItems = T, tryFitwholeOldItems = T, checkIPD = T, ...){
   
   # print credits
   message('automated Fixed Item Parameter Calibration: aFIPC 0.2')
@@ -79,7 +79,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
         message('Estimation failed. estimating new parameters with no prior distribution using quasi-Monte Carlo EM estimation. please be patient.')
         
         try(rm(oldFormModel))
-        try(oldFormModel <- mirt::mirt(data = oldformYData, 1, itemtype = itemtype, SE = T, method = 'QMCEM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = F))
+        try(oldFormModel <- mirt::mirt(data = oldformYDataK, 1, itemtype = itemtype, SE = T, method = 'QMCEM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = F))
       }
       
       if(!oldFormModel@OptimInfo$secondordertest){
@@ -87,7 +87,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
         
         try(rm(oldFormModel))
         while (!exists('oldFormModel')) {
-          try(oldFormModel <- mirt::mirt(data = oldformYData, 1, itemtype = itemtype, SE = T, method = 'MHRM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5, MHRM_SE_draws = 200000), GenRandomPars = F))
+          try(oldFormModel <- mirt::mirt(data = oldformYDataK, 1, itemtype = itemtype, SE = T, method = 'MHRM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5, MHRM_SE_draws = 200000), GenRandomPars = F))
         }
       }
     }
@@ -109,7 +109,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
     newFormModel <- newformXData
     newformXDataK <- data.frame(newFormModel@Data$data)
   } else {
-    newformYDataK <- newformYData
+    newformXDataK <- newformYData
     if(itemtype == '3PL' && length(newformBILOGprior) == 0){
       checknewformBILOGprior <- function()
       { 
@@ -138,7 +138,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
       try(newFormModel <- mirt::mirt(data = newformXData, model = newFormModelSyntax, itemtype = itemtype, SE = T, accelerate = 'squarem'))
     } else {
       message('with estimate prior distribution using an empirical histogram approach. please be patient.')
-      try(newFormModel <- mirt::mirt(data = newformXData, 1, itemtype = itemtype, SE = T, empiricalhist = T, accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = F))
+      try(newFormModel <- mirt::mirt(data = newformXDataK, 1, itemtype = itemtype, SE = T, empiricalhist = T, accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = F))
     }
     
     if (tryFitwholeNewItems) {
@@ -147,7 +147,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
         message('Estimation failed. estimating new parameters with no prior distribution using quasi-Monte Carlo EM estimation. please be patient.')
         
         try(rm(newFormModel))
-        try(newFormModel <- mirt::mirt(data = newformXData, 1, itemtype = itemtype, SE = T, method = 'QMCEM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = F))
+        try(newFormModel <- mirt::mirt(data = newformXDataK, 1, itemtype = itemtype, SE = T, method = 'QMCEM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = F))
       }
       
       if(!newFormModel@OptimInfo$secondordertest){
@@ -155,7 +155,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
         
         try(rm(newFormModel))
         while (!exists('newFormModel')) {
-          try(newFormModel <- mirt::mirt(data = newformXData, 1, itemtype = itemtype, SE = T, method = 'MHRM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5, MHRM_SE_draws = 200000), GenRandomPars = F))
+          try(newFormModel <- mirt::mirt(data = newformXDataK, 1, itemtype = itemtype, SE = T, method = 'MHRM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5, MHRM_SE_draws = 200000), GenRandomPars = F))
         }
       }
       
@@ -175,8 +175,78 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
 
   
   # do FIPC
-  NewScaleParms <- mod2values(newFormModel)
-  OldScaleParms <- mod2values(oldFormModel)
+  NewScaleParms <- mirt::mod2values(newFormModel)
+  OldScaleParms <- mirt::mod2values(oldFormModel)
+  NewScaleParms[, "est"] <- TRUE
+  OldScaleParms[, "est"] <- TRUE
+  NewScaleParms[which(NewScaleParms$item == paste0('GROUP')), "est"] <- FALSE
+  OldScaleParms[which(OldScaleParms$item == paste0('GROUP')), "est"] <- FALSE
+  
+    #IPD
+    if(checkIPD == T){
+      # config
+      IPDgroup <- as.factor(c(rep('oldForm', nrow(oldformYDataK)), rep('newForm', nrow(newformXDataK))))
+      IPDItemCount <- 0
+      IPDItemNamesOldForm <- vector()
+      IPDItemNamesNewForm <- vector()
+      
+      # IPD target item checking
+      for(i in 1:length(oldformCommonItemNames)){
+        if((length(grep(paste0('^',newformCommonItemNames[i],'$'), colnames(newformXDataK[colnames(newFormModel@Data$data)]))) == 1) == TRUE && (length(grep(paste0('^',oldformCommonItemNames[i],'$'), colnames(oldformYDataK[colnames(oldFormModel@Data$data)]))) == 1) == TRUE){
+          IPDItemCount <- IPDItemCount + 1
+          IPDItemNamesOldForm[IPDItemCount] <- names(oldformYDataK[oldformCommonItemNames[i]])
+          IPDItemNamesNewForm[IPDItemCount] <- names(newformXDataK[newformCommonItemNames[i]])
+          
+        } else {
+          
+        }
+      }
+      
+      # IPD Data generation
+      IPDItemList <- data.frame(rbind(IPDItemNamesOldForm, IPDItemNamesNewForm))
+      
+      IPDData <- data.frame(matrix(nrow = length(IPDgroup), ncol = IPDItemCount))
+      colnames(IPDData) <- paste0('X', 1:IPDItemCount)
+      print(IPDItemNamesOldForm)
+      print(IPDItemNamesNewForm)
+      IPDData[1:nrow(oldformYDataK),] <- oldformYDataK[,IPDItemNamesOldForm]
+      IPDData[nrow(oldformYDataK)+1:nrow(newformXDataK),] <- newformXDataK[,IPDItemNamesNewForm]
+      
+      # IPD estimation
+      IPDParmNames <- OldScaleParms$name
+      IPDParmNames <- IPDParmNames[!duplicated(IPDParmNames)]
+      IPDParmNames <- IPDParmNames[-c(grep("^MEAN", IPDParmNames), grep("^COV", IPDParmNames), grep("^ak", IPDParmNames), grep("^d0$", IPDParmNames))]
+      IPDParmNames <- as.character(IPDParmNames)
+      
+      message('Discovering IPD')
+      modIPD_MG <- multipleGroup(IPDData, model = 1, group = IPDgroup,
+                                 itemtype = itemtype, method = 'MHRM', invariance = names(IPDData), technical = list(NCYCLES = 1e+5, removeEmptyRows=TRUE))
+      try(modIPD_DIF <- DIF(modIPD_MG, IPDParmNames, scheme = 'drop_sequential', method = 'MHRM', technical = list(NCYCLES = 1e+5)))
+      if(exists('modIPD_DIF')){
+        
+        modIPD_IPDItem <- names(modIPD_DIF)
+        CommonItemList_NOIPD <- colnames(IPDData)[!colnames(IPDData) %in% modIPD_IPDItem]
+        print(modIPD_DIF)
+        print(CommonItemList_NOIPD)
+        
+        ActualoldFormCommonItem <- vector(length = length(CommonItemList_NOIPD))
+        ActualnewFormCommonItem <- vector(length = length(CommonItemList_NOIPD))
+        for(i in 1:length(CommonItemList_NOIPD)){
+          ActualoldFormCommonItem[i] <- as.character(IPDItemList[CommonItemList_NOIPD][1,i])
+          ActualnewFormCommonItem[i] <- as.character(IPDItemList[CommonItemList_NOIPD][2,i])
+        }
+        
+        message('ActualoldFormCommonItem: ', ActualoldFormCommonItem)
+        message('ActualnewFormCommonItem: ', ActualnewFormCommonItem)
+        
+        oldformCommonItemNames <- ActualoldFormCommonItem
+        newformCommonItemNames <- ActualnewFormCommonItem
+        message('oldformCommonItemNames: ', ActualoldFormCommonItem)
+        message('newformCommonItemNames: ', ActualnewFormCommonItem)
+      } else {
+        message('No IPD detected')
+      }
+    }
   
   for(i in 1:length(oldformCommonItemNames)){
     if((length(grep(paste0('^',newformCommonItemNames[i],'$'), colnames(newformXDataK[colnames(newFormModel@Data$data)]))) == 1) == TRUE && (length(grep(paste0('^',oldformCommonItemNames[i],'$'), colnames(oldformYDataK[colnames(oldFormModel@Data$data)]))) == 1) == TRUE){
@@ -244,7 +314,10 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   modelReturn$ThetaOldform <- ThetaOldform
   modelReturn$ThetaNewform <- ThetaNewform
   modelReturn$ThetaLinkedform <- ThetaLinkedform
-  
+  if(checkIPD){
+    modelReturn$IPDData <- data.frame(IPDData, IPDgroup)
+    modelReturn$IPDItemList <- IPDItemList
+  }
   
   return(as.list(modelReturn))
 }
