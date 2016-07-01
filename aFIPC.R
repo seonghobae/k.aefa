@@ -219,9 +219,16 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
     IPDParmNames <- as.character(IPDParmNames)
     
     message('Discovering IPD')
-    modIPD_MG <- multipleGroup(IPDData, model = 1, group = IPDgroup,
-                               itemtype = itemtype, method = 'MHRM', invariance = names(IPDData), technical = list(NCYCLES = 1e+5, removeEmptyRows=TRUE))
-    try(modIPD_DIF <- DIF(modIPD_MG, IPDParmNames, scheme = 'drop_sequential', method = 'MHRM', technical = list(NCYCLES = 1e+5)))
+    if(itemtype == 'nominal'){
+      modIPD_MG <- multipleGroup(IPDData, model = 1, group = IPDgroup,
+                                 itemtype = itemtype, method = 'EM', invariance = names(IPDData), empiricalhist = T, technical = list(NCYCLES = 1e+5, removeEmptyRows=TRUE))
+      try(modIPD_DIF <- DIF(modIPD_MG, IPDParmNames, scheme = 'drop_sequential', method = 'EM', empiricalhist = T, technical = list(NCYCLES = 1e+5)))
+    } else {
+      modIPD_MG <- multipleGroup(IPDData, model = 1, group = IPDgroup,
+                                 itemtype = itemtype, method = 'MHRM', invariance = names(IPDData), technical = list(NCYCLES = 1e+5, removeEmptyRows=TRUE))
+      try(modIPD_DIF <- DIF(modIPD_MG, IPDParmNames, scheme = 'drop_sequential', method = 'MHRM', technical = list(NCYCLES = 1e+5)))
+    }
+    
     if(exists('modIPD_DIF')){
       
       modIPD_IPDItem <- names(modIPD_DIF)
