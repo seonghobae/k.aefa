@@ -316,7 +316,9 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   modelReturn$ThetaLinkedform <- ThetaLinkedform
   if(checkIPD){
     modelReturn$IPDData <- data.frame(IPDData, IPDgroup)
-    modelReturn$IPDCommonItemList <- IPDItemList[CommonItemList_NOIPD]
+    if(exists('CommonItemList_NOIPD')){
+      modelReturn$IPDCommonItemList <- IPDItemList[CommonItemList_NOIPD]
+    }
   }
   
   return(as.list(modelReturn))
