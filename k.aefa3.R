@@ -2064,7 +2064,11 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
       if(ncol(surveyFixMod@Fit$F)==1){
         print(round(surveyFixMod@Fit$F, 2))
       } else {
-        print(round(GPArotation::geominQ(surveyFixMod@Fit$F, maxit = 10000)$loadings, 2))
+        if(bifactorSolution){
+          print(round(GPArotation::bifactorQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+        } else {
+          print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+        }
       }
     }
   } # the end of while loop
@@ -2091,7 +2095,11 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
       if(ncol(surveyFixMod@Fit$F)==1){
         print(round(surveyFixMod@Fit$F, 2))
       } else {
-        print(round(GPArotation::geominQ(surveyFixMod@Fit$F, maxit = 10000)$loadings, 2))
+        if(bifactorSolution){
+          print(round(GPArotation::bifactorQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+        } else {
+          print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+        }
       }
     }
     
@@ -2116,7 +2124,11 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
       if(ncol(surveyFixMod_Workout@Fit$F) == 1){
         Fmatrix <- surveyFixMod_Workout@Fit$F
       } else {
-        Fmatrix <- GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings
+        if(bifactorSolution){
+          Fmatrix <- GPArotation::bifactorQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings
+        } else {
+          Fmatrix <- GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings
+        }
       }
       
       NoLoadings <- surveyFixMod_Workout@Fit$h2[which(rowSums(abs(round(Fmatrix, 2)) < .4) == ncol(surveyFixMod_Workout@Fit$F))]
@@ -2135,7 +2147,11 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
           if(ncol(surveyFixMod_Workout@Fit$F)==1){
             print(round(surveyFixMod_Workout@Fit$F, 2))
           } else {
-            print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+            if(bifactorSolution){
+              print(round(GPArotation::bifactorQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+            } else {
+              print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+            }
           }
         }
         
@@ -2149,7 +2165,11 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
             if(ncol(surveyFixMod_Workout@Fit$F)==1){
               print(round(surveyFixMod_Workout@Fit$F, 2))
             } else {
-              print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+              if(bifactorSolution){
+                print(round(GPArotation::bifactorQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+              } else {
+                print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+              }
             }
           }
           
@@ -2165,7 +2185,11 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
       if(ncol(surveyFixMod_Workout@Fit$F)==1){
         print(round(surveyFixMod_Workout@Fit$F, 2))
       } else {
-        print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+        if(bifactorSolution){
+          print(round(GPArotation::bifactorQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+        } else {
+          print(round(GPArotation::geominQ(surveyFixMod_Workout@Fit$F, maxit = 10000)$loadings, 2))
+        }
       }
     }
     return(surveyFixMod_Workout)
