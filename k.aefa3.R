@@ -1893,15 +1893,32 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
 }
 
 
-surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T, forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F, forceNormalEM = F, forceMHRM = F, printFactorStructureRealtime = F, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T, autofix = T, forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, ...) {
+surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
+                     SE.type = "crossprod", skipNominal = T, forceGRSM = F,
+                     assumingFake = F, masterThesis = F, forceRasch = F,
+                     unstable = F, forceNormalEM = F, forceMHRM = F,
+                     printFactorStructureRealtime = F, itemkeys = NULL,
+                     survey.weights = NULL, allowMixedResponse = T, autofix = T,
+                     forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, bifactorSolution = F, ...) {
   message('---------------------------------------------------------')
   message(' k.aefa: kwangwoon automated exploratory factor analysis ')
   message('---------------------------------------------------------\n')
   
+  if(bifactorSolution) {
+    rotateCriteria <- 'bifactorQ'
+  } else {
+    rotateCriteria <- 'geominQ'
+  }
+  
   message('Calculating Initial Factor model')
   iteration_num <- 1
   message('Iteration: ', iteration_num, '\n')
-  surveyFixMod <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
+  surveyFixMod <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata),
+                           formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal,
+                           forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis,
+                           forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM,
+                           itemkeys = itemkeys, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse,
+                           autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
   
   itemFitDone <- FALSE
   while (!itemFitDone) {
@@ -1920,7 +1937,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
                                                 method = 'MAP',
                                                 QMC = T,
                                                 Theta = fscores(surveyFixMod, method = 'MAP',
-                                                                QMC = T)))
+                                                                QMC = T, rotate = rotateCriteria), rotate = rotateCriteria))
       } else {
         mirtCluster()
         try(surveyFixMod_itemFitTest <- itemfit(x = surveyFixMod, S_X2 = T, Zh = T, infit = T,
@@ -1928,7 +1945,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
                                                 method = 'MAP',
                                                 QMC = T,
                                                 Theta = fscores(surveyFixMod, method = 'MAP',
-                                                                QMC = T)))
+                                                                QMC = T, rotate = rotateCriteria), rotate = rotateCriteria))
         mirtCluster(remove = T)
       }
       if(!exists('surveyFixMod_itemFitTest')){
@@ -1961,7 +1978,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
                                           method = 'MAP',
                                           QMC = T,
                                           Theta = fscores(surveyFixMod, method = 'MAP',
-                                                          QMC = T))
+                                                          QMC = T, rotate = rotateCriteria), rotate = rotateCriteria)
         }
         
       } else {
@@ -1975,7 +1992,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
                                           method = 'MAP',
                                           QMC = T,
                                           Theta = fscores(surveyFixMod, method = 'MAP',
-                                                          QMC = T))
+                                                          QMC = T, rotate = rotateCriteria), rotate = rotateCriteria)
           
           mirtCluster(remove = T)
         }
