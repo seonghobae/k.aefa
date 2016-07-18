@@ -1,6 +1,6 @@
 source('https://raw.githubusercontent.com/seonghobae/k.aefa/master/k.aefa3.R')
 
-autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNames = ..., oldformCommonItemNames = ..., itemtype = '3PL', newformBILOGprior = NULL, oldformBILOGprior = NULL, tryFitwholeNewItems = T, tryFitwholeOldItems = T, checkIPD = T, tryEM = F, ...){
+autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNames = ..., oldformCommonItemNames = ..., itemtype = '3PL', newformBILOGprior = NULL, oldformBILOGprior = NULL, tryFitwholeNewItems = T, tryFitwholeOldItems = T, checkIPD = T, tryEM = F, freeMEAN = T, ...){
   
   # print credits
   message('automated Fixed Item Parameter Calibration: aFIPC 0.2')
@@ -277,8 +277,13 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   
   message('\nestimating Linked Form Eq(X) parameters')
   message('with Cai\'s (2010) Metropolis-Hastings Robbins-Monro (MHRM) approach. please be patient.')
-  LinkedModelSyntax <- mirt::mirt.model(paste0('F1 = 1-',ncol(newformXDataK[colnames(newFormModel@Data$data)]),'\n',
-                                               'MEAN = F1'))
+  if(freeMEAN == T){
+    LinkedModelSyntax <- mirt::mirt.model(paste0('F1 = 1-',ncol(newformXDataK[colnames(newFormModel@Data$data)]),'\n',
+                                                 'MEAN = F1'))
+  } else {
+    LinkedModelSyntax <- mirt::mirt.model(paste0('F1 = 1-',ncol(newformXDataK[colnames(newFormModel@Data$data)]),'\n' ))
+  }
+
   if(itemtype == 'nominal' | tryEM == T){
     LinkedModel <- mirt::mirt(data = newformXDataK[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, method = 'EM', SE = T, accelerate = 'squarem', empiricalhist = T, technical = list(NCYCLES = 1e+6, SEtol = 1e-4, MHRM_SE_draws = 1e+5), pars = NewScaleParms, GenRandomPars = F)
     
