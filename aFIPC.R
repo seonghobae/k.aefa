@@ -218,6 +218,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
     IPDParmNames <- IPDParmNames[-c(grep("^MEAN", IPDParmNames), grep("^COV", IPDParmNames), grep("^ak", IPDParmNames), grep("^d0$", IPDParmNames))]
     IPDParmNames <- as.character(IPDParmNames)
     
+    mirt::mirtCluster()
     message('Discovering IPD')
     if(itemtype == 'nominal' | tryEM == T){
       modIPD_MG <- multipleGroup(IPDData, model = 1, group = IPDgroup,
@@ -228,6 +229,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
                                  itemtype = itemtype, method = 'MHRM', invariance = names(IPDData), technical = list(NCYCLES = 1e+5, removeEmptyRows=TRUE))
       try(modIPD_DIF <- DIF(modIPD_MG, IPDParmNames, scheme = 'drop_sequential', method = 'MHRM', technical = list(NCYCLES = 1e+5)))
     }
+    mirt::mirtCluster(remove = T)
     
     if(exists('modIPD_DIF')){
       
