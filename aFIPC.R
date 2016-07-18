@@ -258,7 +258,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   }
   
   for(i in 1:length(oldformCommonItemNames)){
-
+    
     if((length(grep(paste0('^',newformCommonItemNames[i],'$'), colnames(newformXDataK[colnames(newFormModel@Data$data)]))) == 1) == TRUE && (length(grep(paste0('^',oldformCommonItemNames[i],'$'), colnames(oldformYDataK[colnames(oldFormModel@Data$data)]))) == 1) == TRUE && (length(levels(as.factor(newFormModel@Data$data[,grep(paste0('^',newformCommonItemNames[i],'$'), colnames(newformXDataK[colnames(newFormModel@Data$data)]))]))) == length(levels(as.factor(oldFormModel@Data$data[,grep(paste0('^',oldformCommonItemNames[i],'$'), colnames(oldformYDataK[colnames(oldFormModel@Data$data)]))]))))){
       message('applying ', paste0(newformCommonItemNames[i]), ' <<< ', paste0(oldformCommonItemNames[i]), ' as common item use')
       
@@ -275,22 +275,50 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
     }
   }
   
+  if(length(attr(newFormModel@ParObjects$lrPars, 'parnum')) != 0 && length(attr(oldFormModel@ParObjects$lrPars, 'parnum')) != 0){
+    NewScaleParms[which(NewScaleParms$item == paste0('BETA')), "value"] <- OldScaleParms[which(OldScaleParms$item == paste0('BETA')), "value"]
+    NewScaleParms[which(NewScaleParms$item == paste0('BETA')), "est"] <- FALSE
+    
+    message('applying BETA parameter as linking')
+    
+    message('   Linkedform Parms: ', paste0(NewScaleParms[which(NewScaleParms$item == paste0('BETA')), "value"], ' '), '\n')
+    betaFormula <- attr(newFormModel@ParObjects$lrPars, 'formula')[[1]]
+    betaCOVdata <- attr(newFormModel@ParObjects$lrPars, 'df')
+    betaSE <- FALSE
+    betaEmpiricalhist <- FALSE
+  } else {
+    betaFormula <- NULL
+    betaCOVdata <- NULL
+    betaSE <- TRUE
+    betaEmpiricalhist <- TRUE
+    
+  }
+  
   print(NewScaleParms)
   
   message('\nestimating Linked Form Eq(X) parameters')
-  message('with Cai\'s (2010) Metropolis-Hastings Robbins-Monro (MHRM) approach. please be patient.')
   if(freeMEAN == T){
     LinkedModelSyntax <- mirt::mirt.model(paste0('F1 = 1-',ncol(newformXDataK[colnames(newFormModel@Data$data)]),'\n',
                                                  'MEAN = F1'))
   } else {
     LinkedModelSyntax <- mirt::mirt.model(paste0('F1 = 1-',ncol(newformXDataK[colnames(newFormModel@Data$data)]),'\n' ))
   }
-
+  
   if(itemtype == 'nominal' | tryEM == T){
-    LinkedModel <- mirt::mirt(data = newformXDataK[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, method = 'EM', SE = T, accelerate = 'squarem', empiricalhist = T, technical = list(NCYCLES = 1e+6, SEtol = 1e-4, MHRM_SE_draws = 1e+5), pars = NewScaleParms, GenRandomPars = F)
+    if(betaEmpiricalhist){
+      message('with MMLE/EM + empirical histogram approach. please be patient.')
+      
+    } else {
+      message('with MMLE/EM approach. please be patient.')
+      
+    }
+    
+    LinkedModel <- mirt::mirt(data = newformXDataK[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, method = 'EM', SE = betaSE, accelerate = 'squarem', empiricalhist = betaEmpiricalhist, technical = list(NCYCLES = 1e+6, SEtol = 1e-4, MHRM_SE_draws = 1e+5), pars = NewScaleParms, GenRandomPars = F, covdata = betaCOVdata, formula = betaFormula)
     
   } else {
-    LinkedModel <- mirt::mirt(data = newformXDataK[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, method = 'MHRM', SE = T, accelerate = 'squarem', TOL = .0005, technical = list(NCYCLES = 1e+6, SEtol = 1e-4, MHRM_SE_draws = 1e+5), pars = NewScaleParms, GenRandomPars = F)
+    message('with Cai\'s (2010) Metropolis-Hastings Robbins-Monro (MHRM) approach. please be patient.')
+    
+    LinkedModel <- mirt::mirt(data = newformXDataK[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, method = 'MHRM', SE = betaSE, accelerate = 'squarem', TOL = .0005, technical = list(NCYCLES = 1e+6, SEtol = 1e-4, MHRM_SE_draws = 1e+5), pars = NewScaleParms, GenRandomPars = F, covdata = betaCOVdata, formula = betaFormula)
     
   }
   
