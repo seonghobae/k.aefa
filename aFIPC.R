@@ -256,7 +256,8 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   }
   
   for(i in 1:length(oldformCommonItemNames)){
-    if((length(grep(paste0('^',newformCommonItemNames[i],'$'), colnames(newformXDataK[colnames(newFormModel@Data$data)]))) == 1) == TRUE && (length(grep(paste0('^',oldformCommonItemNames[i],'$'), colnames(oldformYDataK[colnames(oldFormModel@Data$data)]))) == 1) == TRUE){
+
+    if((length(grep(paste0('^',newformCommonItemNames[i],'$'), colnames(newformXDataK[colnames(newFormModel@Data$data)]))) == 1) == TRUE && (length(grep(paste0('^',oldformCommonItemNames[i],'$'), colnames(oldformYDataK[colnames(oldFormModel@Data$data)]))) == 1) == TRUE && (length(levels(as.factor(newFormModel@Data$data[,grep(paste0('^',newformCommonItemNames[i],'$'), colnames(newformXDataK[colnames(newFormModel@Data$data)]))]))) == length(levels(as.factor(oldFormModel@Data$data[,grep(paste0('^',oldformCommonItemNames[i],'$'), colnames(oldformYDataK[colnames(oldFormModel@Data$data)]))]))))){
       message('applying ', paste0(newformCommonItemNames[i]), ' <<< ', paste0(oldformCommonItemNames[i]), ' as common item use')
       
       message('   Newform Parms: ', paste0(NewScaleParms[which(NewScaleParms$item == paste0(newformCommonItemNames[i])), "value"], ' '))
