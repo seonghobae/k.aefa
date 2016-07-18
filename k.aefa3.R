@@ -2753,3 +2753,63 @@ numericMI <- function(model = ..., data = ..., m = 100, fun = 'sem', estimator =
   message('inspect(fit, "impute")')
   
 }
+  cmvFA <- function(x, MHRM = F){
+    initialModel <- surveyFA(x, autofix = F, forceMHRM = MHRM, bifactorSolution = T)
+    workModel <- initialModel
+    STOP <- FALSE
+    
+    # rotation
+    while (!STOP) {
+      try(invisible(gc()), silent = T)
+      if(ncol(workModel@Fit$F) > 1){
+        if(workModel@Model$nfact == 2){
+          rotSumMat <- GPArotation::bifactorQ(workModel@Fit$F)$loadings[,2]
+        } else {
+          rotSumMat <- data.frame(GPArotation::bifactorQ(workModel@Fit$F, maxit = 1e+6)$loadings[,2:workModel@Model$nfact])
+        }
+        
+        # evaluation
+        evaluationMat <- abs(rotSumMat) < .1
+        print(rotSumMat)
+        print(evaluationMat)
+        
+        if(is.data.frame(rotSumMat)){
+          evaluationMat <- rowSums(evaluationMat)
+          rotSumMat <- rowSums(abs(rotSumMat))
+        } else {
+          evaluationMat <- as.numeric(evaluationMat)
+          rotSumMat <- (abs(rotSumMat))
+        }
+        print(rotSumMat)
+        print(evaluationMat)
+        print(sum(evaluationMat))
+        print(ncol(workModel@Data$data))
+        
+        if(sum(evaluationMat) == ncol(workModel@Data$data)){ # number of inappropreate items should equal with number of items in model
+          message('Done')
+          return(workModel)
+        } else {
+          message(paste0(colnames(workModel@Data$data[,which(abs(rotSumMat) == min(abs(rotSumMat)))])))
+          workModel <- fastFIFA(workModel@Data$data[,-which(abs(rotSumMat) == min(abs(rotSumMat)))], forceMHRM = MHRM)
+        }
+        
+      } else { # if one dimensional model
+        rotSumMat <- workModel@Fit$F
+        evaluationMat <- abs(rotSumMat) < .1
+        print(rotSumMat)
+        print(evaluationMat)
+        evaluationMat <- as.numeric(evaluationMat)
+        rotSumMat <- (abs(rotSumMat))
+        if(sum(evaluationMat) == ncol(workModel@Data$data) | sum(evaluationMat) == 0 | ncol(workModel@Data$data) <= 5){ # number of inappropreate items should equal with number of items in model
+          message('Done')
+          return(workModel)
+        } else {
+          message(paste0(colnames(workModel@Data$data[,which(abs(rotSumMat) == min(abs(rotSumMat)))])))
+          workModel <- fastFIFA(workModel@Data$data[,-which(abs(rotSumMat) == min(abs(rotSumMat)))], forceMHRM = MHRM)
+        }
+        
+        # return(workModel)
+      }
+    }
+    
+  }
