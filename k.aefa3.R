@@ -2020,10 +2020,10 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
           itemFitDone <- TRUE
         }
       } else if(activateZhOnly == FALSE){ # normal IRT condition
-        if(nrow(data) <= 5000 && sum(is.na(surveyFixMod_itemFit$p.S_X2)) == 0 && length(which(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems] < .05)) != 0){ # Kang, T., & Chen, T. T. (2008). Performance of the Generalized S‐X2 Item Fit Index for Polytomous IRT Models. Journal of Educational Measurement, 45(4), 391-406.; Reise, S. P. (1990). A comparison of item- and person-fit methods of assessing model-data fit in IRT. Applied Psychological Measurement, 14, 127-137.
+        if(nrow(data) <= 5000 && sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems] < .05)) != 0){ # Kang, T., & Chen, T. T. (2008). Performance of the Generalized S‐X2 Item Fit Index for Polytomous IRT Models. Journal of Educational Measurement, 45(4), 391-406.; Reise, S. P. (1990). A comparison of item- and person-fit methods of assessing model-data fit in IRT. Applied Psychological Measurement, 14, 127-137.
           message('\nKang, T., & Chen, T. T. (2008); Reise, S. P. (1990)')
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
-        } else if(nrow(data) <= 5000 && sum(is.na(surveyFixMod_itemFit$p.S_X2)) == 0 && length(which(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems] >= 3)) != 0){ # Drasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995). Fitting polytomous item response theory models to multiple-choice tests. Applied Psychological Measurement, 19(2), 143-166.
+        } else if(nrow(data) <= 5000 && sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems] >= 3)) != 0){ # Drasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995). Fitting polytomous item response theory models to multiple-choice tests. Applied Psychological Measurement, 19(2), 143-166.
           message('\nDrasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995)')
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
         } else if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -1.96)) != 0){ # Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
@@ -2753,63 +2753,63 @@ numericMI <- function(model = ..., data = ..., m = 100, fun = 'sem', estimator =
   message('inspect(fit, "impute")')
   
 }
-  cmvFA <- function(x, MHRM = F){
-    initialModel <- surveyFA(x, autofix = F, forceMHRM = MHRM, bifactorSolution = T)
-    workModel <- initialModel
-    STOP <- FALSE
-    
-    # rotation
-    while (!STOP) {
-      try(invisible(gc()), silent = T)
-      if(ncol(workModel@Fit$F) > 1){
-        if(workModel@Model$nfact == 2){
-          rotSumMat <- GPArotation::bifactorQ(workModel@Fit$F)$loadings[,2]
-        } else {
-          rotSumMat <- data.frame(GPArotation::bifactorQ(workModel@Fit$F, maxit = 1e+6)$loadings[,2:workModel@Model$nfact])
-        }
-        
-        # evaluation
-        evaluationMat <- abs(rotSumMat) < .1
-        print(rotSumMat)
-        print(evaluationMat)
-        
-        if(is.data.frame(rotSumMat)){
-          evaluationMat <- rowSums(evaluationMat)
-          rotSumMat <- rowSums(abs(rotSumMat))
-        } else {
-          evaluationMat <- as.numeric(evaluationMat)
-          rotSumMat <- (abs(rotSumMat))
-        }
-        print(rotSumMat)
-        print(evaluationMat)
-        print(sum(evaluationMat))
-        print(ncol(workModel@Data$data))
-        
-        if(sum(evaluationMat) == ncol(workModel@Data$data)){ # number of inappropreate items should equal with number of items in model
-          message('Done')
-          return(workModel)
-        } else {
-          message(paste0(colnames(workModel@Data$data[,which(abs(rotSumMat) == min(abs(rotSumMat)))])))
-          workModel <- fastFIFA(workModel@Data$data[,-which(abs(rotSumMat) == min(abs(rotSumMat)))], forceMHRM = MHRM)
-        }
-        
-      } else { # if one dimensional model
-        rotSumMat <- workModel@Fit$F
-        evaluationMat <- abs(rotSumMat) < .1
-        print(rotSumMat)
-        print(evaluationMat)
+cmvFA <- function(x, MHRM = F){
+  initialModel <- surveyFA(x, autofix = F, forceMHRM = MHRM, bifactorSolution = T)
+  workModel <- initialModel
+  STOP <- FALSE
+  
+  # rotation
+  while (!STOP) {
+    try(invisible(gc()), silent = T)
+    if(ncol(workModel@Fit$F) > 1){
+      if(workModel@Model$nfact == 2){
+        rotSumMat <- GPArotation::bifactorQ(workModel@Fit$F, maxit = 1e+6)$loadings[,2]
+      } else {
+        rotSumMat <- data.frame(GPArotation::bifactorQ(workModel@Fit$F, maxit = 1e+6)$loadings[,2:workModel@Model$nfact])
+      }
+      
+      # evaluation
+      evaluationMat <- abs(rotSumMat) < .1
+      print(rotSumMat)
+      print(evaluationMat)
+      
+      if(is.data.frame(rotSumMat)){
+        evaluationMat <- rowSums(evaluationMat)
+        rotSumMat <- rowSums(abs(rotSumMat))
+      } else {
         evaluationMat <- as.numeric(evaluationMat)
         rotSumMat <- (abs(rotSumMat))
-        if(sum(evaluationMat) == ncol(workModel@Data$data) | sum(evaluationMat) == 0 | ncol(workModel@Data$data) <= 5){ # number of inappropreate items should equal with number of items in model
-          message('Done')
-          return(workModel)
-        } else {
-          message(paste0(colnames(workModel@Data$data[,which(abs(rotSumMat) == min(abs(rotSumMat)))])))
-          workModel <- fastFIFA(workModel@Data$data[,-which(abs(rotSumMat) == min(abs(rotSumMat)))], forceMHRM = MHRM)
-        }
-        
-        # return(workModel)
       }
+      print(rotSumMat)
+      print(evaluationMat)
+      print(sum(evaluationMat))
+      print(ncol(workModel@Data$data))
+      
+      if(sum(evaluationMat) == ncol(workModel@Data$data)){ # number of inappropreate items should equal with number of items in model
+        message('Done')
+        return(workModel)
+      } else {
+        message(paste0(colnames(workModel@Data$data[,which(abs(rotSumMat) == min(abs(rotSumMat)))])))
+        workModel <- fastFIFA(workModel@Data$data[,-which(abs(rotSumMat) == min(abs(rotSumMat)))], forceMHRM = MHRM)
+      }
+      
+    } else { # if one dimensional model
+      rotSumMat <- workModel@Fit$F
+      evaluationMat <- abs(rotSumMat) < .1
+      print(rotSumMat)
+      print(evaluationMat)
+      evaluationMat <- as.numeric(evaluationMat)
+      rotSumMat <- (abs(rotSumMat))
+      if(sum(evaluationMat) == ncol(workModel@Data$data) | sum(evaluationMat) == 0 | ncol(workModel@Data$data) <= 5){ # number of inappropreate items should equal with number of items in model
+        message('Done')
+        return(workModel)
+      } else {
+        message(paste0(colnames(workModel@Data$data[,which(abs(rotSumMat) == min(abs(rotSumMat)))])))
+        workModel <- fastFIFA(workModel@Data$data[,-which(abs(rotSumMat) == min(abs(rotSumMat)))], forceMHRM = MHRM)
+      }
+      
+      # return(workModel)
     }
-    
   }
+  
+}
