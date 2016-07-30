@@ -2813,3 +2813,26 @@ cmvFA <- function(x, MHRM = F){
   }
   
 }
+
+bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F) {
+  mod <- surveyFA(data = data, bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F)
+  STOP <- FALSE
+  while (!STOP) {
+    if(ncol(mod@Fit$F) == 1){
+      rotMAT <- abs(mod@Fit$F)
+    } else {
+      rotMAT <- abs(GPArotation::bifactorQ(mod@Fit$F, maxit = 1e+5)$loadings)[,1]
+    }
+    
+    print(rotMAT)
+    
+    if(sum(rotMAT < .99) != ncol(mod@Data$data)){
+      mod <- surveyFA(data = mod@Data$data[,-which(rotMAT == max(rotMAT))], bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F)
+    } else if(sum(rotMAT > .1) != ncol(mod@Data$data)){
+      mod <- surveyFA(data = mod@Data$data[,-which(rotMAT == min(rotMAT))], bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F)
+    } else {
+      return(mod)
+    }
+    
+  }
+}
