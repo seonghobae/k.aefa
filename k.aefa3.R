@@ -2814,8 +2814,8 @@ cmvFA <- function(x, MHRM = F){
   
 }
 
-bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F) {
-  mod <- surveyFA(data = data, bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F)
+bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F, covdata = NULL, formula = NULL) {
+  mod <- surveyFA(data = data, bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F, covdata = covdata, formula = formula)
   STOP <- FALSE
   while (!STOP) {
     if(ncol(mod@Fit$F) == 1){
@@ -2827,9 +2827,9 @@ bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F) {
     print(rotMAT)
     
     if(sum(rotMAT < .99) != ncol(mod@Data$data)){
-      mod <- surveyFA(data = mod@Data$data[,-which(rotMAT == max(rotMAT))], bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F)
+      mod <- surveyFA(data = mod@Data$data[,-which(rotMAT == max(rotMAT))], bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F, covdata = covdata, formula = formula)
     } else if(sum(rotMAT > .1) != ncol(mod@Data$data)){
-      mod <- surveyFA(data = mod@Data$data[,-which(rotMAT == min(rotMAT))], bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F)
+      mod <- surveyFA(data = mod@Data$data[,-which(rotMAT == min(rotMAT))], bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F, covdata = covdata, formula = formula)
     } else {
       return(mod)
     }
