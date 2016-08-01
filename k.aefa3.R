@@ -2814,7 +2814,7 @@ cmvFA <- function(x, MHRM = F){
   
 }
 
-bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F, covdata = NULL, formula = NULL, skipNominal = T, allowMixedResponse = T) {
+bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F, covdata = NULL, formula = NULL, skipNominal = F, allowMixedResponse = T) {
   mod <- surveyFA(data = data, bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F, covdata = covdata, formula = formula, skipNominal = skipNominal, allowMixedResponse = allowMixedResponse)
   STOP <- FALSE
   while (!STOP) {
