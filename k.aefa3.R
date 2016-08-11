@@ -1075,116 +1075,6 @@ likertFA <- function(data = ..., ...) {
   }
 }
 
-
-fastCluster <- function(data = data,
-                        nruns = 100,
-                        return_max = T,
-                        group = NULL,
-                        GenRandomPars = F,
-                        verbose = T,
-                        caseLable = NULL,
-                        cleaningOnce = T,
-                        skipCleaning = F,
-                        forceNLCA = F){
-  
-  if(skipCleaning == F){
-    message('removing data noises')
-    if(cleaningOnce == T){
-      
-      init_cases <- nrow(data)
-      normalData <- k.faking(data, IRTonly = T, skipNominal = F)
-      data <- data[normalData$normal == T,]
-      data <- data[which(psych::describe(data)$range != 0)]
-      
-    } else {
-      STOP_CAL <- FALSE
-      while(!STOP_CAL){
-        init_cases <- nrow(data)
-        normalData <- k.faking(data, IRTonly = T, skipNominal = F)
-        data <- data[normalData$normal == T,]
-        data <- data[which(psych::describe(data)$range != 0)]
-        if(init_cases == nrow(data)){
-          STOP_CAL <- TRUE
-        }
-      }
-    }
-  }
-  
-  
-  
-  # itemtype decision
-  itemtype <- vector()
-  if(forceNLCA == T){
-    itemtype <- 'nlca'
-  } else {
-    for(i in 1:ncol(data)){
-      if((range(na.omit(data[i]))[2] - range(na.omit(data[i]))[1] == 1) == TRUE){
-        itemtype[i] <- 'lca'
-      } else {
-        itemtype[i] <- 'nlca'
-      }
-    }
-  }
-  
-  
-  # manupulation check (temp)
-  print(row.names(data))
-  print(itemtype)
-  
-  # calculation
-  
-  stopLoop <- FALSE
-  i <- 0
-  while (!stopLoop) {
-    i <- i + 1
-    message('cluster: ', i)
-    try(clusterModel <- mirt::mdirt(data = data, model = i, itemtype = itemtype,
-                                    nruns = nruns, return_max = T, group = group,
-                                    GenRandomPars = GenRandomPars, verbose = verbose))
-    
-    if(exists('clusterModel_OLD') == T && exists('clusterModel') == T){
-      if(clusterModel@Fit$DIC > clusterModel_OLD@Fit$DIC){
-        message('optimal cluster numbers: ', paste0(i-1))
-        finalModel <- clusterModel_OLD
-        stopLoop <- TRUE
-      }
-    }
-    
-    if(i == ncol(data)){
-      finalModel <- clusterModel
-      stopLoop <- TRUE
-    }
-    
-    clusterModel_OLD <- clusterModel
-    rm(clusterModel)
-  }
-  
-  
-  # decision make
-  print(plot(finalModel, facet_items = FALSE))
-  print(plot(finalModel))
-  
-  if(is.na(data)){
-    fs <- fscores(finalModel, QMC = T, MI = 100)
-  } else {
-    fs <- fscores(finalModel, QMC = T)
-  }
-  
-  class_prob <- data.frame(apply(fs, 1, function(x) sample(1:finalModel@Model$nfact, 1, prob=x)))
-  colnames(class_prob) <- "Class"
-  
-  fitIndices <- try(findM2(finalModel), silent = T)
-  if(exists('fitIndices')){
-    print(fitIndices)
-  }
-  
-  if(length(caseLable) != 0){
-    return(data.frame(caseLable[row.names(data),], class_prob, data))
-  } else {
-    return(data.frame(class_prob, data))
-  }
-}
-
 k.sampling <- function(data, n){
   set.seed(1234)
   data <- data[sample(nrow(data), n), ]
@@ -2835,4 +2725,32 @@ bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F, covdata = NULL, 
     }
     
   }
+}
+
+findMLCA <- function(data = ..., start = 2, empiricalhist = T){
+  for(i in start:ncol(data)){
+    if(i != start){
+      tempModel_OLD <- tempModel
+      rm(tempModel)
+    }
+    tempModel <- mdirt(data, i, empiricalhist = empiricalhist, technical = list(NCYCLES = 1e+5))
+    if(i != start){
+      if(tempModel@Fit$DIC > tempModel_OLD@Fit$DIC | !tempModel@OptimInfo$converged){
+        return(tempModel_OLD)
+      }
+    }
+  }
+}
+
+doMLCA <- function(data = ..., start = 2, empiricalhist = T){
+  workModel <- findMLCA(data = data, start = start, empiricalhist = T)
+  print(plot(workModel, facet_items = FALSE))
+  print(plot(workModel))
+  
+  fs <- fscores(workModel, QMC = T)
+  
+  class_prob <- data.frame(apply(fs, 1, function(x) sample(1:workModel@Model$nfact, 1, prob=x)))
+  colnames(class_prob) <- "Class"
+  
+  return(class_prob)
 }
