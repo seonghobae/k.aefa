@@ -1228,7 +1228,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       message('estimation method: ', paste0(estimationMETHOD))
       message('latent regression formula: ', paste0(formulaINPUT))
     }
-    
+    if(estimationMETHOD == 'EM'){
+      message('Empirical Histogram for find Prior distribution: ', empiricalhist)
+    }
     # forcing SE estimation activate
     if((sum(is.na(x)) != 0) && SE.type == 'crossprod'){
       SE <- T
