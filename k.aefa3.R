@@ -1117,7 +1117,10 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
                      forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F,
                      forceMHRM = F, forceNormalEM = F, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T,
                      forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, forceNRM = F, ...){
+  
   for(i in 1:100){
+    try(invisible(gc()), silent = T) # garbage cleaning
+    
     if (i == 1){
       message('\nfactor number: ', paste0(i))
     } else {
