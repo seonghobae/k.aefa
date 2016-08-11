@@ -1814,7 +1814,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
                            forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis,
                            forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM,
                            itemkeys = itemkeys, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse,
-                           autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM...)
+                           autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, ...)
   
   itemFitDone <- FALSE
   while (!itemFitDone) {
