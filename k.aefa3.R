@@ -1134,7 +1134,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         optimINPUT <- NULL
         optimCTRL  <- NULL
         empiricalhist <- FALSE
-        NCYCLES <- NULL
+        NCYCLES <- 4000
       } else if(length(survey.weights) != 0) {
         estimationMETHOD <- 'QMCEM'
         optimINPUT <- 'NR'
@@ -1173,7 +1173,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
           optimINPUT <- NULL
           optimCTRL <- NULL
           empiricalhist <- FALSE
-          NCYCLES <- NULL
+          NCYCLES <- 4000
         }
       }
       covdataINPUT <- NULL
