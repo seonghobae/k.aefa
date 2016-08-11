@@ -1116,7 +1116,7 @@ k.fixdata <- function(data, start, end, bioend){
 fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T,
                      forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F,
                      forceMHRM = F, forceNormalEM = F, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T,
-                     forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, ...){
+                     forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, forceNRM = F, ...){
   for(i in 1:100){
     if (i == 1){
       message('\nfactor number: ', paste0(i))
@@ -1493,11 +1493,12 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         for(i in 1:ncol(x)){
           if(psych::describe(x[,i])$range == 1){
             itemtype_mixed[i] <- 'ideal'
+            dichotomous_type <- 'ideal point'
           } else {
             itemtype_mixed[i] <- 'nominal'
           }
         }
-        message('\nMIRT model: nominal response + ideal response')
+        message('\nMIRT model: nominal response + ', paste0(dichotomous_type))
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = itemtype_mixed, method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
@@ -1514,16 +1515,19 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
             if(psych::describe(x[,i])$range == 1){
               if(nrow(x) >= 5000){
                 itemtype_mixed[i] <- '4PL'
+                dichotomous_type <- '4PL'
               } else if(nrow(x) >= 2000){
                 itemtype_mixed[i] <- '3PL'
+                dichotomous_type <- '3PL'
               } else {
                 itemtype_mixed[i] <- '2PL'
+                dichotomous_type <- '2PL'
               }
             } else {
               itemtype_mixed[i] <- 'nominal'
             }
           }
-          message('\nMIRT model: nominal response + 2PL or 3-4PL')
+          message('\nMIRT model: nominal response + ', paste0(dichotomous_type), ' (automatically set by sample size)')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = itemtype_mixed, method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
@@ -1538,7 +1542,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       }
       
       # generalized partial credit model (non-sequential)
-      if(exists('modTEMP') == F){
+      if(exists('modTEMP') == F && forceNRM == F){
         itemtype_mixed <- vector()
         for(i in 1:ncol(x)){
           if(psych::describe(x[,i])$range == 1){
@@ -1566,7 +1570,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       }
       
       # graded response model (sequential)
-      if(exists('modTEMP') == F){
+      if(exists('modTEMP') == F && forceNRM == F){
         itemtype_mixed <- vector()
         for(i in 1:ncol(x)){
           if(psych::describe(x[,i])$range == 1){
@@ -1705,7 +1709,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       }
       
       # generalized partial credit model (non-sequential)
-      if(exists('modTEMP') == F){
+      if(exists('modTEMP') == F && forceNRM == F){
         message('\nMIRT model: Generalized partial credit')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'gpcm', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
@@ -1719,7 +1723,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       }
       
       # graded response model (sequential)
-      if(exists('modTEMP') == F){
+      if(exists('modTEMP') == F && forceNRM == F){
         message('\nMIRT model: Graded response')
         try(modTEMP <- mirt::mirt(data = x, model = i, method = estimationMETHOD, accelerate = accelerateINPUT,
                                   calcNull = T, technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT,
@@ -1789,7 +1793,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
                      unstable = F, forceNormalEM = F, forceMHRM = F,
                      printFactorStructureRealtime = F, itemkeys = NULL,
                      survey.weights = NULL, allowMixedResponse = T, autofix = T,
-                     forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, bifactorSolution = F, skipS_X2 = F, ...) {
+                     forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, bifactorSolution = F, skipS_X2 = F, forceNRM = F, ...) {
   message('---------------------------------------------------------')
   message(' k.aefa: kwangwoon automated exploratory factor analysis ')
   message('---------------------------------------------------------\n')
@@ -1808,7 +1812,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
                            forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis,
                            forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM,
                            itemkeys = itemkeys, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse,
-                           autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
+                           autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM...)
   
   itemFitDone <- FALSE
   while (!itemFitDone) {
@@ -1904,7 +1908,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
                   which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))],
             itemkeys = itemkeys[,-c(
               union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                    which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
+                    which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, ...)
           
         } else {
           itemFitDone <- TRUE
@@ -1912,13 +1916,13 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
       } else if(activateZhOnly == FALSE){ # normal IRT condition
         if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -1.96)) != 0){ # Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
           message('\nDrasgow, F., Levine, M. V., & Williams, E. A. (1985)')
-          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
+          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, ...)
         } else if(nrow(data) <= 5000 && sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems] >= 3)) != 0 && skipS_X2 == F && surveyFixMod@Model$nfact == 1){ # Drasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995). Fitting polytomous item response theory models to multiple-choice tests. Applied Psychological Measurement, 19(2), 143-166.
           message('\nDrasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995)')
-          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
+          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, ...)
         } else if(nrow(data) <= 5000 && sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems] < .05)) != 0 && skipS_X2 == F && surveyFixMod@Model$nfact == 1){ # Kang, T., & Chen, T. T. (2008). Performance of the Generalized S‐X2 Item Fit Index for Polytomous IRT Models. Journal of Educational Measurement, 45(4), 391-406.; Reise, S. P. (1990). A comparison of item- and person-fit methods of assessing model-data fit in IRT. Applied Psychological Measurement, 14, 127-137.
           message('\nKang, T., & Chen, T. T. (2008); Reise, S. P. (1990)')
-          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
+          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, ...)
         } else if (forceRasch == T) {
           if(length(c(
             union(which(max((surveyFixMod_itemFit$infit)) >= 1.5),
@@ -1930,7 +1934,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
                     which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))],
               itemkeys = itemkeys[,-c(
                 union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                      which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
+                      which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, ...)
             
           } else {
             itemFitDone <- TRUE
@@ -1940,7 +1944,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
         }
       } else if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -1.96)) != 0){ # if can't calculate S-X2 fit when itemtype = 'ideal'; Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
         message('\nDrasgow, F., Levine, M. V., & Williams, E. A. (1985)')
-        surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
+        surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, ...)
       } else {
         itemFitDone <- TRUE
       }
@@ -1972,12 +1976,12 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
     surveyFixModRAW <- data.frame(mirt::extract.mirt(surveyFixMod, 'data'))
     surveyFixModCOV <- data.frame(attr(surveyFixMod@ParObjects$lrPars, "df"))
     
-    noAberrant <- k.faking(surveyFixModRAW, IRTonly = T, itemkeys = itemkeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
+    noAberrant <- k.faking(surveyFixModRAW, IRTonly = T, itemkeys = itemkeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, ...)
     if(length(covdata) == 0){ # anyway, covdata is NULL
-      surveyFixMod <- fastFIFA(surveyFixModRAW[which(noAberrant$normal==TRUE),], itemkeys = itemkeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights[which(noAberrant$normal==TRUE)], allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
+      surveyFixMod <- fastFIFA(surveyFixModRAW[which(noAberrant$normal==TRUE),], itemkeys = itemkeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights[which(noAberrant$normal==TRUE)], allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, ...)
     } else {
       covdata_workout <- surveyFixModCOV
-      surveyFixMod <- fastFIFA(surveyFixModRAW[which(noAberrant$normal==TRUE),], itemkeys = itemkeys, covdata = covdata_workout[which(noAberrant$normal==TRUE),], formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights[which(noAberrant$normal==TRUE)], allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
+      surveyFixMod <- fastFIFA(surveyFixModRAW[which(noAberrant$normal==TRUE),], itemkeys = itemkeys, covdata = covdata_workout[which(noAberrant$normal==TRUE),], formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights[which(noAberrant$normal==TRUE)], allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, ...)
     }
     
     if(printFactorStructureRealtime == T){
@@ -2029,7 +2033,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
         fixFactorStructure_Done <- TRUE
       } else if(LowCommunalities < .3^2){
         
-        surveyFixMod_New <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)], itemkeys = itemkeys[-which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
+        surveyFixMod_New <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)], itemkeys = itemkeys[-which(min(surveyFixMod_Workout@Fit$h2) == surveyFixMod_Workout@Fit$h2)], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, ...)
         surveyFixMod_Workout <- surveyFixMod_New
         
         if(printFactorStructureRealtime == T){
@@ -2047,7 +2051,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
         
       } else if(length(NoLoadings) != 0){ # noloadings
         if(as.logical(length(names(which(NoLoadings == min(NoLoadings))) != 0))){
-          surveyFixMod_New <- fastFIFA(surveyFixModRAW[,!colnames(surveyFixModRAW) %in% names(which(NoLoadings == min(NoLoadings)))], itemkeys = itemkeys[,!colnames(surveyFixModRAW) %in% names(which(NoLoadings == min(NoLoadings)))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, ...)
+          surveyFixMod_New <- fastFIFA(surveyFixModRAW[,!colnames(surveyFixModRAW) %in% names(which(NoLoadings == min(NoLoadings)))], itemkeys = itemkeys[,!colnames(surveyFixModRAW) %in% names(which(NoLoadings == min(NoLoadings)))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, ...)
           surveyFixMod_Workout <- surveyFixMod_New
           
           if(printFactorStructureRealtime == T){
