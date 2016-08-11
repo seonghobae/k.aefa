@@ -2744,13 +2744,13 @@ bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F, covdata = NULL, 
   }
 }
 
-findMLCA <- function(data = ..., start = 2, empiricalhist = T){
+findMLCA <- function(data = ..., start = 2, empiricalhist = T, group = NULL){
   for(i in start:ncol(data)){
     if(i != start){
       tempModel_OLD <- tempModel
       rm(tempModel)
     }
-    tempModel <- mdirt(data, i, empiricalhist = empiricalhist, technical = list(NCYCLES = 1e+5), accelerate = "squarem")
+    tempModel <- mdirt(data, i, empiricalhist = empiricalhist, technical = list(NCYCLES = 1e+5), accelerate = "squarem", group = group)
     if(i != start){
       if(tempModel@Fit$DIC > tempModel_OLD@Fit$DIC | !tempModel@OptimInfo$converged){
         return(tempModel_OLD)
