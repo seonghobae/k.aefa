@@ -1503,7 +1503,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         message('\nMIRT model: nominal response + ', paste0(dichotomous_type))
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = itemtype_mixed, method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                  technical = list(MAXQUAD = 20000000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -1532,7 +1532,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
           message('\nMIRT model: nominal response + ', paste0(dichotomous_type), ' (automatically set by sample size)')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = itemtype_mixed, method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                    technical = list(MAXQUAD = 20000000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -1601,6 +1601,14 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         }
       }
       
+      # finally, if can not converge
+      if(exists('modTEMP') == F){
+        if(i == 1){
+          stop('Fail to find Factor solutions: Model didn\'t converge.')
+        } else {
+          return(modOLD)
+        }
+      }
     } else { # polytomous items
       
       # forceRasch (PCM)
