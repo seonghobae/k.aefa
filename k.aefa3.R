@@ -2759,8 +2759,8 @@ findMLCA <- function(data = ..., start = 2, empiricalhist = T, group = NULL){
   }
 }
 
-doMLCA <- function(data = ..., start = 2, empiricalhist = T){
-  workModel <- findMLCA(data = data, start = start, empiricalhist = empiricalhist)
+doMLCA <- function(data = ..., start = 2, empiricalhist = T, group = NULL){
+  workModel <- findMLCA(data = data, start = start, empiricalhist = empiricalhist, group = group)
   print(plot(workModel, facet_items = FALSE))
   print(plot(workModel))
   
