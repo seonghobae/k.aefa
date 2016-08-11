@@ -2750,7 +2750,7 @@ findMLCA <- function(data = ..., start = 2, empiricalhist = T){
       tempModel_OLD <- tempModel
       rm(tempModel)
     }
-    tempModel <- mdirt(data, i, empiricalhist = empiricalhist, technical = list(NCYCLES = 1e+5))
+    tempModel <- mdirt(data, i, empiricalhist = empiricalhist, technical = list(NCYCLES = 1e+5), accelerate = "squarem")
     if(i != start){
       if(tempModel@Fit$DIC > tempModel_OLD@Fit$DIC | !tempModel@OptimInfo$converged){
         return(tempModel_OLD)
