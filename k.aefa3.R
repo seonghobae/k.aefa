@@ -1492,8 +1492,8 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         }
       }
       
-    } else if((sum(psych::describe(x)$range == 1) != 0) && allowMixedResponse == T && skipIdealPoint == F) { # mixed format (Construct Responses + Multiple Choices)
-      if(skipNominal == F){
+    } else if((sum(psych::describe(x)$range == 1) != 0) && allowMixedResponse == T) { # mixed format (Construct Responses + Multiple Choices)
+      if(skipNominal == F && skipIdealPoint == F){
         itemtype_mixed <- vector()
         for(i in 1:ncol(x)){
           if(psych::describe(x[,i])$range == 1){
