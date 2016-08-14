@@ -1493,25 +1493,28 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       }
       
     } else if((sum(psych::describe(x)$range == 1) != 0) && allowMixedResponse == T) { # mixed format (Construct Responses + Multiple Choices)
-      if(skipNominal == F && skipIdealPoint == F){
-        itemtype_mixed <- vector()
-        for(i in 1:ncol(x)){
-          if(psych::describe(x[,i])$range == 1){
-            itemtype_mixed[i] <- 'ideal'
-            dichotomous_type <- 'ideal point'
-          } else {
-            itemtype_mixed[i] <- 'nominal'
+      if(skipNominal == F){
+        if(skipIdealPoint == F){
+          
+          itemtype_mixed <- vector()
+          for(i in 1:ncol(x)){
+            if(psych::describe(x[,i])$range == 1){
+              itemtype_mixed[i] <- 'ideal'
+              dichotomous_type <- 'ideal point'
+            } else {
+              itemtype_mixed[i] <- 'nominal'
+            }
           }
-        }
-        message('\nMIRT model: nominal response + ', paste0(dichotomous_type))
-        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = itemtype_mixed, method = estimationMETHOD,
-                                  accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(MAXQUAD = 20000000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
-        if(exists('modTEMP')){
-          if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          message('\nMIRT model: nominal response + ', paste0(dichotomous_type))
+          try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = itemtype_mixed, method = estimationMETHOD,
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(MAXQUAD = 20000000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          }
         }
         
         if(exists('modTEMP') == F){
