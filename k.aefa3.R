@@ -2824,7 +2824,7 @@ deepFA <- function(mirtModel){ # for search more factors with prevent local opti
     }
   }
   bestModel <- which(min(DICindices) == DICindices)
-  # message(nfact[bestModel])
+  message('find global optimal: ', nfact[bestModel])
   if(bestModel == 1){
     return(mirtModel)
   } else {
