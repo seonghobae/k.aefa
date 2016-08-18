@@ -2769,7 +2769,7 @@ bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F, covdata = NULL, 
 }
 
 
-findMLCA <- function(data = ..., startN = 1, empiricalhist = F, group = NULL){
+findMLCA <- function(data = ..., startN = 1, empiricalhist = F, group = NULL, empiricaloptimal = T){
   # try(invisible(gc()), silent = T)
   DICindices <- vector()
   j <- 0
@@ -2782,7 +2782,7 @@ findMLCA <- function(data = ..., startN = 1, empiricalhist = F, group = NULL){
   }
   message('starting find global optimal of latent class')
   for(i in startN:ncol(workData)){
-    try(invisible(tempModel <- mirt::mdirt(data = workData, model = i, empiricalhist = empiricalhist, group = group)), silent = F)
+    try(invisible(tempModel <- mirt::mdirt(data = workData, model = i, empiricalhist = empiricalhist, group = group, nruns = 100)), silent = F)
     if(exists('tempModel')){
       if(tempModel@OptimInfo$converged){
         message('class: ', i, ' / DIC: ', tempModel@Fit$DIC)
@@ -2795,20 +2795,70 @@ findMLCA <- function(data = ..., startN = 1, empiricalhist = F, group = NULL){
   }
   bestModel <- which(min(DICindices) == DICindices)
   message('find global optimal: ', nfact[bestModel])
-  return(mirt::mdirt(data = workData, model = nfact[bestModel], empiricalhist = empiricalhist, group = group))
+  
+  if(empiricaloptimal){
+    
+    testFS <- fscores(mirt::mdirt(data = workData, model = nfact[bestModel], empiricalhist = empiricalhist, group = group, nruns = 100), QMC = T)
+    
+    membership <- vector()
+    for(i in 1:nrow(testFS)){
+      membership[i] <- which(testFS[i,] == max(testFS[i,]))
+    }
+    
+    message('empirical optimal: ', max(membership))
+    
+    return(mirt::mdirt(data = workData, model = max(membership), empiricalhist = empiricalhist, group = group, nruns = 100))
+  } else {
+    return(mirt::mdirt(data = workData, model = nfact[bestModel], empiricalhist = empiricalhist, group = group, nruns = 100))
+  }
 }
 
-doMLCA <- function(data = ..., startN = 1, empiricalhist = T, group = NULL){
+doMLCA <- function(data = ..., startN = 1, empiricalhist = F, group = NULL){
   if(is.data.frame(data) | is.matrix(data)){
-    workModel <- findMLCA(data = data, startN = startN, empiricalhist = T, group = group)
+    workModel <- findMLCA(data = data, startN = startN, empiricalhist = T, empiricaloptimal = F, group = group)
   } else {
     workModel <- data
+  }
+  initData <- workModel@Data$data
+  workData <- workModel@Data$data
+  
+  STOP <- FALSE
+  while(!STOP){
+    
+    # item fit evaluation
+    if(sum(is.na(initData)) != 0){
+      workData <- mirt::imputeMissing(workModel, fscores(workModel))
+      workModel <- findMLCA(workData, empiricalhist = F, empiricaloptimal = T)
+    }
+    
+    workModelFit <- mirt::itemfit(workModel, QMC = T)
+    FitSize <- workModelFit$S_X2/workModelFit$df.S_X2
+    
+    print(cbind(workModelFit, FitSize))
+    
+    if(sum(workModelFit$S_X2 == "NaN") != 0){
+      workModel <- findMLCA(workData[,-which(workModelFit$S_X2 == "NaN")], empiricalhist = F, empiricaloptimal = T)
+    } else if(sum(workModelFit$S_X2/workModelFit$df.S_X2 > 6) != 0){
+      workModel <- findMLCA(workData[,-which(max(workModelFit$S_X2/workModelFit$df.S_X2) == workModelFit$S_X2/workModelFit$df.S_X2)], empiricalhist = F, empiricaloptimal = T)
+    } else {
+      STOP <- TRUE
+    }
+    rm(workData)
+    workData <- initData[,colnames(workModel@Data$data)] # update work data
+    if(sum(is.na(initData)) != 0){
+      workModel <- findMLCA(workData, empiricalhist = F, empiricaloptimal = T) # update work model if initial data has NA values
+    }
+  }
+  
+  if(sum(is.na(initData)) != 0){
+    workData <- mirt::imputeMissing(workModel, fscores(workModel))
+    workModel <- findMLCA(workData, empiricalhist = F, empiricaloptimal = T)
   }
   
   print(plot(workModel, facet_items = FALSE))
   print(plot(workModel))
   
-  fs <- fscores(workModel, QMC = T)
+  fs <- fscores(workModel)
   
   class_prob <- data.frame(apply(fs, 1, function(x) sample(1:workModel@Model$nfact, 1, prob=x)))
   colnames(class_prob) <- "Class"
