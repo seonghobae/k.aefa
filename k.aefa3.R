@@ -2761,18 +2761,20 @@ bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F, covdata = NULL, 
   }
 }
 
-  findMLCA <- function(data = ..., start = 1, empiricalhist = T, group = NULL){
+
+  findMLCA <- function(data = ..., startN = 1, empiricalhist = T, group = NULL){
+    try(invisible(gc()), silent = T)
     DICindices <- vector()
     j <- 0
     nfact <- vector()
     
-    if(length(which(psych::describe(DPT[1:18])$range == 0)) == 0){
+    if(length(which(psych::describe(DPT[1:18])$range == 0)) != 0){
       workData <- data[,-which(psych::describe(DPT[1:18])$range == 0)]
     } else {
       workData <- data
     }
     message('starting find global optimal of latent class')
-    for(i in start:ncol(workData)){
+    for(i in startN:ncol(workData)){
       try(invisible(gc()), silent = T)
       try(invisible(tempModel <- mdirt(workData, i, empiricalhist = empiricalhist, group = group, technical = list(NCYCLES = 1e+5))), silent = T)
       if(exists('tempModel')){
@@ -2790,9 +2792,9 @@ bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F, covdata = NULL, 
     return(mdirt(workData, nfact[bestModel], empiricalhist = empiricalhist, group = group, technical = list(NCYCLES = 1e+5)))
   }
   
-  doMLCA <- function(data = ..., start = 1, empiricalhist = T, group = NULL){
+  doMLCA <- function(data = ..., startN = 1, empiricalhist = T, group = NULL){
     if(is.data.frame(data) | is.matrix(data)){
-      workModel <- findMLCA(data = data, start = start, empiricalhist = T, group = group)
+      workModel <- findMLCA(data = data, startN = startN, empiricalhist = T, group = group)
     } else {
       workModel <- data
     }
