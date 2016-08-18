@@ -2762,7 +2762,7 @@ bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F, covdata = NULL, 
 }
 
 
-findMLCA <- function(data = ..., startN = 1, empiricalhist = T, group = NULL){
+findMLCA <- function(data = ..., startN = 1, empiricalhist = F, group = NULL){
   # try(invisible(gc()), silent = T)
   DICindices <- vector()
   j <- 0
