@@ -2768,8 +2768,8 @@ bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F, covdata = NULL, 
     j <- 0
     nfact <- vector()
     
-    if(length(which(psych::describe(DPT[1:18])$range == 0)) != 0){
-      workData <- data[,-which(psych::describe(DPT[1:18])$range == 0)]
+    if(length(which(psych::describe(data)$range == 0)) != 0){
+      workData <- data[,-which(psych::describe(data)$range == 0)]
     } else {
       workData <- data
     }
