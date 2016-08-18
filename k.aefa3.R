@@ -2761,33 +2761,46 @@ bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F, covdata = NULL, 
   }
 }
 
-findMLCA <- function(data = ..., start = 2, empiricalhist = T, group = NULL){
-  for(i in start:ncol(data)){
-    if(i != start){
-      tempModel_OLD <- tempModel
-      rm(tempModel)
-    }
-    tempModel <- mdirt(data, i, empiricalhist = empiricalhist, technical = list(NCYCLES = 1e+5), accelerate = "squarem", group = group)
-    if(i != start){
-      if(tempModel@Fit$DIC > tempModel_OLD@Fit$DIC | !tempModel@OptimInfo$converged){
-        return(tempModel_OLD)
+  findMLCA <- function(data = ..., start = 1, empiricalhist = T, group = NULL){
+    DICindices <- vector()
+    j <- 0
+    nfact <- vector()
+    
+    for(i in start:ncol(data)){
+      try(invisible(gc()), silent = T)
+      try(invisible(tempModel <- mdirt(data, i, empiricalhist = empiricalhist, group = group, technical = list(NCYCLES = 1e+5))), silent = T)
+      if(exists('tempModel')){
+        if(tempModel@OptimInfo$converged){
+          message('class: ', i, ' / DIC: ', tempModel@Fit$DIC)
+          j <- j + 1
+          DICindices[j] <- tempModel@Fit$DIC
+          nfact[j] <- i
+          rm(tempModel)
+        }
       }
     }
+    bestModel <- which(min(DICindices) == DICindices)
+    message('find global optimal: ', nfact[bestModel])
+    return(mdirt(data, nfact[bestModel], empiricalhist = empiricalhist, group = group, technical = list(NCYCLES = 1e+5)))
   }
-}
-
-doMLCA <- function(data = ..., start = 2, empiricalhist = T, group = NULL){
-  workModel <- findMLCA(data = data, start = start, empiricalhist = empiricalhist, group = group)
-  print(plot(workModel, facet_items = FALSE))
-  print(plot(workModel))
   
-  fs <- fscores(workModel, QMC = T)
-  
-  class_prob <- data.frame(apply(fs, 1, function(x) sample(1:workModel@Model$nfact, 1, prob=x)))
-  colnames(class_prob) <- "Class"
-  
-  return(class_prob)
-}
+  doMLCA <- function(data = ..., start = 1, empiricalhist = T, group = NULL){
+    if(is.data.frame(data) | is.matrix(data)){
+      workModel <- findMLCA(data = data, start = start, empiricalhist = T, group = group)
+    } else {
+      workModel <- data
+    }
+    
+    print(plot(workModel, facet_items = FALSE))
+    print(plot(workModel))
+    
+    fs <- fscores(workModel, QMC = T)
+    
+    class_prob <- data.frame(apply(fs, 1, function(x) sample(1:workModel@Model$nfact, 1, prob=x)))
+    colnames(class_prob) <- "Class"
+    
+    return(class_prob)
+  }
 
 deepFA <- function(mirtModel){ # for search more factors with prevent local optimal
   DICindices <- vector()
