@@ -1935,7 +1935,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
         if(sum(surveyFixMod_itemFit$S_X2 == "NaN") != 0){
           message('\nremoving items df is 0')
           
-          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(surveyFixMod_itemFit$S_X2 == "NaN")], itemkeys = itemkeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
+          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(surveyFixMod_itemFit$S_X2 == "NaN")], itemkeys = itemkeys[-which(surveyFixMod_itemFit$S_X2 == "NaN")], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
           if(needGlobalOptimal == T && forceUIRT == F){
             surveyFixMod <- deepFA(surveyFixMod)
           }
