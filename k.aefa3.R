@@ -2766,9 +2766,15 @@ bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F, covdata = NULL, 
     j <- 0
     nfact <- vector()
     
-    for(i in start:ncol(data)){
+    if(length(which(psych::describe(DPT[1:18])$range == 0)) == 0){
+      workData <- data[,-which(psych::describe(DPT[1:18])$range == 0)]
+    } else {
+      workData <- data
+    }
+    message('starting find global optimal of latent class')
+    for(i in start:ncol(workData)){
       try(invisible(gc()), silent = T)
-      try(invisible(tempModel <- mdirt(data, i, empiricalhist = empiricalhist, group = group, technical = list(NCYCLES = 1e+5))), silent = T)
+      try(invisible(tempModel <- mdirt(workData, i, empiricalhist = empiricalhist, group = group, technical = list(NCYCLES = 1e+5))), silent = T)
       if(exists('tempModel')){
         if(tempModel@OptimInfo$converged){
           message('class: ', i, ' / DIC: ', tempModel@Fit$DIC)
@@ -2781,7 +2787,7 @@ bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F, covdata = NULL, 
     }
     bestModel <- which(min(DICindices) == DICindices)
     message('find global optimal: ', nfact[bestModel])
-    return(mdirt(data, nfact[bestModel], empiricalhist = empiricalhist, group = group, technical = list(NCYCLES = 1e+5)))
+    return(mdirt(workData, nfact[bestModel], empiricalhist = empiricalhist, group = group, technical = list(NCYCLES = 1e+5)))
   }
   
   doMLCA <- function(data = ..., start = 1, empiricalhist = T, group = NULL){
