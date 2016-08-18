@@ -2762,53 +2762,52 @@ bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F, covdata = NULL, 
 }
 
 
-  findMLCA <- function(data = ..., startN = 1, empiricalhist = T, group = NULL){
-    try(invisible(gc()), silent = T)
-    DICindices <- vector()
-    j <- 0
-    nfact <- vector()
-    
-    if(length(which(psych::describe(data)$range == 0)) != 0){
-      workData <- data[,-which(psych::describe(data)$range == 0)]
-    } else {
-      workData <- data
-    }
-    message('starting find global optimal of latent class')
-    for(i in startN:ncol(workData)){
-      try(invisible(gc()), silent = T)
-      try(invisible(tempModel <- mdirt(workData, i, empiricalhist = empiricalhist, group = group, technical = list(NCYCLES = 1e+5))), silent = T)
-      if(exists('tempModel')){
-        if(tempModel@OptimInfo$converged){
-          message('class: ', i, ' / DIC: ', tempModel@Fit$DIC)
-          j <- j + 1
-          DICindices[j] <- tempModel@Fit$DIC
-          nfact[j] <- i
-          rm(tempModel)
-        }
+findMLCA <- function(data = ..., startN = 1, empiricalhist = T, group = NULL){
+  # try(invisible(gc()), silent = T)
+  DICindices <- vector()
+  j <- 0
+  nfact <- vector()
+  
+  if(sum(psych::describe(data)$range == 0) == 0){
+    workData <- data
+  } else {
+    workData <- data[,-which(psych::describe(data)$range == 0)]
+  }
+  message('starting find global optimal of latent class')
+  for(i in startN:ncol(workData)){
+    try(invisible(tempModel <- mirt::mdirt(data = workData, model = i, empiricalhist = empiricalhist, group = group)), silent = F)
+    if(exists('tempModel')){
+      if(tempModel@OptimInfo$converged){
+        message('class: ', i, ' / DIC: ', tempModel@Fit$DIC)
+        j <- j + 1
+        DICindices[j] <- tempModel@Fit$DIC
+        nfact[j] <- i
+        rm(tempModel)
       }
     }
-    bestModel <- which(min(DICindices) == DICindices)
-    message('find global optimal: ', nfact[bestModel])
-    return(mdirt(workData, nfact[bestModel], empiricalhist = empiricalhist, group = group, technical = list(NCYCLES = 1e+5)))
+  }
+  bestModel <- which(min(DICindices) == DICindices)
+  message('find global optimal: ', nfact[bestModel])
+  return(mirt::mdirt(data = workData, model = nfact[bestModel], empiricalhist = empiricalhist, group = group))
+}
+
+doMLCA <- function(data = ..., startN = 1, empiricalhist = T, group = NULL){
+  if(is.data.frame(data) | is.matrix(data)){
+    workModel <- findMLCA(data = data, startN = startN, empiricalhist = T, group = group)
+  } else {
+    workModel <- data
   }
   
-  doMLCA <- function(data = ..., startN = 1, empiricalhist = T, group = NULL){
-    if(is.data.frame(data) | is.matrix(data)){
-      workModel <- findMLCA(data = data, startN = startN, empiricalhist = T, group = group)
-    } else {
-      workModel <- data
-    }
-    
-    print(plot(workModel, facet_items = FALSE))
-    print(plot(workModel))
-    
-    fs <- fscores(workModel, QMC = T)
-    
-    class_prob <- data.frame(apply(fs, 1, function(x) sample(1:workModel@Model$nfact, 1, prob=x)))
-    colnames(class_prob) <- "Class"
-    
-    return(class_prob)
-  }
+  print(plot(workModel, facet_items = FALSE))
+  print(plot(workModel))
+  
+  fs <- fscores(workModel, QMC = T)
+  
+  class_prob <- data.frame(apply(fs, 1, function(x) sample(1:workModel@Model$nfact, 1, prob=x)))
+  colnames(class_prob) <- "Class"
+  
+  return(class_prob)
+}
 
 deepFA <- function(mirtModel){ # for search more factors with prevent local optimal
   DICindices <- vector()
