@@ -2827,7 +2827,7 @@ doMLCA <- function(data = ..., startN = 1, empiricalhist = F, group = NULL){
   while(!STOP){
     
     # item fit evaluation
-    workModelFit <- mirt::itemfit(workModel, impute = 100)
+    workModelFit <- mirt::itemfit(workModel, impute = 100, QMC = T)
     FitSize <- workModelFit$S_X2/workModelFit$df.S_X2
     
     print(cbind(workModelFit, FitSize))
@@ -2844,14 +2844,14 @@ doMLCA <- function(data = ..., startN = 1, empiricalhist = F, group = NULL){
   }
   
   if(sum(is.na(initData)) != 0){
-    workData <- mirt::imputeMissing(workModel, fscores(workModel))
+    workData <- mirt::imputeMissing(workModel, fscores(workModel, QMC = T))
     workModel <- findMLCA(workData, empiricalhist = F, empiricaloptimal = T)
   }
   
   print(plot(workModel, facet_items = FALSE))
   print(plot(workModel))
   
-  fs <- fscores(workModel)
+  fs <- fscores(workModel, QMC = T)
   
   class_prob <- data.frame(apply(fs, 1, function(x) sample(1:workModel@Model$nfact, 1, prob=x)))
   colnames(class_prob) <- "Class"
