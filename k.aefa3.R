@@ -2827,7 +2827,7 @@ doMLCA <- function(data = ..., startN = 1, empiricalhist = F, group = NULL){
   while(!STOP){
     
     # item fit evaluation
-    workModelFit <- mirt::itemfit(workModel, QMC = T, impute = 100)
+    workModelFit <- mirt::itemfit(workModel, impute = 100)
     FitSize <- workModelFit$S_X2/workModelFit$df.S_X2
     
     print(cbind(workModelFit, FitSize))
