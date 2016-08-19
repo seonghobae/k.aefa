@@ -2832,8 +2832,8 @@ doMLCA <- function(data = ..., startN = 1, empiricalhist = F, group = NULL){
     
     print(cbind(workModelFit, FitSize))
     
-    if(sum(na.omit(workModelFit$S_X2 == "NaN")) != 0){
-      workModel <- findMLCA(workData[,-which(workModelFit$S_X2 == "NaN")], empiricalhist = F, empiricaloptimal = T)
+    if(sum(na.omit(workModelFit$S_X2[1:ncol(workData)] == "NaN")) != 0){
+      workModel <- findMLCA(workData[,-which(workModelFit$S_X2[1:ncol(workData)] == "NaN")], empiricalhist = F, empiricaloptimal = T)
     } else if(sum(workModelFit$S_X2/workModelFit$df.S_X2 > 6) != 0){
       workModel <- findMLCA(workData[,-which(max(workModelFit$S_X2/workModelFit$df.S_X2) == workModelFit$S_X2/workModelFit$df.S_X2)], empiricalhist = F, empiricaloptimal = T)
     } else {
