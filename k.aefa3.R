@@ -2814,6 +2814,7 @@ findMLCA <- function(data = ..., startN = 1, empiricalhist = F, group = NULL, em
 }
 
 doMLCA <- function(data = ..., startN = 1, empiricalhist = F, group = NULL){
+  mirtCluster()
   if(is.data.frame(data) | is.matrix(data)){
     workModel <- findMLCA(data = data, startN = startN, empiricalhist = T, empiricaloptimal = F, group = group)
   } else {
@@ -2826,17 +2827,12 @@ doMLCA <- function(data = ..., startN = 1, empiricalhist = F, group = NULL){
   while(!STOP){
     
     # item fit evaluation
-    if(sum(is.na(initData)) != 0){
-      workData <- mirt::imputeMissing(workModel, fscores(workModel))
-      workModel <- findMLCA(workData, empiricalhist = F, empiricaloptimal = T)
-    }
-    
-    workModelFit <- mirt::itemfit(workModel, QMC = T)
+    workModelFit <- mirt::itemfit(workModel, QMC = T, impute = 100)
     FitSize <- workModelFit$S_X2/workModelFit$df.S_X2
     
     print(cbind(workModelFit, FitSize))
     
-    if(sum(workModelFit$S_X2 == "NaN") != 0){
+    if(sum(na.omit(workModelFit$S_X2 == "NaN")) != 0){
       workModel <- findMLCA(workData[,-which(workModelFit$S_X2 == "NaN")], empiricalhist = F, empiricaloptimal = T)
     } else if(sum(workModelFit$S_X2/workModelFit$df.S_X2 > 6) != 0){
       workModel <- findMLCA(workData[,-which(max(workModelFit$S_X2/workModelFit$df.S_X2) == workModelFit$S_X2/workModelFit$df.S_X2)], empiricalhist = F, empiricaloptimal = T)
@@ -2845,9 +2841,6 @@ doMLCA <- function(data = ..., startN = 1, empiricalhist = F, group = NULL){
     }
     rm(workData)
     workData <- initData[,colnames(workModel@Data$data)] # update work data
-    if(sum(is.na(initData)) != 0){
-      workModel <- findMLCA(workData, empiricalhist = F, empiricaloptimal = T) # update work model if initial data has NA values
-    }
   }
   
   if(sum(is.na(initData)) != 0){
@@ -2862,6 +2855,7 @@ doMLCA <- function(data = ..., startN = 1, empiricalhist = F, group = NULL){
   
   class_prob <- data.frame(apply(fs, 1, function(x) sample(1:workModel@Model$nfact, 1, prob=x)))
   colnames(class_prob) <- "Class"
+  mirtCluster(remove = T)
   
   return(class_prob)
 }
