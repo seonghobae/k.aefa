@@ -2898,7 +2898,7 @@ deepFA <- function(mirtModel){ # for search more factors with prevent local opti
   
   message('searching global optimal...')
   start <- mirtModel@Model$nfact + 1
-  end <- ncol(mirtModel@Data$data)
+  end <- mirtModel@Model$nfact + 10 # see http://www.tandfonline.com/doi/abs/10.1080/00273171.2012.710386
   
   nfact <- vector()
   nfact[1] <- mirtModel@Model$nfact
