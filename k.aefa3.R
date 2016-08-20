@@ -1364,20 +1364,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         }
       }
       
-      if(exists('modTEMP') == F && i == 1){
-        
-        message('\nMIRT model: spline response')
-        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'spline', method = estimationMETHOD,
-                                  accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
-        if(exists('modTEMP')){
-          if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-        }
-      }
-      
       if(exists('modTEMP') == F && skipIdealPoint == F){
         
         message('\nMIRT model: ideal point')
@@ -1410,6 +1396,20 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         
         message('\nMIRT model: Partially compensatory 2PL')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'PC2PL', method = estimationMETHOD,
+                                  accelerate = accelerateINPUT, calcNull = T,
+                                  technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                                   removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+        if(exists('modTEMP')){
+          if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+        }
+      }
+      
+      if(exists('modTEMP') == F && i == 1){
+        
+        message('\nMIRT model: spline response')
+        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'spline', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
