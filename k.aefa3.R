@@ -1137,14 +1137,14 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         NCYCLES <- 4000
       } else if(length(survey.weights) != 0) {
         estimationMETHOD <- 'QMCEM'
-        optimINPUT <- 'NR'
+        optimINPUT <- NULL
         optimCTRL  <- NULL
         empiricalhist <- FALSE
         NCYCLES <- NULL
       } else if(i < 2){
         if(unstable == T){
           estimationMETHOD <- 'QMCEM'
-          optimINPUT <- 'NR'
+          optimINPUT <- NULL
           optimCTRL  <- NULL
           empiricalhist <- FALSE
           NCYCLES <- NULL
@@ -1164,7 +1164,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       } else {
         if(unstable == T){
           estimationMETHOD <- 'QMCEM'
-          optimINPUT <- 'NR'
+          optimINPUT <- NULL
           optimCTRL  <- NULL
           empiricalhist <- FALSE
           NCYCLES <- NULL
@@ -1196,7 +1196,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         
       } else if(length(survey.weights) != 0) {
         estimationMETHOD <- 'QMCEM'
-        optimINPUT <- 'NR'
+        optimINPUT <- NULL
         optimCTRL  <- NULL
         empiricalhist <- FALSE
         NCYCLES <- NULL
@@ -1798,13 +1798,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         rotMat <- geominQ(modTEMP@Fit$F, maxit = 1e+5)$loadings
       }
       
-      if(modTEMP@Fit$DIC > modOLD@Fit$DIC | modTEMP@OptimInfo$converged != 1 | sum(round(rotMat, 2) >= 1.00) != 0 | sum(round(modTEMP@Fit$h2, 2) >= .99) != 0){ # modTEMP@Fit$AICc > modOLD@Fit$AICc | 
+      if(modTEMP@Fit$DIC > modOLD@Fit$DIC | modTEMP@OptimInfo$converged != 1 | sum(round(modTEMP@Fit$h2, 3) >= .999) != 0){ # modTEMP@Fit$AICc > modOLD@Fit$AICc | 
         message('optimal factor numbers: ', paste0(i-1))
         return(modOLD)
-      } else if(sum(colSums(round(abs(rotMat), 2) > .4) < 2) != 0) {
-        message('optimal factor numbers: ', paste0(i-1))
-        return(modOLD)
-      }
+      } #else if(sum(colSums(round(abs(rotMat), 2) > .4) < 2) != 0) {
+        #message('optimal factor numbers: ', paste0(i-1))
+        #return(modOLD)
+      #}
       
     }
     if(exists('modTEMP') == T){
