@@ -1384,7 +1384,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '2PL', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
+                                                   removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
         if(exists('modTEMP')){
@@ -1802,8 +1802,8 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         message('optimal factor numbers: ', paste0(i-1))
         return(modOLD)
       } #else if(sum(colSums(round(abs(rotMat), 2) > .4) < 2) != 0) {
-        #message('optimal factor numbers: ', paste0(i-1))
-        #return(modOLD)
+      #message('optimal factor numbers: ', paste0(i-1))
+      #return(modOLD)
       #}
       
     }
