@@ -1946,14 +1946,14 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
           itemFitDone <- TRUE
         }
       } else if(activateZhOnly == FALSE){ # normal IRT condition
-        if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems){
+        if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems && surveyFixMod@Model$nfact == 1){
           message('\nremoving items df is NA')
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)], itemkeys = itemkeys[-which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
           if(needGlobalOptimal == T && forceUIRT == F){
             surveyFixMod <- deepFA(surveyFixMod)
           }
-        } else if(sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) != 0){
+        } else if(sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) != 0 && surveyFixMod@Model$nfact == 1){
           message('\nremoving items df is 0')
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(surveyFixMod_itemFit$df.S_X2 == 0)], itemkeys = itemkeys[-which(surveyFixMod_itemFit$df.S_X2 == 0)], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
