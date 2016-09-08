@@ -1308,7 +1308,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       if(nrow(x) >= 2000){
         
         if(nrow(x) >= 5000){
-          message('\nMIRT model: Noncompensatory 4PL')
+          message('\nMIRT model: Compensatory 4PL')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
@@ -1323,7 +1323,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         
         if(exists('modTEMP') == F){
           
-          message('\nMIRT model: Noncompensatory 3PL')
+          message('\nMIRT model: Compensatory 3PL')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
@@ -1337,7 +1337,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         
         if(exists('modTEMP') == F){
           
-          message('\nMIRT model: Noncompensatory 3PL with upper asymptote estimated')
+          message('\nMIRT model: Compensatory 3PL with upper asymptote estimated')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PLu', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
@@ -1380,7 +1380,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       
       if(exists('modTEMP') == F){
         
-        message('\nMIRT model: Noncompensatory 2PL')
+        message('\nMIRT model: Compensatory 2PL')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '2PL', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
@@ -1430,7 +1430,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       
     } else if(length(itemkeys) != 0){ # 2-4PLNRM
       if(nrow(x) >= 2000){
-        message('\nMIRT model: Noncompensatory 4PL Nominal response')
+        message('\nMIRT model: Compensatory 4PL Nominal response')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PLNRM', method = estimationMETHOD,
                                   key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
@@ -1443,7 +1443,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         
         if(exists('modTEMP') == F){
           
-          message('\nMIRT model: Noncompensatory 3PL Nominal response')
+          message('\nMIRT model: Compensatory 3PL Nominal response')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PLNRM', method = estimationMETHOD,
                                     key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
@@ -1458,7 +1458,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         
         if(exists('modTEMP') == F){
           
-          message('\nMIRT model: Noncompensatory 3PL Nominal response with upper asymptote estimated')
+          message('\nMIRT model: Compensatory 3PL Nominal response with upper asymptote estimated')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PLuNRM', method = estimationMETHOD,
                                     key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
@@ -1473,7 +1473,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       
       if(exists('modTEMP') == F){
         
-        message('\nMIRT model: Noncompensatory 2PL Nominal response')
+        message('\nMIRT model: Compensatory 2PL Nominal response')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '2PLNRM', method = estimationMETHOD,
                                   key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
@@ -2291,7 +2291,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
     if(max(x, na.rm = T) - min(x, na.rm = T) == 1){ # dichotomous items
       
       if(nrow(x) >= 5000){
-        message('\nMIRT model: Noncompensatory 4PL')
+        message('\nMIRT model: Compensatory 4PL')
         try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = '4PL', method = estimationMETHOD,
                                            accelerate = accelerateINPUT, calcNull = T,
                                            technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
@@ -2304,7 +2304,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
         
         if(exists('modTEMP') == F){
           
-          message('\nMIRT model: Noncompensatory 3PL')
+          message('\nMIRT model: Compensatory 3PL')
           try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = '3PL', method = estimationMETHOD,
                                              accelerate = accelerateINPUT, calcNull = T,
                                              technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
@@ -2318,7 +2318,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
         
         if(exists('modTEMP') == F){
           
-          message('\nMIRT model: Noncompensatory 3PL with lower or upper asymptote estimated')
+          message('\nMIRT model: Compensatory 3PL with lower or upper asymptote estimated')
           try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = '3PLu', method = estimationMETHOD,
                                              accelerate = accelerateINPUT, calcNull = T,
                                              technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
@@ -2361,7 +2361,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
       
       if(exists('modTEMP') == F){
         
-        message('\nMIRT model: Noncompensatory 2PL')
+        message('\nMIRT model: Compensatory 2PL')
         try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = '2PL', method = estimationMETHOD,
                                            accelerate = accelerateINPUT, calcNull = T,
                                            technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
@@ -2397,7 +2397,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
       
     } else if(length(itemkeys) != 0){ # 2-4PLNRM when given item keys (nested logit)
       if(nrow(x) >= 5000){
-        message('\nMIRT model: Noncompensatory 4PL Nominal response')
+        message('\nMIRT model: Compensatory 4PL Nominal response')
         try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = '4PLNRM', method = estimationMETHOD,
                                            key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
                                            technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
@@ -2410,7 +2410,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
         
         if(exists('modTEMP') == F){
           
-          message('\nMIRT model: Noncompensatory 3PL Nominal response')
+          message('\nMIRT model: Compensatory 3PL Nominal response')
           try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = '3PLNRM', method = estimationMETHOD,
                                              key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
                                              technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
@@ -2425,7 +2425,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
         
         if(exists('modTEMP') == F){
           
-          message('\nMIRT model: Noncompensatory 3PL Nominal response with lower or upper asymptote estimated')
+          message('\nMIRT model: Compensatory 3PL Nominal response with lower or upper asymptote estimated')
           try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = '3PLuNRM', method = estimationMETHOD,
                                              key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
                                              technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
@@ -2440,7 +2440,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
       
       if(exists('modTEMP') == F){
         
-        message('\nMIRT model: Noncompensatory 2PL Nominal response')
+        message('\nMIRT model: Compensatory 2PL Nominal response')
         try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = '2PLNRM', method = estimationMETHOD,
                                            key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
                                            technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
