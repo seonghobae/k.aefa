@@ -1305,9 +1305,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         try(return(modTEMP))
       }
       
-      if(nrow(x) >= 2000){
+      if(nrow(x) >= 500){
         
-        if(nrow(x) >= 5000){
+        if(nrow(x) >= 2000){
           message('\nMIRT model: Compensatory 4PL')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
@@ -1321,6 +1321,19 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
         }
         
         
+        if(exists('modTEMP') == F){
+          
+          message('\nMIRT model: Compensatory 3PL with upper asymptote (slip) estimated')
+          try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PLu', method = estimationMETHOD,
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
+          }
+        }
         
         if(exists('modTEMP') == F){
           
@@ -1350,19 +1363,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
           }
         }
         
-        if(exists('modTEMP') == F){
-          
-          message('\nMIRT model: Compensatory 3PL with upper asymptote (slip) estimated')
-          try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PLu', method = estimationMETHOD,
-                                    accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(MAXQUAD = 2000000, MHRM_SE_draws = MHRM_SE_draws, symmetric_SEM = symmetric_SEMINPUT, SEtol = SEtolINPUT,
-                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
-          if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged != 1){rm(modTEMP)}
-          }
-        }
       }
       
       if(exists('modTEMP') == F && skipIdealPoint == F){
