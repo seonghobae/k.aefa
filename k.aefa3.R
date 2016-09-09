@@ -260,7 +260,7 @@ fastHMM <- function(dat = ..., ...){
   }
 }
 
-k.faking <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T, forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F, forceMHRM = F, printFactorStructureRealtime = F, itemkeys = NULL, survey.weights = NULL, IRTonly = F, ...) { # for aberrant & faking response detection
+k.faking <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = F, forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F, forceMHRM = F, printFactorStructureRealtime = F, itemkeys = NULL, survey.weights = NULL, IRTonly = F, ...) { # for aberrant & faking response detection
   dataset <- data
   dname <- data
   
@@ -1113,7 +1113,7 @@ k.fixdata <- function(data, start, end, bioend){
 }
 
 # surveyFA addon
-fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T,
+fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = F,
                      forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F,
                      forceMHRM = F, forceNormalEM = F, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T,
                      forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, forceNRM = F, ...){
@@ -1821,7 +1821,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
 
 
 surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
-                     SE.type = "crossprod", skipNominal = T, forceGRSM = F,
+                     SE.type = "crossprod", skipNominal = F, forceGRSM = F,
                      assumingFake = F, masterThesis = F, forceRasch = F,
                      unstable = F, forceNormalEM = F, forceMHRM = F,
                      printFactorStructureRealtime = F, itemkeys = NULL,
@@ -2154,7 +2154,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
   
 }
 
-fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = T,
+fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = F,
                               forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F,
                               forceMHRM = F, itemkeys = NULL, survey.weights = NULL, group = ...,
                               invariance = c('free_means', 'free_var', colnames(x)), ...){
