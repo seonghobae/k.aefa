@@ -1380,7 +1380,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       }
       
       
-      if(exists('modTEMP') == F){
+      if(exists('modTEMP') == F && i > 1){
         
         message('\nMIRT model: Partially compensatory 2PL')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'PC2PL', method = estimationMETHOD,
