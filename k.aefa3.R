@@ -2773,7 +2773,7 @@ bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F, covdata = NULL, 
   if(length(covdata) != 0){
     forceNormalEM <- TRUE
   } else {
-    forceNormalEM <- NULL
+    forceNormalEM <- FALSE
   }
   mod <- surveyFA(data = data, bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F, covdata = covdata, formula = formula, skipNominal = skipNominal, allowMixedResponse = allowMixedResponse, itemkeys = itemkeys, needGlobalOptimal = needGlobalOptimal, forceNormalEM = forceNormalEM)
   STOP <- FALSE
