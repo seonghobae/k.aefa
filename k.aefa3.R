@@ -941,7 +941,7 @@ likertFA <- function(data = ..., ...) {
   message('estimating Theta')
   try(test2_fscores <- fscores(object = result, rotate = 'geominQ', full.scores = T, plausible.draws = 100, QMC = TRUE, method = 'MAP', MI = 100))
   message('estimating itemfit')
-  try(test2 <- itemfit(result, method = 'MAP', Theta = test2_fscores, impute = 100, QMC = TRUE), silent = T)
+  try(test2 <- itemfit(result, method = 'MAP', impute = 100, QMC = TRUE), silent = T)
   
   if(exists("test2")) { # patch for mirt function bug...
     test2$cal <- test2$S_X2/test2$df.S_X2
@@ -1864,17 +1864,13 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
       if(sum(is.na(surveyFixMod@Data$data)) == 0){
         try(surveyFixMod_itemFitTest <- itemfit(x = surveyFixMod, S_X2 = T, Zh = T, infit = T,
                                                 method = 'MAP',
-                                                QMC = T,
-                                                Theta = fscores(surveyFixMod, method = 'MAP',
-                                                                QMC = T, maxit = 1e+5, rotate = rotateCriteria), rotate = rotateCriteria, maxit = 1e+5))
+                                                QMC = T, rotate = rotateCriteria, maxit = 1e+5))
       } else {
         mirtCluster()
         try(surveyFixMod_itemFitTest <- itemfit(x = surveyFixMod, S_X2 = T, Zh = T, infit = T,
                                                 impute = 100,
                                                 method = 'MAP',
-                                                QMC = T,
-                                                Theta = fscores(surveyFixMod, method = 'MAP',
-                                                                QMC = T, maxit = 1e+5, rotate = rotateCriteria), rotate = rotateCriteria, maxit = 1e+5))
+                                                QMC = T, rotate = rotateCriteria, maxit = 1e+5))
         mirtCluster(remove = T)
       }
       if(!exists('surveyFixMod_itemFitTest')){
@@ -1905,9 +1901,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
           
           surveyFixMod_itemFit <- itemfit(x = surveyFixMod, S_X2 = S_X2, Zh = Zh, infit = infit,
                                           method = 'MAP',
-                                          QMC = T,
-                                          Theta = fscores(surveyFixMod, method = 'MAP',
-                                                          QMC = T, maxit = 1e+5, rotate = rotateCriteria), maxit = 1e+5, rotate = rotateCriteria)
+                                          QMC = T, maxit = 1e+5, rotate = rotateCriteria)
         }
         
       } else {
@@ -1919,9 +1913,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
           surveyFixMod_itemFit <- itemfit(x = surveyFixMod, S_X2 = S_X2, Zh = Zh, infit = infit,
                                           impute = 100,
                                           method = 'MAP',
-                                          QMC = T,
-                                          Theta = fscores(surveyFixMod, method = 'MAP',
-                                                          QMC = T, maxit = 1e+5, rotate = rotateCriteria), maxit = 1e+5, rotate = rotateCriteria)
+                                          QMC = T, maxit = 1e+5, rotate = rotateCriteria)
           
           mirtCluster(remove = T)
         }
