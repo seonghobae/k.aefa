@@ -1948,7 +1948,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
           if(needGlobalOptimal == T && forceUIRT == F){
             surveyFixMod <- deepFA(surveyFixMod)
           }
-        } else if(sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) != 0 && surveyFixMod@Model$nfact == 1){
+        } else if(sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) != 0 && surveyFixMod@Model$nfact == 1 && skipS_X2 == F){
           message('\nremoving items df is 0')
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(surveyFixMod_itemFit$df.S_X2 == 0)], itemkeys = itemkeys[-which(surveyFixMod_itemFit$df.S_X2 == 0)], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
