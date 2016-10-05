@@ -2694,7 +2694,7 @@ bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F, covdata = NULL, 
   } else {
     forceNormalEM <- FALSE
   }
-  mod <- surveyFA(data = data, bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F, covdata = covdata, formula = formula, skipNominal = skipNominal, allowMixedResponse = allowMixedResponse, itemkeys = itemkeys, needGlobalOptimal = needGlobalOptimal, forceNormalEM = forceNormalEM)
+  mod <- surveyFA(data = data, bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F, covdata = covdata, formula = formula, skipNominal = skipNominal, allowMixedResponse = allowMixedResponse, itemkeys = itemkeys, needGlobalOptimal = needGlobalOptimal, forceNormalEM = forceNormalEM, forceUIRT = F)
   STOP <- FALSE
   while (!STOP) {
     if(ncol(mod@Fit$F) == 1){
@@ -2706,9 +2706,9 @@ bifactorFA <- function(data = ..., skipS_X2 = F, forceMHRM = F, covdata = NULL, 
     print(rotMAT)
     
     if(sum(rotMAT < .999) != ncol(mod@Data$data)){
-      mod <- surveyFA(data = mod@Data$data[,-which(rotMAT == max(rotMAT))], bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F, covdata = covdata, formula = formula, skipNominal = skipNominal, allowMixedResponse = allowMixedResponse, itemkeys = itemkeys[-which(rotMAT == max(rotMAT))], needGlobalOptimal = needGlobalOptimal, forceNormalEM = forceNormalEM)
+      mod <- surveyFA(data = mod@Data$data[,-which(rotMAT == max(rotMAT))], bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F, covdata = covdata, formula = formula, skipNominal = skipNominal, allowMixedResponse = allowMixedResponse, itemkeys = itemkeys[-which(rotMAT == max(rotMAT))], needGlobalOptimal = needGlobalOptimal, forceNormalEM = forceNormalEM, forceUIRT = F)
     } else if(sum(rotMAT > .1) != ncol(mod@Data$data)){
-      mod <- surveyFA(data = mod@Data$data[,-which(rotMAT == min(rotMAT))], bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F, covdata = covdata, formula = formula, skipNominal = skipNominal, allowMixedResponse = allowMixedResponse, itemkeys = itemkeys[-which(rotMAT == max(rotMAT))], needGlobalOptimal = needGlobalOptimal, forceNormalEM = forceNormalEM)
+      mod <- surveyFA(data = mod@Data$data[,-which(rotMAT == min(rotMAT))], bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F, covdata = covdata, formula = formula, skipNominal = skipNominal, allowMixedResponse = allowMixedResponse, itemkeys = itemkeys[-which(rotMAT == max(rotMAT))], needGlobalOptimal = needGlobalOptimal, forceNormalEM = forceNormalEM, forceUIRT = F)
     } else {
       return(mod)
     }
