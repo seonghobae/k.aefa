@@ -1862,85 +1862,21 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
       message('Iteration: ', iteration_num, '\n')
       
       if(sum(is.na(surveyFixMod@Data$data)) == 0){
-        try(surveyFixMod_itemFitTest <- itemfit(x = surveyFixMod, S_X2 = T, Zh = T, infit = T,
+        try(surveyFixMod_itemFit <- itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
                                                 method = 'MAP',
                                                 QMC = T, rotate = rotateCriteria, maxit = 1e+5))
       } else {
         mirtCluster()
-        try(surveyFixMod_itemFitTest <- itemfit(x = surveyFixMod, S_X2 = T, Zh = T, infit = T,
+        try(surveyFixMod_itemFit <- itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
                                                 impute = 100,
                                                 method = 'MAP',
                                                 QMC = T, rotate = rotateCriteria, maxit = 1e+5))
         mirtCluster(remove = T)
       }
-      if(!exists('surveyFixMod_itemFitTest')){
-        S_X2 <- FALSE
-        Zh <- TRUE
-        infit <- TRUE
-        if (sum(surveyFixMod@Model$itemtype == 'Rasch') != 0) {
-          activateInfitOnly <- TRUE
-          activateZhOnly <- FALSE
-        } else {
-          activateInfitOnly <- FALSE
-          activateZhOnly <- TRUE
-        }
-      } else { # for normal conditions (e.g. gpcm, 2-4PL)
-        S_X2 <- TRUE
-        Zh <- TRUE
-        infit <- TRUE
-        activateInfitOnly <- FALSE
-        activateZhOnly <- FALSE
-      }
-      
-      # item fit calculation for detection of weird item(s)
-      if(sum(is.na(surveyFixMod@Data$data)) == 0){
-        if (exists('surveyFixMod_itemFitTest')) {
-          surveyFixMod_itemFit <- surveyFixMod_itemFitTest # re use upon calculation
-          rm(surveyFixMod_itemFitTest)
-        } else {
-          
-          surveyFixMod_itemFit <- itemfit(x = surveyFixMod, S_X2 = S_X2, Zh = Zh, infit = infit,
-                                          method = 'MAP',
-                                          QMC = T, maxit = 1e+5, rotate = rotateCriteria)
-        }
-        
-      } else {
-        if (exists('surveyFixMod_itemFitTest')) {
-          surveyFixMod_itemFit <- surveyFixMod_itemFitTest # re use upon calculation
-          rm(surveyFixMod_itemFitTest)
-        } else {
-          mirtCluster()
-          surveyFixMod_itemFit <- itemfit(x = surveyFixMod, S_X2 = S_X2, Zh = Zh, infit = infit,
-                                          impute = 100,
-                                          method = 'MAP',
-                                          QMC = T, maxit = 1e+5, rotate = rotateCriteria)
-          
-          mirtCluster(remove = T)
-        }
-        
-        
-      }
-      
+
       print(surveyFixMod_itemFit)
       
       # item evaluation
-      if(activateInfitOnly == T){ # if can't calculate S-X2 fit when itemtype = 'Rasch'
-        if(length(c(
-          union(which(max((surveyFixMod_itemFit$infit)) >= 1.5),
-                which(max((surveyFixMod_itemFit$outfit)) >= 1.5)))) > 0){
-          
-          message('\nRasch infit & outfit (.5 ~ 1.5): beta version')
-          surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(
-            union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                  which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))],
-            itemkeys = itemkeys[,-c(
-              union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                    which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
-          
-        } else {
-          itemFitDone <- TRUE
-        }
-      } else if(activateZhOnly == FALSE){ # normal IRT condition
         if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems && surveyFixMod@Model$nfact == 1){
           message('\nremoving items df is NA')
           
@@ -1992,18 +1928,9 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
         } else {
           itemFitDone <- TRUE
         }
-      } else if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -1.96)) != 0){ # if can't calculate S-X2 fit when itemtype = 'ideal'; Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
-        message('\nDrasgow, F., Levine, M. V., & Williams, E. A. (1985)')
-        surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = itemkeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
-        if(needGlobalOptimal == T && forceUIRT == F){
-          surveyFixMod <- deepFA(surveyFixMod)
-        }
       } else {
         itemFitDone <- TRUE
       }
-    } else {
-      itemFitDone <- TRUE
-    }
     
     
     if(printFactorStructureRealtime == T){
