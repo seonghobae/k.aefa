@@ -1307,7 +1307,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "cross
       
       if(nrow(x) >= 500){
         
-        if(nrow(x) >= 1000){
+        if(nrow(x) >= 800){
           message('\nMIRT model: Compensatory 4PL')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
