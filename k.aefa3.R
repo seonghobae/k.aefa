@@ -2857,7 +2857,7 @@ deepFA <- function(mirtModel){
   
   deepModel <- deepFAengine(mirtModel)
   if(deepModel@Model$nfact == init_nfact+3){
-    return(deepFAengine(mirtModel))
+    return(deepFAengine(deepModel))
   } else {
     return(deepModel)
   }
