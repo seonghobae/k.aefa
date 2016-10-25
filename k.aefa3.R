@@ -2808,7 +2808,7 @@ doMLCA <- function(data = ..., startN = 1, empiricalhist = F, group = NULL){
   return(class_prob)
 }
 
-deepFA <- function(mirtModel){ # for search more factors with prevent local optimal
+deepFAengine <- function(mirtModel){ # for search more factors with prevent local optimal
   DICindices <- vector()
   DICindices[1] <- mirtModel@Fit$DIC
   
@@ -2849,5 +2849,16 @@ deepFA <- function(mirtModel){ # for search more factors with prevent local opti
     return(mirtModel)
   } else {
     return(mirt::mirt(data = mirtModel@Data$data, model = nfact[bestModel], itemtype = mirtModel@Model$itemtype, SE = mirtModel@Options$SE, SE.type = mirtModel@Options$SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = mirtModel@Options$Moptim, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = mirtModel@Options$technical$NCYCLES, MAXQUAD = mirtModel@Options$technical$MAXQUAD, SEtol = mirtModel@Options$technical$SEtol, symmetric_SEM = mirtModel@Options$technical$symmetric_SEM, removeEmptyRows = mirtModel@Options$technical$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$technical$MHRM_SE_draws)))
+  }
+}
+
+deepFA <- function(mirtModel){
+  init_nfact <- mirtModel@Model$nfact
+  
+  deepModel <- deepFAengine(mirtModel)
+  if(deepModel@Model$nfact == init_nfact+3){
+    return(deepFAengine(mirtModel))
+  } else {
+    return(deepModel)
   }
 }
