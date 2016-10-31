@@ -1,6 +1,6 @@
 source('https://raw.githubusercontent.com/seonghobae/k.aefa/master/k.aefa3.R')
 
-autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNames = ..., oldformCommonItemNames = ..., itemtype = '3PL', newformBILOGprior = NULL, oldformBILOGprior = NULL, tryFitwholeNewItems = T, tryFitwholeOldItems = T, checkIPD = T, tryEM = F, freeMEAN = T, ...){
+autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNames = ..., oldformCommonItemNames = ..., itemtype = '3PL', newformBILOGprior = NULL, oldformBILOGprior = NULL, tryFitwholeNewItems = T, tryFitwholeOldItems = T, checkIPD = T, tryEM = F, freeMEAN = T){
   
   # print credits
   message('automated Fixed Item Parameter Calibration: aFIPC 0.2')
