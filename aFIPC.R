@@ -109,7 +109,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
     newFormModel <- newformXData
     newformXDataK <- data.frame(newFormModel@Data$data)
   } else {
-    newformXDataK <- newformYData
+    newformXDataK <- newformXData
     if(itemtype == '3PL' && length(newformBILOGprior) == 0){
       checknewformBILOGprior <- function()
       { 
