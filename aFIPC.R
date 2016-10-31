@@ -38,7 +38,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   }
   
   # estimate models for calibration
-  if(is.list(oldformYData@Options) && !is.data.frame(oldformYData)){ # if Data is mirt model
+  if(!is.data.frame(oldformYData) && !is.matrix(oldformYData)){ # if Data is mirt model
     oldFormModel <- oldformYData
     oldformYDataK <- data.frame(oldFormModel@Data$data)
   } else { # if Data is data.frame
@@ -105,7 +105,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
     
   }
   
-  if(is.list(newformXData@Options) && !is.data.frame(newformXData)){ # if Data is mirt model
+  if(!is.data.frame(newformXData) && !is.matrix(newformXData)){ # if Data is mirt model
     newFormModel <- newformXData
     newformXDataK <- data.frame(newFormModel@Data$data)
   } else {
