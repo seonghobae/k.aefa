@@ -96,7 +96,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
       message('Estimation failed. trying to remove weird items by itemfit statistics')
       try(rm(oldFormModel))
       
-      oldFormModel <- surveyFA(oldformYData, autofix = F, SE = T, forceMHRM = T)
+      oldFormModel <- surveyFA(oldformYData, autofix = F, SE = T, forceUIRT = T)
     }
     
     if(!oldFormModel@OptimInfo$secondordertest){
@@ -165,7 +165,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
       message('Estimation failed. trying to remove weird items by itemfit statistics')
       try(rm(newFormModel))
       
-      newFormModel <- surveyFA(newformXData, autofix = F, SE = T, forceMHRM = T)
+      newFormModel <- surveyFA(newformXData, autofix = F, SE = T, forceUIRT = T)
     }
     
     if(!newFormModel@OptimInfo$secondordertest){
