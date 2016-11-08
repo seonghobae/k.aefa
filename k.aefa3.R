@@ -12,40 +12,40 @@ message("\n Check Packages: Processing......")
 try(update.packages(ask = F, repos = 'http://cran.nexr.com'))
 
 if(!require(depmixS4)) {
-  try(install.packages("depmixS4", dependencies = TRUE), silent=TRUE); require(depmixS4)
+  try(install.packages("depmixS4", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(depmixS4)
 }
 
 if(!require(Rsolnp)) {
-  try(install.packages("Rsolnp", dependencies = TRUE), silent=TRUE); require(Rsolnp)
+  try(install.packages("Rsolnp", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(Rsolnp)
 }
 
 if(!require(Cairo)) {
-  try(install.packages("Cairo", dependencies = TRUE), silent=TRUE); require(Cairo)
+  try(install.packages("Cairo", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(Cairo)
 }
 if(!require(cairoDevice)) {
-  try(install.packages("cairoDevice", dependencies = TRUE), silent=TRUE); require(cairoDevice)
+  try(install.packages("cairoDevice", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(cairoDevice)
 }
 if(!require(stringr)) {
-  try(install.packages("stringr", dependencies = TRUE), silent=TRUE); require(stringr)
+  try(install.packages("stringr", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(stringr)
 }
 
 if(!require(SQUAREM)) {
-  try(install.packages("SQUAREM", dependencies = TRUE), silent=TRUE); require(SQUAREM)
+  try(install.packages("SQUAREM", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(SQUAREM)
 }
 
 if(!require(rrcovNA)) {
-  try(install.packages("rrcovNA", dependencies = TRUE), silent=TRUE); require(rrcovNA)
+  try(install.packages("rrcovNA", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(rrcovNA)
 }
 
 # check packages
 if(!require(FAiR)) {
   message("\n Installing Packages: Processing......")
-  try(install.packages("FAiR", dependencies = TRUE), silent = T)
+  try(install.packages("FAiR", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }
 
 # check packages
 if(!require(bfa)) {
-  try(install.packages("bfa", dependencies = TRUE), silent = T)
+  try(install.packages("bfa", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }
 
 # check packages
@@ -63,62 +63,62 @@ if(!require(mirt)) {
 }
 
 if(!require(latticeExtra)) {
-  try(install.packages('latticeExtra', dependencies = TRUE), silent = T)
+  try(install.packages('latticeExtra', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }
 
 if(!require(plyr)) {
-  try(install.packages('plyr', dependencies = TRUE), silent = T)
+  try(install.packages('plyr', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }
 
 if(!require(multilevel)) {
-  try(install.packages('multilevel', dependencies = TRUE), silent = T)
+  try(install.packages('multilevel', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }
 
 if(!require(nlme)) {
-  try(install.packages('nlme', dependencies = TRUE), silent = T)
+  try(install.packages('nlme', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }
 
 if(!require(lsr)) {
-  try(install.packages('lsr', dependencies = TRUE), silent = T)
+  try(install.packages('lsr', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }
 
 if(!require(meta)) {
-  try(install.packages('meta', dependencies = TRUE), silent = T)
+  try(install.packages('meta', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }
 
 if(!require(metafor)) {
-  try(install.packages('metafor', dependencies = TRUE), silent = T)
+  try(install.packages('metafor', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }
 
 if(!require(rmeta)) {
-  try(install.packages('rmeta', dependencies = TRUE), silent = T)
+  try(install.packages('rmeta', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }
 if(!require(psychometric)) {
-  try(install.packages('psychometric', dependencies = TRUE), silent = T)
+  try(install.packages('psychometric', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }
 if(!require(pracma)) {
-  try(install.packages('pracma', dependencies = TRUE), silent = T)
+  try(install.packages('pracma', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }
 if(!require(rsm)) {
-  try(install.packages('rsm', dependencies = TRUE), silent = T)
+  try(install.packages('rsm', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }
 if(!require(car)) {
-  try(install.packages('car', dependencies = TRUE), silent = T)
+  try(install.packages('car', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }
 if(!require(TAM)) {
-  try(install.packages('TAM', dependencies = TRUE), silent = T)
+  try(install.packages('TAM', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }
 if(!require(GPArotation)) {
-  try(install.packages('GPArotation', dependencies = TRUE), silent = T)
+  try(install.packages('GPArotation', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }  
 if(!require(lavaan)) {
-  try(install.packages("lavaan", dependencies = TRUE), silent = T)
+  try(install.packages("lavaan", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }
 if(!require(semTools)) {
-  try(install.packages("semTools", dependencies = TRUE), silent = T)
+  try(install.packages("semTools", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }
 if(!require(psych)) {
-  try(install.packages("psych", dependencies = TRUE), silent = T)
+  try(install.packages("psych", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
 }
 
 
