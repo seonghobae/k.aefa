@@ -2900,7 +2900,7 @@ jmleRaschEst <- function(data, model = 'PCM'){
     }
   }
   RaschJMLEresult <- new.env()
-  # RaschJMLEresult$itemList <- colnames(RaschData)
-  RaschJMLEresult <- jmleRasch
+  RaschJMLEresult$itemList <- colnames(RaschData)
+  RaschJMLEresult$model <- jmleRasch
   return(RaschJMLEresult)
 }
