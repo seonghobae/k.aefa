@@ -282,14 +282,14 @@ k.faking <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
         # person-fit test in IRT
         if(sum(is.na(dataset)) == 0){
           dataset.mirt <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
-          dataset.response <- personfit(dataset.mirt, method='MAP', QMC = T)
+          dataset.response <- mirt::personfit(dataset.mirt, method='MAP', QMC = T)
           
           
         } else {
           dataset.mirt <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
           dataset_temp <- imputeMissing(x = dataset.mirt, Theta = fscores(dataset.mirt, method = 'MAP', QMC = T), QMC = T, impute = 100)
           dataset.mirt2 <- fastFIFA(x = as.data.frame(dataset_temp), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
-          dataset.response <- personfit(dataset.mirt2, method='MAP', QMC = T)
+          dataset.response <- mirt::personfit(dataset.mirt2, method='MAP', QMC = T)
         }
         
         
@@ -326,7 +326,7 @@ k.faking <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
       # person-fit test in IRT
       if(sum(is.na(dataset)) == 0){
         dataset.mirt <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
-        dataset.response <- personfit(dataset.mirt, method='MAP', QMC = T)
+        dataset.response <- mirt::personfit(dataset.mirt, method='MAP', QMC = T)
         
         
       } else {
@@ -335,7 +335,7 @@ k.faking <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type
         dataset_temp <- imputeMissing(x = dataset.mirt, Theta = fscores(dataset.mirt, method = 'MAP', QMC = T), QMC = T, impute = 100)
         message('re-estimating parameters')
         dataset.mirt2 <- fastFIFA(x = as.data.frame(dataset_temp), covdata = as.data.frame(covdata), formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, itemkeys = itemkeys, survey.weights = survey.weights, ...)
-        dataset.response <- personfit(dataset.mirt2, method='MAP', QMC = T)
+        dataset.response <- mirt::personfit(dataset.mirt2, method='MAP', QMC = T)
       }
       
       print(hist(dataset.response$Zh))
@@ -941,7 +941,7 @@ likertFA <- function(data = ..., ...) {
   message('estimating Theta')
   try(test2_fscores <- fscores(object = result, rotate = 'geominQ', full.scores = T, plausible.draws = 100, QMC = TRUE, method = 'MAP', MI = 100))
   message('estimating itemfit')
-  try(test2 <- itemfit(result, method = 'MAP', impute = 100, QMC = TRUE), silent = T)
+  try(test2 <- mirt::itemfit(result, method = 'MAP', impute = 100, QMC = TRUE), silent = T)
   
   if(exists("test2")) { # patch for mirt function bug...
     test2$cal <- test2$S_X2/test2$df.S_X2
@@ -1862,12 +1862,12 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
       message('Iteration: ', iteration_num, '\n')
       
       if(sum(is.na(surveyFixMod@Data$data)) == 0){
-        try(surveyFixMod_itemFit <- itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
+        try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
                                             method = 'MAP',
                                             QMC = T, rotate = rotateCriteria, maxit = 1e+5))
       } else {
         mirtCluster()
-        try(surveyFixMod_itemFit <- itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
+        try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
                                             impute = 100,
                                             method = 'MAP',
                                             QMC = T, rotate = rotateCriteria, maxit = 1e+5))
