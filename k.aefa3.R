@@ -2862,3 +2862,45 @@ deepFA <- function(mirtModel){
     return(deepModel)
   }
 }
+
+jmleRaschEst <- function(data, model = 'PCM'){
+  if(!require('mixRasch')){
+    install.packages('mixRasch', repos = 'http://cran.nexr.com', dependencies = T); library('mixRasch')
+  }
+  itemList <- colnames(data)
+  RaschData <- data.frame(data)
+  jmleRasch <- mixRasch::mixRasch(data = RaschData, steps = max(psych::describe(RaschData)$range), max.iter = 500, model = model)
+  STOP <- FALSE
+  while (!STOP) {
+    if(ncol(data) > 2){
+      jmleFit <- data.frame(jmleRasch$item.par$in.out)
+      if(length(which(abs(jmleFit$out.Z) > 2)) != 0){
+        message('outfit: ', colnames(RaschData)[which(max(abs(jmleFit$out.Z)) == abs(jmleFit$out.Z))])
+        
+        itemList <- names(RaschData) %in% colnames(RaschData)[which(max(abs(jmleFit$out.Z)) == abs(jmleFit$out.Z))]
+        RaschData <- RaschData[!itemList]
+        
+        itemList <- itemList[-c(which(max(abs(jmleFit$out.Z)) == jmleFit$out.Z))]
+        jmleRasch <- mixRasch::mixRasch(data = RaschData, steps = max(psych::describe(RaschData)$range), max.iter = 500, model = model)
+        
+      } else if(length(which(abs(jmleFit$in.Z) > 2)) != 0){
+        message('infit: ', colnames(RaschData)[which(max(abs(jmleFit$in.Z)) == abs(jmleFit$in.Z))])
+        
+        itemList <- names(RaschData) %in% colnames(RaschData)[which(max(abs(jmleFit$in.Z)) == abs(jmleFit$in.Z))]
+        RaschData <- RaschData[!itemList]
+        
+        itemList <- itemList[-c(which(max(abs(jmleFit$out.Z)) == jmleFit$out.Z))]
+        jmleRasch <- mixRasch::mixRasch(data = RaschData, steps = max(psych::describe(RaschData)$range), max.iter = 500, model = model)
+        
+      } else {
+        STOP <- TRUE
+      }
+    } else {
+      STOP <- TRUE
+    }
+  }
+  RaschJMLEresult <- new.env()
+  # RaschJMLEresult$itemList <- colnames(RaschData)
+  RaschJMLEresult <- jmleRasch
+  return(RaschJMLEresult)
+}
