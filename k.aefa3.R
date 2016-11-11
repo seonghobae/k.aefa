@@ -1910,18 +1910,18 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
           surveyFixMod <- deepFA(surveyFixMod)
         }
       } else if (forceRasch == T) {
-        if(length(c(
-          union(which(max((surveyFixMod_itemFit$infit)) >= 1.5),
-                which(max((surveyFixMod_itemFit$outfit)) >= 1.5)))) > 0){
+        if(length(which(abs(surveyFixMod_itemFit$z.infit[1:surveyFixMod@Data$nitems]) > 2)) != 0){
           
-          message('\nRasch infit & outfit (.5 ~ 1.5): beta version')
-          surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(
-            union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                  which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))],
-            itemkeys = itemkeys[,-c(
-              union(which(max((surveyFixMod_itemFit$infit)) == (surveyFixMod_itemFit$infit)),
-                    which(max((surveyFixMod_itemFit$outfit)) == (surveyFixMod_itemFit$outfit))))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
+          message('\nRasch outfit (|z|>2)')
+          surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(which(max(abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])) == abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])))],
+            itemkeys = itemkeys[,-c(which(max(abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])) == abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
           
+        } else if(length(which(abs(surveyFixMod_itemFit$z.infit[1:surveyFixMod@Data$nitems]) > 2)) != 0){
+          
+          message('\nRasch infit (|z|>2)')
+          surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(which(max(abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])) == abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])))],
+                                   itemkeys = itemkeys[,-c(which(max(abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])) == abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
+                                                       
         } else {
           itemFitDone <- TRUE
         }
