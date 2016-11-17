@@ -19,12 +19,12 @@ if(!require(Rsolnp)) {
   try(install.packages("Rsolnp", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(Rsolnp)
 }
 
-if(!require(Cairo)) {
-  try(install.packages("Cairo", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(Cairo)
-}
-if(!require(cairoDevice)) {
-  try(install.packages("cairoDevice", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(cairoDevice)
-}
+#if(!require(Cairo)) {
+#  try(install.packages("Cairo", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(Cairo)
+#}
+#if(!require(cairoDevice)) {
+#  try(install.packages("cairoDevice", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(cairoDevice)
+#}
 if(!require(stringr)) {
   try(install.packages("stringr", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(stringr)
 }
@@ -38,10 +38,10 @@ if(!require(rrcovNA)) {
 }
 
 # check packages
-if(!require(FAiR)) {
-  message("\n Installing Packages: Processing......")
-  try(install.packages("FAiR", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
-}
+#if(!require(FAiR)) {
+#  message("\n Installing Packages: Processing......")
+#  try(install.packages("FAiR", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+#}
 
 # check packages
 if(!require(bfa)) {
