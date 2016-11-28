@@ -1863,14 +1863,14 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
       
       if(sum(is.na(surveyFixMod@Data$data)) == 0){
         try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
-                                            method = 'MAP',
-                                            QMC = T, rotate = rotateCriteria, maxit = 1e+5))
+                                                  method = 'MAP',
+                                                  QMC = T, rotate = rotateCriteria, maxit = 1e+5))
       } else {
         mirtCluster()
         try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
-                                            impute = 100,
-                                            method = 'MAP',
-                                            QMC = T, rotate = rotateCriteria, maxit = 1e+5))
+                                                  impute = 100,
+                                                  method = 'MAP',
+                                                  QMC = T, rotate = rotateCriteria, maxit = 1e+5))
         mirtCluster(remove = T)
       }
       
@@ -1914,14 +1914,14 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = F,
           
           message('\nRasch outfit (|z|>2)')
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(which(max(abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])) == abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])))],
-            itemkeys = itemkeys[,-c(which(max(abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])) == abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
+                                   itemkeys = itemkeys[,-c(which(max(abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])) == abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
           
         } else if(length(which(abs(surveyFixMod_itemFit$z.infit[1:surveyFixMod@Data$nitems]) > 2)) != 0){
           
           message('\nRasch infit (|z|>2)')
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(which(max(abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])) == abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])))],
                                    itemkeys = itemkeys[,-c(which(max(abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])) == abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
-                                                       
+          
         } else {
           itemFitDone <- TRUE
         }
@@ -2903,4 +2903,81 @@ jmleRaschEst <- function(data, model = 'PCM'){
   RaschJMLEresult$itemList <- colnames(RaschData)
   RaschJMLEresult$model <- jmleRasch
   return(RaschJMLEresult)
+}
+
+cmleRaschEst <- function(data, model = 'PCM'){
+  if(!require('eRm')){
+    install.packages('eRm', repos = 'http://cran.nexr.com', dependencies = T); library('eRm')
+  }
+  itemList <- colnames(data)
+  RaschData <- data.frame(data)
+  if(model == 'PCM'){
+    cmleRasch <- eRm::PCM(RaschData)
+  } else if(model == 'RSM'){
+    cmleRasch <- eRm::RSM(RaschData)
+  } else if(model == 'dich'){
+    cmleRasch <- eRm::RM(RaschData)
+  } else {
+    stop('model have to define PCM, RSM, dich')
+  }
+  
+  # define while loop
+  STOP <- FALSE # initial is STOP = FALSE
+  while (!STOP) {
+    if(ncol(data) > 2){
+      # cmleFit <- data.frame(cmleRasch$item.par$in.out)
+      cmleFit <- data.frame(eRm::itemfit(eRm::person.parameter(cmleRasch))$i.outfitZ,
+                            eRm::itemfit(eRm::person.parameter(cmleRasch))$i.outfitMSQ,
+                            eRm::itemfit(eRm::person.parameter(cmleRasch))$i.infitZ,
+                            eRm::itemfit(eRm::person.parameter(cmleRasch))$i.infitMSQ)
+      colnames(cmleFit) <- c("out.Z", "out.MSQ", "in.Z", "in.MSQ")
+      
+      print(cmleFit)
+      
+      if(length(which(abs(cmleFit$out.Z) > 2)) != 0){
+        message('outfit: ', colnames(RaschData)[which(max(abs(cmleFit$out.Z)) == abs(cmleFit$out.Z))])
+        
+        itemList <- names(RaschData) %in% colnames(RaschData)[which(max(abs(cmleFit$out.Z)) == abs(cmleFit$out.Z))]
+        RaschData <- RaschData[!itemList]
+        
+        itemList <- itemList[-c(which(max(abs(cmleFit$out.Z)) == cmleFit$out.Z))]
+        
+        if(model == 'PCM'){
+          cmleRasch <- eRm::PCM(RaschData)
+        } else if(model == 'RSM'){
+          cmleRasch <- eRm::RSM(RaschData)
+        } else if(model == 'dich'){
+          cmleRasch <- eRm::RM(RaschData)
+        } else {
+          stop('model have to define PCM, RSM, dich')
+        }        
+        
+      } else if(length(which(abs(cmleFit$in.Z) > 2)) != 0){
+        message('infit: ', colnames(RaschData)[which(max(abs(cmleFit$in.Z)) == abs(cmleFit$in.Z))])
+        
+        itemList <- names(RaschData) %in% colnames(RaschData)[which(max(abs(cmleFit$in.Z)) == abs(cmleFit$in.Z))]
+        RaschData <- RaschData[!itemList]
+        
+        itemList <- itemList[-c(which(max(abs(cmleFit$out.Z)) == cmleFit$out.Z))]
+        
+        if(model == 'PCM'){
+          cmleRasch <- eRm::PCM(RaschData)
+        } else if(model == 'RSM'){
+          cmleRasch <- eRm::RSM(RaschData)
+        } else if(model == 'dich'){
+          cmleRasch <- eRm::RM(RaschData)
+        } else {
+          stop('model have to define PCM, RSM, dich')
+        }        
+      } else {
+        STOP <- TRUE
+      }
+    } else {
+      STOP <- TRUE
+    }
+  }
+  Raschcmleresult <- new.env()
+  Raschcmleresult$itemList <- colnames(RaschData)
+  Raschcmleresult$model <- cmleRasch
+  return(Raschcmleresult)
 }
