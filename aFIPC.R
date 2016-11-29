@@ -75,14 +75,14 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
     }
     
     if(tryFitwholeOldItems == T){
-      if(!oldFormModel@OptimInfo$secondordertest){
+      if(!oldFormModel@OptimInfo$secondordertest && !itemtype == 'ideal'){
         message('Estimation failed. estimating new parameters with no prior distribution using quasi-Monte Carlo EM estimation. please be patient.')
         
         try(rm(oldFormModel))
         try(oldFormModel <- mirt::mirt(data = oldformYDataK, 1, itemtype = itemtype, SE = T, method = 'QMCEM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = F))
       }
       
-      if(!oldFormModel@OptimInfo$secondordertest){
+      if(!oldFormModel@OptimInfo$secondordertest && !itemtype == 'ideal'){
         message('Estimation failed. estimating new parameters with no prior distribution using  Cai\'s (2010) Metropolis-Hastings Robbins-Monro (MHRM) algorithm. please be patient.')
         
         try(rm(oldFormModel))
@@ -92,35 +92,35 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
       }
     }
     
-    if(!oldFormModel@OptimInfo$secondordertest){
+    if(!oldFormModel@OptimInfo$secondordertest && !itemtype == 'ideal'){
       message('Estimation failed. trying to remove weird items by itemfit statistics')
       try(rm(oldFormModel))
-
+      
       oldFormModel <- surveyFA(oldformYData, autofix = F, SE = T, forceUIRT = T)
     }
     
-    if(!oldFormModel@OptimInfo$secondordertest){
+    if(!oldFormModel@OptimInfo$secondordertest && !itemtype == 'ideal'){
       message('Estimation failed. trying to remove weird items by itemfit statistics by normal MMLE/EM')
       try(rm(oldFormModel))
-
+      
       oldFormModel <- surveyFA(oldformYData, autofix = F, SE = T, forceUIRT = T, forceNormalEM = T)
     }
     
-    if(!oldFormModel@OptimInfo$secondordertest){
+    if(!oldFormModel@OptimInfo$secondordertest && !itemtype == 'ideal'){
       message('Estimation failed. trying to remove weird items by itemfit statistics by MMLE/QMCEM')
       try(rm(oldFormModel))
-
+      
       oldFormModel <- surveyFA(oldformYData, autofix = F, SE = T, forceUIRT = T, unstable = T)
     }
     
-    if(!oldFormModel@OptimInfo$secondordertest){
+    if(!oldFormModel@OptimInfo$secondordertest && !itemtype == 'ideal'){
       message('Estimation failed. trying to remove weird items by itemfit statistics by MMLE/MHRM')
       try(rm(oldFormModel))
-
+      
       oldFormModel <- surveyFA(oldformYData, autofix = F, SE = T, forceUIRT = T, forceMHRM = T)
     }
     
-    if(!oldFormModel@OptimInfo$secondordertest){
+    if(!oldFormModel@OptimInfo$secondordertest && !itemtype == 'ideal'){
       stop('Estimation failed. Please check test quality.')
     }
     
@@ -164,14 +164,14 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
     
     if (tryFitwholeNewItems) {
       
-      if(!newFormModel@OptimInfo$secondordertest){
+      if(!newFormModel@OptimInfo$secondordertest && !itemtype == 'ideal'){
         message('Estimation failed. estimating new parameters with no prior distribution using quasi-Monte Carlo EM estimation. please be patient.')
         
         try(rm(newFormModel))
         try(newFormModel <- mirt::mirt(data = newformXDataK, 1, itemtype = itemtype, SE = T, method = 'QMCEM', accelerate = 'squarem', technical = list(NCYCLES = 1e+5), GenRandomPars = F))
       }
       
-      if(!newFormModel@OptimInfo$secondordertest){
+      if(!newFormModel@OptimInfo$secondordertest && !itemtype == 'ideal'){
         message('Estimation failed. estimating new parameters with no prior distribution using  Cai\'s (2010) Metropolis-Hastings Robbins-Monro (MHRM) algorithm. please be patient.')
         
         try(rm(newFormModel))
@@ -182,35 +182,35 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
       
     }
     
-    if(!newFormModel@OptimInfo$secondordertest){
+    if(!newFormModel@OptimInfo$secondordertest && !itemtype == 'ideal'){
       message('Estimation failed. trying to remove weird items by itemfit statistics')
       try(rm(newFormModel))
-
+      
       newFormModel <- surveyFA(newformXData, autofix = F, SE = T, forceUIRT = T)
     }
     
-    if(!newFormModel@OptimInfo$secondordertest){
+    if(!newFormModel@OptimInfo$secondordertest && !itemtype == 'ideal'){
       message('Estimation failed. trying to remove weird items by itemfit statistics again by normal MMLE/EM')
       try(rm(newFormModel))
-
+      
       newFormModel <- surveyFA(newformXData, autofix = F, SE = T, forceUIRT = T, forceNormalEM = T)
     }
     
-    if(!newFormModel@OptimInfo$secondordertest){
+    if(!newFormModel@OptimInfo$secondordertest && !itemtype == 'ideal'){
       message('Estimation failed. trying to remove weird items by itemfit statistics again by MMLE/QMCEM')
       try(rm(newFormModel))
-
+      
       newFormModel <- surveyFA(newformXData, autofix = F, SE = T, forceUIRT = T, unstable = T)
     }
     
-    if(!newFormModel@OptimInfo$secondordertest){
+    if(!newFormModel@OptimInfo$secondordertest && !itemtype == 'ideal'){
       message('Estimation failed. trying to remove weird items by itemfit statistics again by MMLE/MHRM')
       try(rm(newFormModel))
-
+      
       newFormModel <- surveyFA(newformXData, autofix = F, SE = T, forceUIRT = T, forceMHRM = T)
     }
     
-    if(!newFormModel@OptimInfo$secondordertest){
+    if(!newFormModel@OptimInfo$secondordertest && !itemtype == 'ideal'){
       stop('Estimation failed. Please check test quality.')
     }
   }
