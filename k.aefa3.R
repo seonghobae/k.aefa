@@ -1153,13 +1153,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "cross
           optimINPUT <- NULL
           optimCTRL  <- NULL
           empiricalhist <- FALSE
-          NCYCLES <- 1e+5
+          NCYCLES <- 4000
         } else {
           estimationMETHOD <- 'EM'
           optimINPUT <- NULL
           optimCTRL  <- NULL
           empiricalhist <- TRUE
-          NCYCLES <- 1e+5
+          NCYCLES <- 4000
         }
       } else {
         if(unstable == T){
@@ -1212,13 +1212,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "cross
           optimINPUT <- NULL
           optimCTRL  <- NULL
           empiricalhist <- FALSE
-          NCYCLES <- 1e+5
+          NCYCLES <- 4000
         } else {
           estimationMETHOD <- 'EM'
           optimINPUT <- NULL
           optimCTRL <- NULL
           empiricalhist <- TRUE
-          NCYCLES <- 1e+5
+          NCYCLES <- 4000
         }
       } else {
         estimationMETHOD <- 'QMCEM'
@@ -1707,7 +1707,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "cross
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
           if(exists('modTEMP')){
-                        if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+            if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
           }
           
           if(exists('modTEMP') == F){
@@ -1737,7 +1737,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "cross
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
         if(exists('modTEMP')){
-                      if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
         }
       }
       
@@ -1751,7 +1751,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "cross
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
         if(exists('modTEMP')){
-                      if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
         }
       }
       
@@ -1765,7 +1765,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "cross
                                   optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
         if(exists('modTEMP')){
-                      if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
         }
       }
       
@@ -2221,7 +2221,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
                                            formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                            SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
         if(exists('modTEMP')){
-                      if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
         }
         
         if(exists('modTEMP') == F){
@@ -2234,7 +2234,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
                                              formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                              SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
           if(exists('modTEMP')){
-                        if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+            if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
           }
         }
         
@@ -2248,7 +2248,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
                                              formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                              SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
           if(exists('modTEMP')){
-                        if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+            if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
           }
         }
         
@@ -2262,7 +2262,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
                                              formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                              SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
           if(exists('modTEMP')){
-                        if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+            if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
           }
         }
       }
@@ -2277,7 +2277,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
                                            formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                            SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
         if(exists('modTEMP')){
-                      if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
         }
       }
       
@@ -2291,7 +2291,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
                                            formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                            SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
         if(exists('modTEMP')){
-                      if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
         }
       }
       
@@ -2305,7 +2305,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
                                            formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                            SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
         if(exists('modTEMP')){
-                      if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
         }
       }
       
@@ -2327,7 +2327,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
                                            formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                            SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
         if(exists('modTEMP')){
-                      if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
         }
         
         if(exists('modTEMP') == F){
@@ -2340,7 +2340,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
                                              formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                              SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
           if(exists('modTEMP')){
-                        if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+            if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
           }
         }
         
@@ -2355,7 +2355,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
                                              formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                              SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
           if(exists('modTEMP')){
-                        if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+            if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
           }
         }
       }
@@ -2370,7 +2370,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
                                            formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                            SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
         if(exists('modTEMP')){
-                      if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
         }
       }
       
@@ -2383,7 +2383,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
                                            formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                            SE.type = SE.type, survey.weights = survey.weights, key = NULL, ...), silent = F)
         if(exists('modTEMP')){
-                      if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
         }
       }
       
@@ -2451,7 +2451,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
                                                SE.type = SE.type, survey.weights = survey.weights,
                                                group = group, invariance = invariance, ... = ...), silent = F)
             if(exists('modTEMP')){
-                          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+              if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
             }
             
             if(exists('modTEMP') == F){
@@ -2472,7 +2472,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
                                                SE.type = SE.type, survey.weights = survey.weights,
                                                group = group, invariance = invariance, ... = ...), silent = F)
             if(exists('modTEMP')){
-                          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+              if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
             }
             
             if(exists('modTEMP') == F){
@@ -2503,7 +2503,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
                                            SE.type = SE.type, survey.weights = survey.weights,
                                            group = group, invariance = invariance, ... = ...), silent = F)
         if(exists('modTEMP')){
-                      if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
         }
       }
       
@@ -2518,7 +2518,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
                                            SE.type = SE.type, survey.weights = survey.weights,
                                            group = group, invariance = invariance, ... = ...), silent = F)
         if(exists('modTEMP')){
-                      if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
         }
       }
       
@@ -2533,7 +2533,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
                                            SE.type = SE.type, survey.weights = survey.weights,
                                            group = group, invariance = invariance, ... = ...), silent = T)
         if(exists('modTEMP')){
-                      if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
         }
       }
       
