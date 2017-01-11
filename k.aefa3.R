@@ -1265,7 +1265,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "cross
       accelerateINPUT <- 'squarem'
       TOLINPUT <- NULL
       SEtolINPUT <- 1e-3
-      symmetric_SEMINPUT <- TRUE
+      symmetric_SEMINPUT <- FALSE
       SE.type <- 'MHRM'
       
       message('TOL: ', 'default', ' / SEtol: ', SEtolINPUT, ' / SE.type: ', SE.type, ' / Accelerator: ',
@@ -2177,7 +2177,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
       accelerateINPUT <- 'none'
       TOLINPUT <- NULL
       SEtolINPUT <- 1e-4
-      symmetric_SEMINPUT <- TRUE
+      symmetric_SEMINPUT <- FALSE
       
       message('TOL: ', 'default', ' / SEtol: ', SEtolINPUT, ' / SE.type: ', SE.type, ' / Accelerator: ',
               accelerateINPUT, ' / Symmetric SEM: ', symmetric_SEMINPUT)
@@ -2185,7 +2185,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
       accelerateINPUT <- 'squarem'
       TOLINPUT <- NULL
       SEtolINPUT <- 1e-3
-      symmetric_SEMINPUT <- TRUE
+      symmetric_SEMINPUT <- FALSE
       SE.type <- 'MHRM'
       
       message('TOL: ', 'default', ' / SEtol: ', SEtolINPUT, ' / SE.type: ', SE.type, ' / Accelerator: ',
