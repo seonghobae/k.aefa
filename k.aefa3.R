@@ -2834,7 +2834,7 @@ deepFAengine <- function(mirtModel){ # for search more factors with prevent loca
     
     try(invisible(tempModel <- mirt::mirt(data = mirtModel@Data$data, model = i, itemtype = mirtModel@Model$itemtype, SE = mirtModel@Options$SE, SE.type = mirtModel@Options$SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = mirtModel@Options$Moptim, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = mirtModel@Options$technical$NCYCLES, MAXQUAD = mirtModel@Options$technical$MAXQUAD, SEtol = mirtModel@Options$technical$SEtol, symmetric_SEM = mirtModel@Options$technical$symmetric_SEM, removeEmptyRows = mirtModel@Options$technical$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$technical$MHRM_SE_draws))), silent = T)
     if(exists('tempModel')){
-      if(tempModel@OptimInfo$converged){
+      if(tempModel@OptimInfo$converged && tempModel@OptimInfo$secondordertest == T){
         message(i, ' factors were converged; DIC: ', tempModel@Fit$DIC)
         j <- j + 1
         DICindices[j] <- tempModel@Fit$DIC
