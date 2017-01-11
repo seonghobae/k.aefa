@@ -2691,7 +2691,7 @@ cmvFA <- function(x, MHRM = F){
 bifactorFA <- function(data = ..., skipS_X2 = F, forceNormalEM = T, forceMHRM = F, covdata = NULL, formula = NULL, skipNominal = F, allowMixedResponse = T, itemkeys = NULL, needGlobalOptimal = T) {
   if(length(covdata) != 0){
     forceNormalEM <- TRUE
-  } if(forceNormalEM){
+  } else if(forceNormalEM){
     forceNormalEM <- TRUE
   } else {
     forceNormalEM <- FALSE
