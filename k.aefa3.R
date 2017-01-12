@@ -2709,7 +2709,7 @@ bifactorFA <- function(data = ..., skipS_X2 = F, forceNormalEM = T, forceMHRM = 
     
     if(sum(rotMAT < .9999) != ncol(mod@Data$data)){
       mod <- surveyFA(data = mod@Data$data[,-which(rotMAT == max(rotMAT))], bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F, covdata = covdata, formula = formula, skipNominal = skipNominal, allowMixedResponse = allowMixedResponse, itemkeys = itemkeys[-which(rotMAT == max(rotMAT))], needGlobalOptimal = needGlobalOptimal, forceNormalEM = forceNormalEM, forceUIRT = F)
-    } else if(sum(rotMAT > .1) != ncol(mod@Data$data)){
+    } else if(sum(rotMAT > .0001) != ncol(mod@Data$data)){
       mod <- surveyFA(data = mod@Data$data[,-which(rotMAT == min(rotMAT))], bifactorSolution = T, skipS_X2 = skipS_X2, forceMHRM = forceMHRM, autofix = F, covdata = covdata, formula = formula, skipNominal = skipNominal, allowMixedResponse = allowMixedResponse, itemkeys = itemkeys[-which(rotMAT == max(rotMAT))], needGlobalOptimal = needGlobalOptimal, forceNormalEM = forceNormalEM, forceUIRT = F)
     } else {
       return(mod)
