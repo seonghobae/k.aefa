@@ -1305,9 +1305,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "cross
         try(return(modTEMP))
       }
       
-      if(nrow(x) >= 125){
+      if(nrow(x) >= 100){
         
-        if(nrow(x) >= 250){
+        if(nrow(x) >= 200){
           message('\nMIRT model: Compensatory 4PL')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
@@ -1432,7 +1432,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "cross
       }
       
     } else if(length(itemkeys) != 0){ # 2-4PLNRM
-      if(nrow(x) >= 250){
+      if(nrow(x) >= 200){
         message('\nMIRT model: Compensatory 4PL Nominal response')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PLNRM', method = estimationMETHOD,
                                   key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
