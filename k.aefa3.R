@@ -1264,7 +1264,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "cross
     } else if((SE == T && estimationMETHOD == 'MHRM') == T){
       accelerateINPUT <- 'squarem'
       TOLINPUT <- NULL
-      SEtolINPUT <- 1e-3
+      SEtolINPUT <- 1e-4
       symmetric_SEMINPUT <- FALSE
       SE.type <- 'MHRM'
       
