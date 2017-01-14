@@ -1118,7 +1118,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "cross
                      forceMHRM = F, forceNormalEM = T, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T,
                      forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, forceNRM = F, ...){
   
+  message('input data n size: ', nrow(x))
   x <- x[-which(rowSums(is.na(x)) > ncol(x)*(1-3/4)),] # 아무리 풀기 싫어도 75퍼센트 정도는 풀어줘라 쫌!!
+  message('current data n size: ', nrow(x))
   
   for(i in 1:100){
     try(invisible(gc()), silent = T) # garbage cleaning
