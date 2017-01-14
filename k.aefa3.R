@@ -1118,6 +1118,8 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "cross
                      forceMHRM = F, forceNormalEM = T, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T,
                      forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, forceNRM = F, ...){
   
+  x <- x[-which(rowSums(is.na(x)) > ncol(x)*(1-3/4)),] # 아무리 풀기 싫어도 75퍼센트 정도는 풀어줘라 쫌!!
+  
   for(i in 1:100){
     try(invisible(gc()), silent = T) # garbage cleaning
     
@@ -1896,7 +1898,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
       } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems] < .05)) != 0 && skipS_X2 == F && surveyFixMod@Model$nfact == 1){ # Kang, T., & Chen, T. T. (2008). Performance of the Generalized S‐X2 Item Fit Index for Polytomous IRT Models. Journal of Educational Measurement, 45(4), 391-406.; Reise, S. P. (1990). A comparison of item- and person-fit methods of assessing model-data fit in IRT. Applied Psychological Measurement, 14, 127-137.
         message('\nKang, T., & Chen, T. T. (2008); Reise, S. P. (1990)')
         workKeys <- workKeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
-
+        
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
         if(needGlobalOptimal == T && forceUIRT == F){
           surveyFixMod <- deepFA(surveyFixMod)
