@@ -1882,7 +1882,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
       print(surveyFixMod_itemFit)
       
       # item evaluation
-      if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -1.96)) != 0){ # Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
+      if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -1.96)) != 0 && sum(is.na(surveyFixModRAW)) == 0){ # Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
         message('\nDrasgow, F., Levine, M. V., & Williams, E. A. (1985)')
         workKeys <- workKeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
