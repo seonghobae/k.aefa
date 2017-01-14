@@ -1832,7 +1832,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
   message('---------------------------------------------------------\n')
   
   message('input data n size: ', nrow(data))
-  data <- data[-which(rowSums(is.na(x)) > ncol(data)*(1-3/4)),] # 아무리 풀기 싫어도 75퍼센트 정도는 풀어줘라 쫌!!
+  data <- data[-which(rowSums(is.na(data)) > ncol(data)*(1-3/4)),] # 아무리 풀기 싫어도 75퍼센트 정도는 풀어줘라 쫌!!
   message('current data n size: ', nrow(data))
   
   if(bifactorSolution) {
