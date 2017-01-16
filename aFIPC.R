@@ -224,7 +224,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   NewScaleParms[which(NewScaleParms$item == paste0('GROUP')), "est"] <- FALSE
   OldScaleParms[which(OldScaleParms$item == paste0('GROUP')), "est"] <- FALSE
   
-  if(itemtype = 'Rasch'){
+  if(itemtype == 'Rasch'){
     NewScaleParms[which(NewScaleParms$name == "a1"), "est"] <- FALSE
     OldScaleParms[which(OldScaleParms$item == "a1"), "est"] <- FALSE
   }
