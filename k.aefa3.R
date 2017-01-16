@@ -1826,12 +1826,12 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
                      unstable = F, forceNormalEM = F, forceMHRM = F,
                      printFactorStructureRealtime = F, itemkeys = NULL,
                      survey.weights = NULL, allowMixedResponse = T, autofix = F,
-                     forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, bifactorSolution = T, skipS_X2 = F, forceNRM = F, needGlobalOptimal = T, ...) {
+                     forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, bifactorSolution = T, skipS_X2 = F, forceNRM = F, needGlobalOptimal = T, pilotTestMode = F, ...) {
   message('---------------------------------------------------------')
   message(' k.aefa: kwangwoon automated exploratory factor analysis ')
   message('---------------------------------------------------------\n')
   
-  if(sum(is.na(data)) != 0){
+  if(sum(is.na(data)) != 0 && pilotTestMode == T){
     
     message('input data n size: ', nrow(data))
     data <- data[which(rowSums(is.na(data)) < ncol(data)*(1-3/4)),] # 아무리 풀기 싫어도 75퍼센트 정도는 풀어줘라 쫌!!
