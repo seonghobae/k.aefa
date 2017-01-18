@@ -355,7 +355,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
     NewScaleParms[which(NewScaleParms$name == "MEAN_11"), "est"] <- FALSE
     OldScaleParms[which(OldScaleParms$name == "MEAN_11"), "est"] <- FALSE
     NewScaleParms[which(NewScaleParms$name == "COV_11"), "value"] <- 1
-    OldScaleParms[which(OldScaleParms$name == "MEAN_11"), "est"] <- 0
+    OldScaleParms[which(OldScaleParms$name == "MEAN_11"), "value"] <- 0
     
     
   }
