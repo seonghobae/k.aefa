@@ -224,9 +224,12 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   NewScaleParms[which(NewScaleParms$item == paste0('GROUP')), "est"] <- FALSE
   OldScaleParms[which(OldScaleParms$item == paste0('GROUP')), "est"] <- FALSE
   
+  NewScaleParms[which(NewScaleParms$name == "COV_11"), "est"] <- FALSE
+  OldScaleParms[which(OldScaleParms$name == "COV_11"), "est"] <- FALSE
+  
   if(itemtype == 'Rasch'){
     NewScaleParms[which(NewScaleParms$name == "a1"), "est"] <- FALSE
-    OldScaleParms[which(OldScaleParms$item == "a1"), "est"] <- FALSE
+    OldScaleParms[which(OldScaleParms$name == "a1"), "est"] <- FALSE
   }
   
   #IPD
@@ -347,6 +350,10 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   if(freeMEAN == T){
     LinkedModelSyntax <- mirt::mirt.model(paste0('F1 = 1-',ncol(newformXDataK[colnames(newFormModel@Data$data)]),'\n',
                                                  'MEAN = F1'))
+    
+    NewScaleParms[which(NewScaleParms$name == "MEAN_1"), "est"] <- TRUE
+    OldScaleParms[which(OldScaleParms$name == "MEAN_1"), "est"] <- TRUE
+    
   } else {
     LinkedModelSyntax <- mirt::mirt.model(paste0('F1 = 1-',ncol(newformXDataK[colnames(newFormModel@Data$data)]),'\n' ))
   }
