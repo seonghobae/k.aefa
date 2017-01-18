@@ -1,6 +1,6 @@
 source('https://raw.githubusercontent.com/seonghobae/k.aefa/master/k.aefa3.R')
 
-autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNames = ..., oldformCommonItemNames = ..., itemtype = '3PL', newformBILOGprior = NULL, oldformBILOGprior = NULL, tryFitwholeNewItems = T, tryFitwholeOldItems = T, checkIPD = T, tryEM = F, freeMEAN = T, forceNormalZeroOne = F, ...){
+autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNames = ..., oldformCommonItemNames = ..., itemtype = '3PL', newformBILOGprior = NULL, oldformBILOGprior = NULL, tryFitwholeNewItems = T, tryFitwholeOldItems = T, checkIPD = T, tryEM = F, freeMEAN = T, forceNormalZeroOne = F, parameterOverwrite = F, ...){
   
   # print credits
   message('automated Fixed Item Parameter Calibration: aFIPC 0.2')
@@ -219,8 +219,12 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   # do FIPC
   NewScaleParms <- mirt::mod2values(newFormModel)
   OldScaleParms <- mirt::mod2values(oldFormModel)
-  NewScaleParms[, "est"] <- TRUE
-  OldScaleParms[, "est"] <- TRUE
+  
+  if(!parameterOverwrite){
+    NewScaleParms[, "est"] <- TRUE
+    OldScaleParms[, "est"] <- TRUE
+  }
+  
   NewScaleParms[which(NewScaleParms$item == paste0('GROUP')), "est"] <- FALSE
   OldScaleParms[which(OldScaleParms$item == paste0('GROUP')), "est"] <- FALSE
   
