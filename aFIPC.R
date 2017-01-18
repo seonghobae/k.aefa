@@ -1,6 +1,6 @@
 source('https://raw.githubusercontent.com/seonghobae/k.aefa/master/k.aefa3.R')
 
-autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNames = ..., oldformCommonItemNames = ..., itemtype = '3PL', newformBILOGprior = NULL, oldformBILOGprior = NULL, tryFitwholeNewItems = T, tryFitwholeOldItems = T, checkIPD = T, tryEM = F, freeMEAN = T, ...){
+autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNames = ..., oldformCommonItemNames = ..., itemtype = '3PL', newformBILOGprior = NULL, oldformBILOGprior = NULL, tryFitwholeNewItems = T, tryFitwholeOldItems = T, checkIPD = T, tryEM = F, freeMEAN = T, forceNormalZeroOne = F, ...){
   
   # print credits
   message('automated Fixed Item Parameter Calibration: aFIPC 0.2')
@@ -347,6 +347,18 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   print(NewScaleParms)
   
   message('\nestimating Linked Form Eq(X) parameters')
+  if(forceNormalZeroOne){
+    freeMEAN <- F
+    
+    NewScaleParms[which(NewScaleParms$name == "COV_11"), "est"] <- FALSE
+    OldScaleParms[which(OldScaleParms$name == "COV_11"), "est"] <- FALSE
+    NewScaleParms[which(NewScaleParms$name == "MEAN_11"), "est"] <- FALSE
+    OldScaleParms[which(OldScaleParms$name == "MEAN_11"), "est"] <- FALSE
+    NewScaleParms[which(NewScaleParms$name == "COV_11"), "value"] <- 1
+    OldScaleParms[which(OldScaleParms$name == "MEAN_11"), "est"] <- 0
+    
+    
+  }
   if(freeMEAN == T){
     LinkedModelSyntax <- mirt::mirt.model(paste0('F1 = 1-',ncol(newformXDataK[colnames(newFormModel@Data$data)]),'\n',
                                                  'MEAN = F1'))
