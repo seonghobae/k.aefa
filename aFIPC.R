@@ -224,8 +224,8 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   NewScaleParms[which(NewScaleParms$item == paste0('GROUP')), "est"] <- FALSE
   OldScaleParms[which(OldScaleParms$item == paste0('GROUP')), "est"] <- FALSE
   
-  NewScaleParms[which(NewScaleParms$name == "COV_11"), "est"] <- FALSE
-  OldScaleParms[which(OldScaleParms$name == "COV_11"), "est"] <- FALSE
+  NewScaleParms[which(NewScaleParms$name == "COV_11"), "est"] <- TRUE
+  OldScaleParms[which(OldScaleParms$name == "COV_11"), "est"] <- TRUE
   
   if(itemtype == 'Rasch'){
     NewScaleParms[which(NewScaleParms$name == "a1"), "est"] <- FALSE
