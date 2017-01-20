@@ -1264,7 +1264,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "cross
     } else if((SE == T && estimationMETHOD == 'MHRM') == T){
       accelerateINPUT <- 'squarem'
       TOLINPUT <- NULL
-      SEtolINPUT <- 1e-4
+      SEtolINPUT <- 1e-5
       symmetric_SEMINPUT <- FALSE
       SE.type <- 'MHRM'
       
@@ -2206,7 +2206,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
     if((SE == T && SE.type == 'SEM') == T){
       accelerateINPUT <- 'none'
       TOLINPUT <- NULL
-      SEtolINPUT <- 1e-4
+      SEtolINPUT <- 1e-5
       symmetric_SEMINPUT <- FALSE
       
       message('TOL: ', 'default', ' / SEtol: ', SEtolINPUT, ' / SE.type: ', SE.type, ' / Accelerator: ',
