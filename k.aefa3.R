@@ -3030,7 +3030,7 @@ cmleRaschEst <- function(data, model = 'PCM'){
   return(Raschcmleresult)
 }
 
-          autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , est.a.M="h" , est.a.Var="i", burnin = 5000, iter = 10000){
+autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , est.a.M="h" , est.a.Var="i", burnin = 10000, iter = 20000){
   if(!require('sirt')){
     install.packages('sirt')
     library('sirt')
