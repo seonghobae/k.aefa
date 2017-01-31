@@ -3029,3 +3029,74 @@ cmleRaschEst <- function(data, model = 'PCM'){
   Raschcmleresult$model <- cmleRasch
   return(Raschcmleresult)
 }
+
+          autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , est.a.M="h" , est.a.Var="i", burnin = 5000, iter = 10000){
+  if(!require('sirt')){
+    install.packages('sirt')
+    library('sirt')
+  }
+  
+  if(range(x[1], na.rm = T)[2] - range(x[1], na.rm = T)[1] > 1){
+    link <- 'normal'
+  } else {
+    link <- 'logit'
+  }
+  
+  if(burnin == iter){
+    iter <- iter*2
+  }
+  
+  
+  
+  initData <- x
+  iterationTrials <- 1
+  
+  initData <- initData[which(!is.na(group)),]
+  group <- group[which(!is.na(group))]
+  
+  if(is.character(group)){
+    group <- as.factor(group)
+  }
+  
+  if(is.factor(group)){
+    numberOfGroups <- length(attributes(group)$levels)
+  } else {
+    numberOfGroups <- length(attributes(as.factor(group))$levels)
+  }
+  
+  message('MCMC link: ', link)
+  message('MCMC Trials: ', iterationTrials)
+  message('Current number of items: ', ncol(initData))
+  message('Current number of groups: ', numberOfGroups)
+  
+  group <- as.integer(group)
+  
+  init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, progress.iter = burnin/10)
+  
+  STOP <- FALSE
+  while(!STOP){
+    if(sum(init$summary.mcmcobj$Rhat > 1.01) != 0){
+      excludeVar <- unique(na.omit(as.numeric(unlist(strsplit(unlist(as.character(init$summary.mcmcobj[which(max(init$summary.mcmcobj$Rhat) == init$summary.mcmcobj$Rhat),]$parameter)), "[^0-9]+")))))
+      if(length(excludeVar) != 0 && ncol(initData) > 3){
+        message('Removing a item ', names(initData[excludeVar]),' / ', init$summary.mcmcobj[which(max(init$summary.mcmcobj$Rhat) == init$summary.mcmcobj$Rhat),]$parameter, ' Rhat: ', max(init$summary.mcmcobj$Rhat))
+        
+        initData <- initData[,-excludeVar]
+        
+        iterationTrials <- iterationTrials+1
+        
+        
+        message('MCMC Trials: ', iterationTrials)
+        message('Current number of items: ', ncol(initData))
+        
+        init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, progress.iter = burnin/10)
+        
+      } else {
+        STOP <- TRUE
+      }
+    } else {
+      STOP <- TRUE
+    }
+  }
+  
+  return(init)
+}
