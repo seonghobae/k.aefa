@@ -3030,7 +3030,7 @@ cmleRaschEst <- function(data, model = 'PCM'){
   return(Raschcmleresult)
 }
 
-autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , est.a.M="h" , est.a.Var="i", burnin = 10000, iter = 20000, Rhat = 1.05){
+autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , est.a.M="h" , est.a.Var="i", burnin = 10000, iter = 20000, Rhat = 1.05, autofix = T){
   if(!require('sirt')){
     install.packages('sirt')
     library('sirt')
@@ -3079,6 +3079,24 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , 
       excludeVar <- unique(na.omit(as.numeric(unlist(strsplit(unlist(as.character(init$summary.mcmcobj[which(max(init$summary.mcmcobj$Rhat) == init$summary.mcmcobj$Rhat),]$parameter)), "[^0-9]+")))))
       if(length(excludeVar) != 0 && ncol(initData) > 3){
         message('Removing a item ', names(initData[excludeVar]),' / ', init$summary.mcmcobj[which(max(init$summary.mcmcobj$Rhat) == init$summary.mcmcobj$Rhat),]$parameter, ' Rhat: ', max(init$summary.mcmcobj$Rhat))
+        
+        initData <- initData[,-excludeVar]
+        
+        iterationTrials <- iterationTrials+1
+        
+        
+        message('MCMC Trials: ', iterationTrials)
+        message('Current number of items: ', ncol(initData))
+        
+        init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, progress.iter = burnin/10)
+        
+      } else {
+        STOP <- TRUE
+      }
+    } else if(sum(init$summary.mcmcobj$Mean[grep("^a",init$summary.mcmcobj$parameter)] < 0) != 0 && autofix){
+      excludeVar <- unique(na.omit(as.numeric(unlist(strsplit(unlist(as.character(init$summary.mcmcobj$parameter[which(min(init$summary.mcmcobj$Mean[grep("^a",init$summary.mcmcobj$parameter)]) == (init$summary.mcmcobj$Mean))])), "[^0-9]+")))))
+      if(length(excludeVar) != 0 && ncol(initData) > 3){
+        message('Removing a item ', names(initData[excludeVar]),' / ', init$summary.mcmcobj$parameter[which(min(init$summary.mcmcobj$Mean[grep("^a",init$summary.mcmcobj$parameter)]) == (init$summary.mcmcobj$Mean))], ' Rhat: ', min(init$summary.mcmcobj$Mean[grep("^a",init$summary.mcmcobj$parameter)]))
         
         initData <- initData[,-excludeVar]
         
