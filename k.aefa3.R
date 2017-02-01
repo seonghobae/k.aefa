@@ -3030,7 +3030,7 @@ cmleRaschEst <- function(data, model = 'PCM'){
   return(Raschcmleresult)
 }
 
-autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , est.a.M="h" , est.a.Var="i", burnin = 10000, iter = 20000, Rhat = 1.05, autofix = T){
+          autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , est.a.M="h" , est.a.Var="i", burnin = 10000, iter = 20000, Rhat = 1.05, autofix = T){
   if(!require('sirt')){
     install.packages('sirt')
     library('sirt')
@@ -3096,7 +3096,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , 
     } else if(sum(init$summary.mcmcobj$Mean[grep("^a",init$summary.mcmcobj$parameter)] < 0) != 0 && autofix){
       excludeVar <- unique(na.omit(as.numeric(unlist(strsplit(unlist(as.character(init$summary.mcmcobj$parameter[which(min(init$summary.mcmcobj$Mean[grep("^a",init$summary.mcmcobj$parameter)]) == (init$summary.mcmcobj$Mean))])), "[^0-9]+")))))
       if(length(excludeVar) != 0 && ncol(initData) > 3){
-        message('Removing a item ', names(initData[excludeVar]),' / ', init$summary.mcmcobj$parameter[which(min(init$summary.mcmcobj$Mean[grep("^a",init$summary.mcmcobj$parameter)]) == (init$summary.mcmcobj$Mean))], ' Rhat: ', min(init$summary.mcmcobj$Mean[grep("^a",init$summary.mcmcobj$parameter)]))
+        message('Removing a item ', names(initData[excludeVar]),' / ', init$summary.mcmcobj$parameter[which(min(init$summary.mcmcobj$Mean[grep("^a",init$summary.mcmcobj$parameter)]) == (init$summary.mcmcobj$Mean))], ' value: ', min(init$summary.mcmcobj$Mean[grep("^a",init$summary.mcmcobj$parameter)]))
         
         initData <- initData[,-excludeVar]
         
