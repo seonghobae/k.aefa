@@ -3075,7 +3075,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , 
   
   STOP <- FALSE
   while(!STOP){
-    if(sum(init$summary.mcmcobj$Rhat > 1.01) != 0){
+    if(sum(init$summary.mcmcobj$Rhat > 1.02) != 0){
       excludeVar <- unique(na.omit(as.numeric(unlist(strsplit(unlist(as.character(init$summary.mcmcobj[which(max(init$summary.mcmcobj$Rhat) == init$summary.mcmcobj$Rhat),]$parameter)), "[^0-9]+")))))
       if(length(excludeVar) != 0 && ncol(initData) > 3){
         message('Removing a item ', names(initData[excludeVar]),' / ', init$summary.mcmcobj[which(max(init$summary.mcmcobj$Rhat) == init$summary.mcmcobj$Rhat),]$parameter, ' Rhat: ', max(init$summary.mcmcobj$Rhat))
