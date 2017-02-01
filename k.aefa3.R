@@ -3030,7 +3030,7 @@ cmleRaschEst <- function(data, model = 'PCM'){
   return(Raschcmleresult)
 }
 
-autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , est.a.M="h" , est.a.Var="i", burnin = 10000, iter = 20000){
+autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , est.a.M="h" , est.a.Var="i", burnin = 10000, iter = 20000, Rhat = 1.05){
   if(!require('sirt')){
     install.packages('sirt')
     library('sirt')
@@ -3075,7 +3075,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , 
   
   STOP <- FALSE
   while(!STOP){
-    if(sum(init$summary.mcmcobj$Rhat > 1.02) != 0){
+    if(sum(init$summary.mcmcobj$Rhat > Rhat) != 0){
       excludeVar <- unique(na.omit(as.numeric(unlist(strsplit(unlist(as.character(init$summary.mcmcobj[which(max(init$summary.mcmcobj$Rhat) == init$summary.mcmcobj$Rhat),]$parameter)), "[^0-9]+")))))
       if(length(excludeVar) != 0 && ncol(initData) > 3){
         message('Removing a item ', names(initData[excludeVar]),' / ', init$summary.mcmcobj[which(max(init$summary.mcmcobj$Rhat) == init$summary.mcmcobj$Rhat),]$parameter, ' Rhat: ', max(init$summary.mcmcobj$Rhat))
