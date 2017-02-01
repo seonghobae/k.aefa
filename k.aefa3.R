@@ -3118,3 +3118,65 @@ cmleRaschEst <- function(data, model = 'PCM'){
   
   return(init)
 }
+
+testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdifficulty = 0, sdOfdifficulty = 1.0, numberOfItems = 16, maximumItemSelection = 1){
+  if(!require('xxIRT')){
+    install.packages('xxIRT')
+    library('xxIRT')
+  }
+  if(!require('mirt')){
+    install.packages('mirt')
+    library('mirt')
+  }
+  if(!require('sirt')){
+    install.packages('sirt')
+    library('sirt')
+  }
+  library(xxIRT)
+  library(mirt)
+  library('sirt')
+  
+  if(class(MIRTmodel) == 'mirt'){
+    IRTpars <- data.frame(coef(MIRTmodel, IRTpars = T, simplify = T)$items[,1:3])
+    
+    items <- IRTpars
+    
+    colnames(items)[3] <- 'c'
+  } else if(class(MIRTmodel) == 'mcmc.sirt'){
+    message('sirt')
+    IRTpars <- data.frame(MIRTmodel$summary.mcmcobj$MAP[grep("^a", MIRTmodel$summary.mcmcobj$parameter)], MIRTmodel$summary.mcmcobj$MAP[grep("^b", MIRTmodel$summary.mcmcobj$parameter)])
+    colnames(IRTpars) <- c('a', 'b')
+    rownames(IRTpars) <- colnames(MIRTmodel$dat)
+    if(length(MIRTmodel$summary.mcmcobj$MAP[grep("^c", MIRTmodel$summary.mcmcobj$parameter)]) != 0){
+      IRTpars$c <- MIRTmodel$summary.mcmcobj$MAP[grep("^c", MIRTmodel$summary.mcmcobj$parameter)]
+    } else {
+      IRTpars$c <- rep(0, ncol(MIRTmodel$dat))
+    }
+    items <- IRTpars
+    
+  }
+  
+
+  
+  items$content <- as.numeric(as.factor(measurementArea))
+  
+  # print(items)
+  
+  x <- ata(items, NumberOfForms, len = numberOfItems, maxselect = maximumItemSelection, debug=TRUE)
+  
+  # x <- ata.obj.relative(x, seq(-1, 1, .5), "max", negative=FALSE, flatten=.1)
+  
+  x <- ata.obj.absolute(x, "b", meanOfdifficulty * numberOfItems)
+  x <- ata.obj.absolute(x, (x$pool$b - meanOfdifficulty)^2, sdOfdifficulty * numberOfItems)
+  
+  # x <- ata.obj.relative(x, "b", "max")
+  # x <- ata.constraint(x, 1, numberOfItems, numberOfItems)
+  # x <- ata.item.maxselect(x, 1)
+  x <- ata.solve(x)
+  print(plot(x))
+  y <- ata.get.items(x, as.list=TRUE)
+  message('mean of difficulty: ',mean(y[[1]]$b))
+  message('min of difficulty: ',min(y[[1]]$b))
+  message('max of difficulty: ',max(y[[1]]$b))
+  return(y)
+}
