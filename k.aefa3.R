@@ -3185,5 +3185,8 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   message('mean of difficulty: ',mean(y[[1]]$b))
   message('min of difficulty: ',min(y[[1]]$b))
   message('max of difficulty: ',max(y[[1]]$b))
-  return(y)
+  
+  z <- list(OriginalParms = items, ATAforms = y)
+  
+  return(z)
 }
