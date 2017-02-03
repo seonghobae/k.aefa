@@ -3136,13 +3136,10 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   library(mirt)
   library('sirt')
   
-  if(class(MIRTmodel) == 'mirt'){
+  if(class(MIRTmodel)[1] == 'SingleGroupClass'){
     IRTpars <- data.frame(coef(MIRTmodel, IRTpars = T, simplify = T)$items[,1:3])
-    
-    items <- IRTpars
-    
-    colnames(items)[3] <- 'c'
-  } else if(class(MIRTmodel) == 'mcmc.sirt'){
+    colnames(IRTpars)[3] <- 'c'
+  } else if(class(MIRTmodel)[1] == 'mcmc.sirt'){
     message('sirt')
     if(length(grep("^a",as.character(MIRTmodel$summary.mcmcobj$parameter))[!grep("^a",as.character(MIRTmodel$summary.mcmcobj$parameter)) %in% grep("^a_marg",as.character(MIRTmodel$summary.mcmcobj$parameter))]) == 0){
       IRTpars <- data.frame(rep(1,ncol(MIRTmodel$dat)),
@@ -3159,12 +3156,10 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
     } else {
       IRTpars$c <- rep(0, ncol(MIRTmodel$dat))
     }
-    items <- IRTpars
     
   }
   
-  
-  
+  items <- IRTpars
   items$content <- as.numeric(as.factor(measurementArea))
   
   # print(items)
