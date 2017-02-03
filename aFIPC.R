@@ -382,13 +382,24 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
       message('with MMLE/EM approach. please be patient.')
       
     }
-    
-    LinkedModel <- mirt::mirt(data = newformXDataK[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, method = 'EM', SE = betaSE, accelerate = 'squarem', empiricalhist = betaEmpiricalhist, technical = list(NCYCLES = 1e+6, SEtol = 1e-4, MHRM_SE_draws = 1e+5), pars = NewScaleParms, GenRandomPars = F, covdata = betaCOVdata, formula = betaFormula)
+    if(sum(NewScaleParms$est) == 0){
+      LinkedModel <- mirt::mirt(data = newformXDataK[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, method = 'EM', SE = betaSE, accelerate = 'squarem', empiricalhist = betaEmpiricalhist, technical = list(NCYCLES = 1e+6, SEtol = 1e-4, MHRM_SE_draws = 1e+5), pars = NewScaleParms, GenRandomPars = F, covdata = betaCOVdata, formula = betaFormula, pars = 'values')
+      
+    } else {
+      LinkedModel <- mirt::mirt(data = newformXDataK[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, method = 'EM', SE = betaSE, accelerate = 'squarem', empiricalhist = betaEmpiricalhist, technical = list(NCYCLES = 1e+6, SEtol = 1e-4, MHRM_SE_draws = 1e+5), pars = NewScaleParms, GenRandomPars = F, covdata = betaCOVdata, formula = betaFormula)
+      
+    }
     
   } else {
     message('with Cai\'s (2010) Metropolis-Hastings Robbins-Monro (MHRM) approach. please be patient.')
     
-    LinkedModel <- mirt::mirt(data = newformXDataK[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, method = 'MHRM', SE = betaSE, accelerate = 'squarem', TOL = .0005, technical = list(NCYCLES = 1e+6, SEtol = 1e-4, MHRM_SE_draws = 1e+5), pars = NewScaleParms, GenRandomPars = F, covdata = betaCOVdata, formula = betaFormula)
+    if(sum(NewScaleParms$est) == 0){
+      LinkedModel <- mirt::mirt(data = newformXDataK[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, method = 'MHRM', SE = betaSE, accelerate = 'squarem', TOL = .0005, technical = list(NCYCLES = 1e+6, SEtol = 1e-4, MHRM_SE_draws = 1e+5), pars = NewScaleParms, GenRandomPars = F, covdata = betaCOVdata, formula = betaFormula, pars = 'values')
+      
+    } else {
+      LinkedModel <- mirt::mirt(data = newformXDataK[colnames(newFormModel@Data$data)], LinkedModelSyntax, itemtype = newFormModel@Model$itemtype, method = 'MHRM', SE = betaSE, accelerate = 'squarem', TOL = .0005, technical = list(NCYCLES = 1e+6, SEtol = 1e-4, MHRM_SE_draws = 1e+5), pars = NewScaleParms, GenRandomPars = F, covdata = betaCOVdata, formula = betaFormula)
+      
+    }
     
   }
   
