@@ -3030,7 +3030,7 @@ cmleRaschEst <- function(data, model = 'PCM'){
   return(Raschcmleresult)
 }
 
-          autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , est.a.M="h" , est.a.Var="i", burnin = 10000, iter = 20000, Rhat = 1.05, autofix = T){
+autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , est.a.M="h" , est.a.Var="i", burnin = 10000, iter = 20000, Rhat = 1.05, autofix = T){
   if(!require('sirt')){
     install.packages('sirt')
     library('sirt')
@@ -3144,7 +3144,8 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
     colnames(items)[3] <- 'c'
   } else if(class(MIRTmodel) == 'mcmc.sirt'){
     message('sirt')
-    IRTpars <- data.frame(MIRTmodel$summary.mcmcobj$MAP[grep("^a", MIRTmodel$summary.mcmcobj$parameter)], MIRTmodel$summary.mcmcobj$MAP[grep("^b", MIRTmodel$summary.mcmcobj$parameter)])
+    IRTpars <- data.frame(MIRTmodel$summary.mcmcobj$MAP[grep("^a",as.character(MIRTmodel$summary.mcmcobj$parameter))[!grep("^a",as.character(MIRTmodel$summary.mcmcobj$parameter)) %in% grep("^a_marg",as.character(MIRTmodel$summary.mcmcobj$parameter))]],
+                          MIRTmodel$summary.mcmcobj$MAP[grep("^b",as.character(MIRTmodel$summary.mcmcobj$parameter))[!grep("^b",as.character(MIRTmodel$summary.mcmcobj$parameter)) %in% grep("^b_marg",as.character(MIRTmodel$summary.mcmcobj$parameter))]])
     colnames(IRTpars) <- c('a', 'b')
     rownames(IRTpars) <- colnames(MIRTmodel$dat)
     if(length(MIRTmodel$summary.mcmcobj$MAP[grep("^c", MIRTmodel$summary.mcmcobj$parameter)]) != 0){
@@ -3156,7 +3157,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
     
   }
   
-
+  
   
   items$content <- as.numeric(as.factor(measurementArea))
   
