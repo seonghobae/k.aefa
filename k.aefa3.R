@@ -3207,7 +3207,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
       message('applying Haebara method...')
       A <- LinkingCoefficients$Haebara[1]
       B <- LinkingCoefficients$Haebara[2]
-    } else if(SCLmethod = 'StockingLord'){
+    } else if(SCLmethod == 'StockingLord'){
       message('applying Stocking-Lord method...')
       A <- LinkingCoefficients$StockLord[1]
       B <- LinkingCoefficients$StockLord[2]
