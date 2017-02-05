@@ -3274,7 +3274,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
     ATAFormModelValues[[i]]$est <- FALSE
     
     ATAFormModel[[i]] <- mirt::mirt(data = ATAFormData[[i]], model = 1, itemtype = '3PL', pars = ATAFormModelValues[[i]])
-    
+    names(ATAFormModel)[[i]] <- paste0('form', i)
   }
   
   
