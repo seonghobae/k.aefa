@@ -3159,6 +3159,8 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
       IRTpars$c <- rep(0, ncol(MIRTmodel$dat))
     }
     
+  } else {
+    stop('Did you provide right mirt or sirt mcmc model?')
   }
   
   if(length(oldFormYMIRTmodel) != 0){ # if SCL activated
@@ -3197,6 +3199,8 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
         IRTpars2$c <- rep(0, ncol(oldFormYMIRTmodel$dat))
       }
       
+    } else {
+      stop('Did you provide right mirt or sirt mcmc model?')
     }
     
     # split common item parameters
