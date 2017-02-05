@@ -3159,7 +3159,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
     
   }
   
-  if(length(oldFormMIRTmodel) != 0){ # if SCL activated
+  if(length(oldFormYMIRTmodel) != 0){ # if SCL activated
     if(length(oldFormYCommonItemNumber) == 0 | length(newFormXCommonItemNumber) == 0 | length(newFormXCommonItemNumber) != length(oldFormYCommonItemNumber)) {
       STOP('Please provide correspond oldFormYCommonItemNumber and newFormXCommonItemNumber')
     }
