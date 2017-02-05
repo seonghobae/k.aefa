@@ -3256,6 +3256,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   for(i in 1:NROW(y)){
     message('-------------------------------------------------')
     message('mean of difficulty of Form ', i,': ', mean(y[[i]]$b))
+    message('sd of difficulty of Form ', i,': ', sd(y[[i]]$b))
     message('min of difficulty of Form ', i,': ', min(y[[i]]$b))
     message('max of difficulty of Form ', i,': ', max(y[[i]]$b))
     message('-------------------------------------------------\n')
