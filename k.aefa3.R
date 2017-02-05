@@ -3119,7 +3119,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , 
   return(init)
 }
 
-testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdifficulty = 0, sdOfdifficulty = 1.0, numberOfItems = 16, maximumItemSelection = 1){
+testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdifficulty = 0, sdOfdifficulty = 1.0, numberOfItems = 16, maximumItemSelection = 1, oldFormYMIRTmodel = NULL, SCLmethod = 'Haebara', oldFormYCommonItemNumber = NULL, newFormXCommonItemNumber = NULL){
   if(!require('xxIRT')){
     install.packages('xxIRT')
     library('xxIRT')
@@ -3157,6 +3157,68 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
       IRTpars$c <- rep(0, ncol(MIRTmodel$dat))
     }
     
+  }
+  
+  if(length(oldFormMIRTmodel) != 0){ # if SCL activated
+    if(length(oldFormYCommonItemNumber) == 0 | length(newFormXCommonItemNumber) == 0 | length(newFormXCommonItemNumber) != length(oldFormYCommonItemNumber) == 0) {
+      STOP('Please provide correspond oldFormYCommonItemNumber and newFormXCommonItemNumber')
+    }
+    
+    # check SCL software
+    if(!require(SNSequate)){
+      install.packages('SNSequate')
+      library('SNSequate')
+    }
+    
+    # read IRT parameters of oldform Y
+    if(class(oldFormYMIRTmodel)[1] == 'SingleGroupClass'){
+      IRTpars2 <- data.frame(coef(oldFormYMIRTmodel, IRTpars = T, simplify = T)$items[,1:3])
+      colnames(IRTpars2)[3] <- 'c'
+    } else if(class(oldFormYMIRTmodel)[1] == 'mcmc.sirt'){
+      message('sirt')
+      if(length(grep("^a",as.character(oldFormYMIRTmodel$summary.mcmcobj$parameter))[!grep("^a",as.character(oldFormYMIRTmodel$summary.mcmcobj$parameter)) %in% grep("^a_marg",as.character(oldFormYMIRTmodel$summary.mcmcobj$parameter))]) == 0){
+        IRTpars2 <- data.frame(rep(1,ncol(oldFormYMIRTmodel$dat)),
+                               oldFormYMIRTmodel$summary.mcmcobj$MAP[grep("^b",as.character(oldFormYMIRTmodel$summary.mcmcobj$parameter))[!grep("^b",as.character(oldFormYMIRTmodel$summary.mcmcobj$parameter)) %in% grep("^b_marg",as.character(oldFormYMIRTmodel$summary.mcmcobj$parameter))]])
+      } else {
+        IRTpars2 <- data.frame(oldFormYMIRTmodel$summary.mcmcobj$MAP[grep("^a",as.character(oldFormYMIRTmodel$summary.mcmcobj$parameter))[!grep("^a",as.character(oldFormYMIRTmodel$summary.mcmcobj$parameter)) %in% grep("^a_marg",as.character(oldFormYMIRTmodel$summary.mcmcobj$parameter))]],
+                               oldFormYMIRTmodel$summary.mcmcobj$MAP[grep("^b",as.character(oldFormYMIRTmodel$summary.mcmcobj$parameter))[!grep("^b",as.character(oldFormYMIRTmodel$summary.mcmcobj$parameter)) %in% grep("^b_marg",as.character(oldFormYMIRTmodel$summary.mcmcobj$parameter))]])
+      }
+      
+      colnames(IRTpars2) <- c('a', 'b')
+      rownames(IRTpars2) <- colnames(oldFormYMIRTmodel$dat)
+      if(length(oldFormYMIRTmodel$summary.mcmcobj$MAP[grep("^c", oldFormYMIRTmodel$summary.mcmcobj$parameter)]) != 0){
+        IRTpars2$c <- oldFormYMIRTmodel$summary.mcmcobj$MAP[grep("^c", oldFormYMIRTmodel$summary.mcmcobj$parameter)]
+      } else {
+        IRTpars2$c <- rep(0, ncol(oldFormYMIRTmodel$dat))
+      }
+      
+    }
+    
+    # split common item parameters
+    newCommonXIRTpars <- IRTpars[newFormXCommonItemNumber,]
+    oldCommonYIRTpars <- IRTpars2[oldFormYCommonItemNumber,]
+    
+    # do calcluate linking coefficients slope A and constant B
+    LinkingCoefficients <- irt.link(as.data.frame(cbind(oldCommonYIRTpars, newCommonXIRTpars)), common = 1:length(oldFormYCommonItemNumber), model = '3PL', icc = 'logistic', D = 1.702)
+    names(LinkingCoefficients$Haebara) <- c('A', 'B')
+    names(LinkingCoefficients$StockLord) <- c('A', 'B')
+    
+    if(SCLmethod == 'Haebara'){
+      message('applying Haebara method...')
+      A <- LinkingCoefficients$Haebara[1]
+      B <- LinkingCoefficients$Haebara[2]
+    } else if(SCLmethod = 'StockingLord'){
+      message('applying Stocking-Lord method...')
+      A <- LinkingCoefficients$StockLord[1]
+      B <- LinkingCoefficients$StockLord[2]
+    } else {
+      stop('please provide "Haebara" or "StockingLord" in SCLmethod argument correctly')
+    }
+    
+    # adjusting new test IRT parameters to value of old test item parameters
+    IRTpars$a <- IRTpars$a/A
+    IRTpars$b <- A*IRTpars$b+B
+    # ignoring cx=cy, that's not require of adjustments. 
   }
   
   items <- IRTpars
