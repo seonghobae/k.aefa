@@ -3244,11 +3244,45 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   x <- ata.solve(x)
   print(plot(x))
   y <- ata.get.items(x, as.list=TRUE)
-  message('mean of difficulty: ',mean(y[[1]]$b))
-  message('min of difficulty: ',min(y[[1]]$b))
-  message('max of difficulty: ',max(y[[1]]$b))
   
-  z <- list(OriginalParms = items, ATAforms = y)
+  # get ATA data
+  ATAFormData <- list()
+  ATAFormModel <- list()
+  ATAFormModelValues <- list()
+  for(i in 1:NROW(y)){
+    message('-------------------------------------------------')
+    message('mean of difficulty of Form ', i,': ', mean(y[[i]]$b))
+    message('min of difficulty of Form ', i,': ', min(y[[i]]$b))
+    message('max of difficulty of Form ', i,': ', max(y[[i]]$b))
+    message('-------------------------------------------------\n')
+  }
+  
+  for(i in 1:NROW(y)){
+    if(class(MIRTmodel)[1] == 'SingleGroupClass'){
+      ATAFormData[[i]] <- data.frame(MIRTmodel@Data$data)
+      ATAFormData[[i]] <- ATAFormData[[i]][,colnames(ATAFormData[[i]]) %in% rownames(y[[i]])]
+    } else if(class(MIRTmodel)[1] == 'mcmc.sirt'){
+      ATAFormData[[i]] <- data.frame(MIRTmodel$dat)
+      ATAFormData[[i]] <- ATAFormData[[i]][colnames(ATAFormData[[i]]) %in% rownames(y[[i]])]
+    }
+    
+    print(head(ATAFormData[[i]]))
+    
+    ATAFormModelValues[[i]] <- mirt::mirt(data = ATAFormData[[i]], model = 1, itemtype = '3PL', pars = 'values')
+    ATAFormModelValues[[i]][which(ATAFormModelValues[[i]]$name == 'a1'),"value"] <- y[[i]]$a
+    ATAFormModelValues[[i]][which(ATAFormModelValues[[i]]$name == 'd'),"value"] <- -1*y[[i]]$a*y[[i]]$b
+    ATAFormModelValues[[i]][which(ATAFormModelValues[[i]]$name == 'g'),"value"] <- y[[i]]$c
+    
+    ATAFormModelValues[[i]]$est <- FALSE
+    
+    ATAFormModel[[i]] <- mirt::mirt(data = ATAFormData[[i]], model = 1, itemtype = '3PL', pars = ATAFormModelValues[[i]])
+    
+  }
+  
+  
+  
+  z <- list(OriginalParms = items, ATAforms = y, ATAFormModel = ATAFormModel)
   
   return(z)
 }
+
