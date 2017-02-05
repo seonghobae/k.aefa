@@ -3137,10 +3137,12 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   library('sirt')
   
   if(class(MIRTmodel)[1] == 'SingleGroupClass'){
+    message('mirt model provided')
+    
     IRTpars <- data.frame(coef(MIRTmodel, IRTpars = T, simplify = T)$items[,1:3])
     colnames(IRTpars)[3] <- 'c'
   } else if(class(MIRTmodel)[1] == 'mcmc.sirt'){
-    message('sirt')
+    message('sirt model provided')
     if(length(grep("^a",as.character(MIRTmodel$summary.mcmcobj$parameter))[!grep("^a",as.character(MIRTmodel$summary.mcmcobj$parameter)) %in% grep("^a_marg",as.character(MIRTmodel$summary.mcmcobj$parameter))]) == 0){
       IRTpars <- data.frame(rep(1,ncol(MIRTmodel$dat)),
                             MIRTmodel$summary.mcmcobj$MAP[grep("^b",as.character(MIRTmodel$summary.mcmcobj$parameter))[!grep("^b",as.character(MIRTmodel$summary.mcmcobj$parameter)) %in% grep("^b_marg",as.character(MIRTmodel$summary.mcmcobj$parameter))]])
@@ -3172,10 +3174,13 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
     
     # read IRT parameters of oldform Y
     if(class(oldFormYMIRTmodel)[1] == 'SingleGroupClass'){
+      message('mirt model provided')
+      
       IRTpars2 <- data.frame(coef(oldFormYMIRTmodel, IRTpars = T, simplify = T)$items[,1:3])
       colnames(IRTpars2)[3] <- 'c'
     } else if(class(oldFormYMIRTmodel)[1] == 'mcmc.sirt'){
-      message('sirt')
+      message('sirt model provided')
+      
       if(length(grep("^a",as.character(oldFormYMIRTmodel$summary.mcmcobj$parameter))[!grep("^a",as.character(oldFormYMIRTmodel$summary.mcmcobj$parameter)) %in% grep("^a_marg",as.character(oldFormYMIRTmodel$summary.mcmcobj$parameter))]) == 0){
         IRTpars2 <- data.frame(rep(1,ncol(oldFormYMIRTmodel$dat)),
                                oldFormYMIRTmodel$summary.mcmcobj$MAP[grep("^b",as.character(oldFormYMIRTmodel$summary.mcmcobj$parameter))[!grep("^b",as.character(oldFormYMIRTmodel$summary.mcmcobj$parameter)) %in% grep("^b_marg",as.character(oldFormYMIRTmodel$summary.mcmcobj$parameter))]])
