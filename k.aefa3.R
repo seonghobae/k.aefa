@@ -3266,8 +3266,6 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
       ATAFormData[[i]] <- ATAFormData[[i]][colnames(ATAFormData[[i]]) %in% rownames(y[[i]])]
     }
     
-    print(head(ATAFormData[[i]]))
-    
     ATAFormModelValues[[i]] <- mirt::mirt(data = ATAFormData[[i]], model = 1, itemtype = '3PL', pars = 'values')
     ATAFormModelValues[[i]][which(ATAFormModelValues[[i]]$name == 'a1'),"value"] <- y[[i]]$a
     ATAFormModelValues[[i]][which(ATAFormModelValues[[i]]$name == 'd'),"value"] <- -1*y[[i]]$a*y[[i]]$b
