@@ -3076,9 +3076,16 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , 
   STOP <- FALSE
   while(!STOP){
     if(sum(init$summary.mcmcobj$Rhat > Rhat) != 0){
-      excludeVar <- unique(na.omit(as.numeric(unlist(strsplit(unlist(as.character(init$summary.mcmcobj[which(max(init$summary.mcmcobj$Rhat) == init$summary.mcmcobj$Rhat),]$parameter)), "[^0-9]+")))))
+      parmList <- init$summary.mcmcobj
+      
+      if(lenght(grep("^sigma[0-9]", as.character(init$summary.mcmcobj$parameter))) != 0){
+        parmList <- parmList[-grep("^sigma[0-9]", as.character(parmList)),]
+        print(parmList)
+      }
+      excludeVar <- unique(na.omit(as.numeric(unlist(strsplit(unlist(as.character(parmList[which(max(parmList$Rhat) == parmList$Rhat),]$parameter)), "[^0-9]+")))))
+
       if(length(excludeVar) != 0 && ncol(initData) > 3){
-        message('Removing a item ', names(initData[excludeVar]),' / ', init$summary.mcmcobj[which(max(init$summary.mcmcobj$Rhat) == init$summary.mcmcobj$Rhat),]$parameter, ' Rhat: ', max(init$summary.mcmcobj$Rhat))
+        message('Removing a item ', names(initData[excludeVar]),' / ', parmList[which(max(parmList$Rhat) == parmList$Rhat),]$parameter, ' Rhat: ', max(parmList$Rhat))
         
         initData <- initData[,-excludeVar]
         
@@ -3093,10 +3100,10 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , 
       } else {
         STOP <- TRUE
       }
-    } else if(sum(init$summary.mcmcobj$Mean[grep("^a",init$summary.mcmcobj$parameter)] < 0) != 0 && autofix){
-      excludeVar <- unique(na.omit(as.numeric(unlist(strsplit(unlist(as.character(init$summary.mcmcobj$parameter[which(min(init$summary.mcmcobj$Mean[grep("^a",init$summary.mcmcobj$parameter)]) == (init$summary.mcmcobj$Mean))])), "[^0-9]+")))))
+    } else if(sum(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)] < 0) != 0 && autofix){
+      excludeVar <- unique(na.omit(as.numeric(unlist(strsplit(unlist(as.character(init$summary.mcmcobj$parameter[which(min(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)]) == (init$summary.mcmcobj$MAP))])), "[^0-9]+")))))
       if(length(excludeVar) != 0 && ncol(initData) > 3){
-        message('Removing a item ', names(initData[excludeVar]),' / ', init$summary.mcmcobj$parameter[which(min(init$summary.mcmcobj$Mean[grep("^a",init$summary.mcmcobj$parameter)]) == (init$summary.mcmcobj$Mean))], ' value: ', min(init$summary.mcmcobj$Mean[grep("^a",init$summary.mcmcobj$parameter)]))
+        message('Removing a item ', names(initData[excludeVar]),' / ', init$summary.mcmcobj$parameter[which(min(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)]) == (init$summary.mcmcobj$MAP))], ' value: ', min(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)]))
         
         initData <- initData[,-excludeVar]
         
