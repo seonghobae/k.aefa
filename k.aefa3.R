@@ -1497,7 +1497,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "defau
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, key = NULL, ...), silent = F)
         if(exists('modTEMP')){
-          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){
+            warning('Model may unstable but Trying to remedy automatically')
+          }
         }
       }
       
