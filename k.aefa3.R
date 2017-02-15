@@ -260,7 +260,7 @@ fastHMM <- function(dat = ..., ...){
   }
 }
 
-k.faking <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = F, forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F, forceMHRM = F, printFactorStructureRealtime = F, itemkeys = NULL, survey.weights = NULL, IRTonly = F, ...) { # for aberrant & faking response detection
+k.faking <- function(data = ..., covdata = NULL, formula = NULL, SE = F, SE.type = "defaultSE", skipNominal = F, forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F, forceMHRM = F, printFactorStructureRealtime = F, itemkeys = NULL, survey.weights = NULL, IRTonly = F, ...) { # for aberrant & faking response detection
   dataset <- data
   dname <- data
   
@@ -1113,7 +1113,7 @@ k.fixdata <- function(data, start, end, bioend){
 }
 
 # surveyFA addon
-fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "crossprod", skipNominal = F,
+fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "defaultSE", skipNominal = F,
                      forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F,
                      forceMHRM = F, forceNormalEM = T, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T,
                      forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, forceNRM = F, ...){
@@ -1235,19 +1235,19 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "cross
       message('Empirical Histogram for find Prior distribution: ', empiricalhist)
     }
     # forcing SE estimation activate
-    if((sum(is.na(x)) != 0) && SE.type == 'crossprod'){
+    if((sum(is.na(x)) != 0) && SE.type == 'defaultSE'){
       SE <- T
       if(length(covdata) == 0){
         if(estimationMETHOD == 'MHRM'){ # Richadson (BL) isn't support MHRM estimation method
           SE.type <- 'MHRM'
         } else {
-          SE.type <- 'Richardson'
+          SE.type <- 'Oakes'
         }
       } else {
         if(estimationMETHOD == 'MHRM'){ # Richadson (BL) isn't support MHRM estimation method
           SE.type <- 'MHRM'
         } else {
-          SE.type <- 'complete'
+          SE.type <- 'Oakes'
         }
       }
     }
@@ -1821,7 +1821,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "cross
 
 
 surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
-                     SE.type = "crossprod", skipNominal = F, forceGRSM = F,
+                     SE.type = "defaultSE", skipNominal = F, forceGRSM = F,
                      assumingFake = F, masterThesis = F, forceRasch = F,
                      unstable = F, forceNormalEM = F, forceMHRM = F,
                      printFactorStructureRealtime = F, itemkeys = NULL,
@@ -2103,7 +2103,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
   
 }
 
-fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "crossprod", skipNominal = F,
+fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type = "defaultSE", skipNominal = F,
                               forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F,
                               forceMHRM = F, itemkeys = NULL, survey.weights = NULL, group = ...,
                               invariance = c('free_means', 'free_var', colnames(x)), ...){
@@ -2185,19 +2185,19 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
     }
     
     # forcing SE estimation activate
-    if((sum(is.na(x)) != 0) && SE.type == 'crossprod'){
+    if((sum(is.na(x)) != 0) && SE.type == 'defaultSE'){
       SE <- T
       if(length(covdata) == 0){
         if(estimationMETHOD == 'MHRM'){ # Richadson (BL) isn't support MHRM estimation method
           SE.type <- 'MHRM'
         } else {
-          SE.type <- 'Richardson'
+          SE.type <- 'Oakes'
         }
       } else {
         if(estimationMETHOD == 'MHRM'){ # Richadson (BL) isn't support MHRM estimation method
           SE.type <- 'MHRM'
         } else {
-          SE.type <- 'complete'
+          SE.type <- 'Oakes'
         }
       }
     }
