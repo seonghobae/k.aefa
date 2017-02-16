@@ -1136,11 +1136,19 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "defau
         empiricalhist <- FALSE
         NCYCLES <- 4000
       } else if(length(survey.weights) != 0) {
-        estimationMETHOD <- 'QMCEM'
-        optimINPUT <- NULL
-        optimCTRL  <- NULL
-        empiricalhist <- FALSE
-        NCYCLES <- NULL
+        if (forceNormalEM == T){
+          estimationMETHOD <- NULL
+          optimINPUT <- NULL
+          optimCTRL  <- NULL
+          empiricalhist <- FALSE
+          NCYCLES <- NULL
+        } else {
+          estimationMETHOD <- 'QMCEM'
+          optimINPUT <- NULL
+          optimCTRL  <- NULL
+          empiricalhist <- FALSE
+          NCYCLES <- NULL
+        }
       } else if(i < 2){
         if(unstable == T){
           estimationMETHOD <- 'QMCEM'
@@ -1498,8 +1506,8 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "defau
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, key = NULL, ...), silent = F)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){
-            warning('Model may unstable but Trying to remedy automatically')
-          }
+            message('Model may unstable but Trying to remedy automatically')
+            }
         }
       }
       
