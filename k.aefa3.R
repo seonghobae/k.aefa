@@ -1171,7 +1171,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "defau
         }
       } else {
         if(unstable == T){
-          estimationMETHOD <- 'QMCEM'
+          if(forceNormalEM == T && i == 1){
+            estimationMETHOD <- 'EM'
+          } else {
+            estimationMETHOD <- 'QMCEM'
+          }
           optimINPUT <- NULL
           optimCTRL  <- NULL
           empiricalhist <- FALSE
@@ -1507,7 +1511,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "defau
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){
             message('Model may unstable but Trying to remedy automatically')
-            }
+          }
         }
       }
       
