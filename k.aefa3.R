@@ -1137,7 +1137,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "defau
         NCYCLES <- 4000
       } else if(length(survey.weights) != 0) {
         if (forceNormalEM == T){
-          estimationMETHOD <- NULL
+          estimationMETHOD <- 'EM'
           optimINPUT <- NULL
           optimCTRL  <- NULL
           empiricalhist <- FALSE
