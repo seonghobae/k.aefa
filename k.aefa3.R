@@ -1150,7 +1150,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "defau
           NCYCLES <- NULL
         }
       } else if(i < 2){
-        if(unstable == T){
+        if (forceNormalEM == T && unstable == T) {
+          estimationMETHOD <- 'EM'
+          optimINPUT <- NULL
+          optimCTRL  <- NULL
+          empiricalhist <- FALSE
+          NCYCLES <- 4000
+        } else if(unstable == T){
           estimationMETHOD <- 'QMCEM'
           optimINPUT <- NULL
           optimCTRL  <- NULL
