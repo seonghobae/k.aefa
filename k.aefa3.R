@@ -1291,7 +1291,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "defau
     } else {
       accelerateINPUT <- 'squarem'
       TOLINPUT <- NULL
-      SEtolINPUT <- 1e-10
+      SEtolINPUT <- 1e-20
       symmetric_SEMINPUT <- FALSE
       
       if(SE == T){
