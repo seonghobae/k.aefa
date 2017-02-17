@@ -1138,13 +1138,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "defau
       } else if(length(survey.weights) != 0) {
         if (forceNormalEM == T | i == 1){
           estimationMETHOD <- 'EM'
-          optimINPUT <- NULL
+          optimINPUT <- 'nlminb'
           optimCTRL  <- NULL
           empiricalhist <- FALSE
           NCYCLES <- NULL
         } else {
           estimationMETHOD <- 'QMCEM'
-          optimINPUT <- NULL
+          optimINPUT <- 'nlminb'
           optimCTRL  <- NULL
           empiricalhist <- FALSE
           NCYCLES <- NULL
@@ -1152,25 +1152,25 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "defau
       } else if(i < 2){
         if (forceNormalEM == T && unstable == T) {
           estimationMETHOD <- 'EM'
-          optimINPUT <- NULL
+          optimINPUT <- 'nlminb'
           optimCTRL  <- NULL
           empiricalhist <- FALSE
           NCYCLES <- 4000
         } else if(unstable == T){
           estimationMETHOD <- 'QMCEM'
-          optimINPUT <- NULL
+          optimINPUT <- 'nlminb'
           optimCTRL  <- NULL
           empiricalhist <- FALSE
           NCYCLES <- NULL
         } else if (forceNormalEM == T) {
           estimationMETHOD <- 'EM'
-          optimINPUT <- NULL
+          optimINPUT <- 'nlminb'
           optimCTRL  <- NULL
           empiricalhist <- FALSE
           NCYCLES <- 4000
         } else {
           estimationMETHOD <- 'EM'
-          optimINPUT <- NULL
+          optimINPUT <- 'nlminb'
           optimCTRL  <- NULL
           empiricalhist <- TRUE
           NCYCLES <- 4000
@@ -1182,7 +1182,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "defau
           } else {
             estimationMETHOD <- 'QMCEM'
           }
-          optimINPUT <- NULL
+          optimINPUT <- 'nlminb'
           optimCTRL  <- NULL
           empiricalhist <- FALSE
           NCYCLES <- NULL
@@ -1214,33 +1214,33 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "defau
         
       } else if(length(survey.weights) != 0) {
         estimationMETHOD <- 'QMCEM'
-        optimINPUT <- NULL
+        optimINPUT <- 'nlminb'
         optimCTRL  <- NULL
         empiricalhist <- FALSE
         NCYCLES <- NULL
       } else if(i < 2){
         if(unstable == T){
           estimationMETHOD <- 'QMCEM'
-          optimINPUT <- NULL
+          optimINPUT <- 'nlminb'
           optimCTRL <- NULL
           empiricalhist <- FALSE
           NCYCLES <- NULL
         } else if (forceNormalEM == T) {
           estimationMETHOD <- 'EM'
-          optimINPUT <- NULL
+          optimINPUT <- 'nlminb'
           optimCTRL  <- NULL
           empiricalhist <- FALSE
           NCYCLES <- 4000
         } else {
           estimationMETHOD <- 'EM'
-          optimINPUT <- NULL
+          optimINPUT <- 'nlminb'
           optimCTRL <- NULL
           empiricalhist <- TRUE
           NCYCLES <- 4000
         }
       } else {
         estimationMETHOD <- 'QMCEM'
-        optimINPUT <- NULL # NULL
+        optimINPUT <- 'nlminb' # NULL
         optimCTRL <- NULL
         empiricalhist <- FALSE
         NCYCLES <- NULL
@@ -1291,7 +1291,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "defau
     } else {
       accelerateINPUT <- 'squarem'
       TOLINPUT <- NULL
-      SEtolINPUT <- 1e-20
+      SEtolINPUT <- 1e-30
       symmetric_SEMINPUT <- FALSE
       
       if(SE == T){
@@ -1437,7 +1437,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "defau
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
         if(exists('modTEMP')){
-          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          if(modTEMP@OptimInfo$converged != 1 | modTEMP@OptimInfo$secondordertest == F){
+            message('Model is unstable so that try to remedy the model automatically as soon as possible')
+          }
         }
       }
       
