@@ -2899,7 +2899,7 @@ deepFAengine <- function(mirtModel){ # for search more factors with prevent loca
   
   if(mirtModel@Options$method == 'EM' && length(attr(mirtModel@ParObjects$lrPars, 'formula')[[1]]) == 0) {
     method <- 'MHRM'
-  } else if(mirtModel@Options$method == 'EM' && length(attr(mirtModel@ParObjects$lrPars, 'formula')[[1]]) != 0) {
+  } else if(mirtModel@Options$method == 'EM' | length(attr(mirtModel@ParObjects$lrPars, 'formula')[[1]]) != 0) {
     method <- 'QMCEM'
   } else {
     method <- mirtModel@Options$method
