@@ -2939,15 +2939,15 @@ deepFAengine <- function(mirtModel, survey.weights){ # for search more factors w
 deepFA <- function(mirtModel, survey.weights){
   init_nfact <- mirtModel@Model$nfact
   
-  deepModel <- deepFAengine(mirtModel)
+  deepModel <- deepFAengine(mirtModel, survey.weights)
   if(deepModel@Model$nfact == init_nfact+3){
     
-    deepModel <- deepFAengine(deepModel)
+    deepModel <- deepFAengine(deepModel, survey.weights)
     if(deepModel@Model$nfact == init_nfact+6){
-      deepModel <- deepFAengine(deepModel)
+      deepModel <- deepFAengine(deepModel, survey.weights)
       
       if(deepModel@Model$nfact == init_nfact+9){
-        deepModel <- deepFAengine(deepModel)
+        deepModel <- deepFAengine(deepModel, survey.weights)
         
       } else {
         return(deepModel)
