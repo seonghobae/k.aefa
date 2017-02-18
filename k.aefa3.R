@@ -2905,7 +2905,7 @@ deepFAengine <- function(mirtModel){ # for search more factors with prevent loca
     method <- mirtModel@Options$method
   }
   
-  message('searching global optimal...')
+  message('searching global optimal... / estimation method: ', method)
   start <- mirtModel@Model$nfact + 1
   end <- mirtModel@Model$nfact + 3 # see http://www.tandfonline.com/doi/abs/10.1080/00273171.2012.710386
   
