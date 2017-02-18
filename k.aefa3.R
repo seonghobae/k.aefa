@@ -1275,29 +1275,29 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       accelerateINPUT <- 'none'
       TOLINPUT <- NULL
       SEtolINPUT <- 1e-30
-      symmetric_SEMINPUT <- FALSE
+      symmetricINPUT <- FALSE
       
       message('TOL: ', 'default', ' / SEtol: ', SEtolINPUT, ' / SE.type: ', SE.type, ' / Accelerator: ',
-              accelerateINPUT, ' / Symmetric SEM: ', symmetric_SEMINPUT)
+              accelerateINPUT, ' / Symmetric SEM: ', symmetricINPUT)
     } else if((SE == T && estimationMETHOD == 'MHRM') == T){
       accelerateINPUT <- 'squarem'
       TOLINPUT <- NULL
       SEtolINPUT <- 1e-20
-      symmetric_SEMINPUT <- FALSE
+      symmetricINPUT <- FALSE
       SE.type <- 'MHRM'
       
       message('TOL: ', 'default', ' / SEtol: ', SEtolINPUT, ' / SE.type: ', SE.type, ' / Accelerator: ',
-              accelerateINPUT, ' / Symmetric SEM: ', symmetric_SEMINPUT)
+              accelerateINPUT, ' / Symmetric SEM: ', symmetricINPUT)
     } else {
       accelerateINPUT <- 'squarem'
       TOLINPUT <- NULL
       SEtolINPUT <- 1e-30
-      symmetric_SEMINPUT <- FALSE
+      symmetricINPUT <- FALSE
       
       if(SE == T){
         message('Standard Error Estimation: On')
         message('TOL: ', 'default', ' / SEtol: ', SEtolINPUT, ' / SE.type: ', SE.type, ' / Accelerator: ',
-                accelerateINPUT, ' / Symmetric SEM: ', symmetric_SEMINPUT)
+                accelerateINPUT, ' / Symmetric SEM: ', symmetricINPUT)
       }
     }
     
@@ -1316,7 +1316,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -1329,7 +1329,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           message('\nMIRT model: Compensatory 4PL')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                    technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1346,7 +1346,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           message('\nMIRT model: Compensatory 3PL with upper asymptote (slip) estimated')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PLu', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                    technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1362,7 +1362,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           message('\nMIRT model: Partially compensatory 3PL')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'PC3PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                    technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1378,7 +1378,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           message('\nMIRT model: Compensatory 3PL')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                    technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1396,7 +1396,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         message('\nMIRT model: ideal point')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'ideal', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1413,7 +1413,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         message('\nMIRT model: Partially compensatory 2PL')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'PC2PL', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1429,7 +1429,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         message('\nMIRT model: Compensatory 2PL')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '2PL', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1447,7 +1447,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         message('\nMIRT model: Rasch')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1460,7 +1460,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         message('\nMIRT model: spline response')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'spline', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1484,7 +1484,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         message('\nMIRT model: Compensatory 4PL Nominal response')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PLNRM', method = estimationMETHOD,
                                   key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1497,7 +1497,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           message('\nMIRT model: Compensatory 3PL Nominal response')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PLNRM', method = estimationMETHOD,
                                     key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                    technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1512,7 +1512,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           message('\nMIRT model: Compensatory 3PL Nominal response with upper asymptote estimated')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PLuNRM', method = estimationMETHOD,
                                     key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                    technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1527,7 +1527,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         message('\nMIRT model: Compensatory 2PL Nominal response')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '2PLNRM', method = estimationMETHOD,
                                   key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1540,7 +1540,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         message('\nMIRT model: Nominal response without keys')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'nominal', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, key = NULL, ...), silent = F)
@@ -1575,7 +1575,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           message('\nMIRT model: nominal response + ', paste0(dichotomous_type))
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = itemtype_mixed, method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(MAXQUAD = 20000000000, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                    technical = list(MAXQUAD = 20000000000, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = 20000), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -1605,7 +1605,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           message('\nMIRT model: nominal response + ', paste0(dichotomous_type), ' (automatically set by sample size)')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = itemtype_mixed, method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(MAXQUAD = 20000000000, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                    technical = list(MAXQUAD = 20000000000, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = 20000), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -1635,7 +1635,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         message('\nMIRT model: Generalized partial credit + ideal or 3-4PL')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = itemtype_mixed, method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -1662,7 +1662,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         }
         message('\nMIRT model: Graded response + ideal or 3-4PL')
         try(modTEMP <- mirt::mirt(data = x, model = i, method = estimationMETHOD, itemtype = itemtype_mixed, accelerate = accelerateINPUT,
-                                  calcNull = T, technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT,
+                                  calcNull = T, technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
                                                                  SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
                                   TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
                                   optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
@@ -1690,7 +1690,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -1732,7 +1732,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsmIRT', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                    technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -1752,7 +1752,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsm', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                    technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -1782,7 +1782,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         message('\nMIRT model: nominal response')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'nominal', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -1796,7 +1796,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         message('\nMIRT model: Generalized partial credit')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'gpcm', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -1809,7 +1809,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       if(exists('modTEMP') == F && forceNRM == F){
         message('\nMIRT model: Graded response')
         try(modTEMP <- mirt::mirt(data = x, model = i, method = estimationMETHOD, accelerate = accelerateINPUT,
-                                  calcNull = T, technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT,
+                                  calcNull = T, technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
                                                                  SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
                                   TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
                                   optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
@@ -2257,29 +2257,29 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
       accelerateINPUT <- 'none'
       TOLINPUT <- NULL
       SEtolINPUT <- 1e-5
-      symmetric_SEMINPUT <- FALSE
+      symmetricINPUT <- FALSE
       
       message('TOL: ', 'default', ' / SEtol: ', SEtolINPUT, ' / SE.type: ', SE.type, ' / Accelerator: ',
-              accelerateINPUT, ' / Symmetric SEM: ', symmetric_SEMINPUT)
+              accelerateINPUT, ' / Symmetric SEM: ', symmetricINPUT)
     } else if((SE == T && estimationMETHOD == 'MHRM') == T){
       accelerateINPUT <- 'squarem'
       TOLINPUT <- NULL
       SEtolINPUT <- 1e-3
-      symmetric_SEMINPUT <- FALSE
+      symmetricINPUT <- FALSE
       SE.type <- 'MHRM'
       
       message('TOL: ', 'default', ' / SEtol: ', SEtolINPUT, ' / SE.type: ', SE.type, ' / Accelerator: ',
-              accelerateINPUT, ' / Symmetric SEM: ', symmetric_SEMINPUT)
+              accelerateINPUT, ' / Symmetric SEM: ', symmetricINPUT)
     } else {
       accelerateINPUT <- 'squarem'
       TOLINPUT <- NULL
       SEtolINPUT <- 1e-10
-      symmetric_SEMINPUT <- FALSE
+      symmetricINPUT <- FALSE
       
       if(SE == T){
         message('Standard Error Estimation: On')
         message('TOL: ', 'default', ' / SEtol: ', SEtolINPUT, ' / SE.type: ', SE.type, ' / Accelerator: ',
-                accelerateINPUT, ' / Symmetric SEM: ', symmetric_SEMINPUT)
+                accelerateINPUT, ' / Symmetric SEM: ', symmetricINPUT)
       }
     }
     
@@ -2296,7 +2296,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
         message('\nMIRT model: Compensatory 4PL')
         try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = '4PL', method = estimationMETHOD,
                                            accelerate = accelerateINPUT, calcNull = T,
-                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                             removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                            formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                            SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
@@ -2309,7 +2309,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
           message('\nMIRT model: Compensatory 3PL')
           try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = '3PL', method = estimationMETHOD,
                                              accelerate = accelerateINPUT, calcNull = T,
-                                             technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                             technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                               removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                              formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                              SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
@@ -2323,7 +2323,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
           message('\nMIRT model: Compensatory 3PL with lower or upper asymptote estimated')
           try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = '3PLu', method = estimationMETHOD,
                                              accelerate = accelerateINPUT, calcNull = T,
-                                             technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                             technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                               removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                              formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                              SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
@@ -2337,7 +2337,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
           message('\nMIRT model: Partially compensatory 3PL')
           try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = 'PC3PL', method = estimationMETHOD,
                                              accelerate = accelerateINPUT, calcNull = T,
-                                             technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                             technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                               removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                              formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                              SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
@@ -2352,7 +2352,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
         message('\nMIRT model: ideal point')
         try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = 'ideal', method = estimationMETHOD,
                                            accelerate = accelerateINPUT, calcNull = T,
-                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                             removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                            formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                            SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
@@ -2366,7 +2366,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
         message('\nMIRT model: Compensatory 2PL')
         try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = '2PL', method = estimationMETHOD,
                                            accelerate = accelerateINPUT, calcNull = T,
-                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                             removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                            formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                            SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
@@ -2380,7 +2380,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
         message('\nMIRT model: Partially compensatory 2PL')
         try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = 'PC2PL', method = estimationMETHOD,
                                            accelerate = accelerateINPUT, calcNull = T,
-                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                             removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                            formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                            SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
@@ -2402,7 +2402,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
         message('\nMIRT model: Compensatory 4PL Nominal response')
         try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = '4PLNRM', method = estimationMETHOD,
                                            key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                             removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                            formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                            SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
@@ -2415,7 +2415,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
           message('\nMIRT model: Compensatory 3PL Nominal response')
           try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = '3PLNRM', method = estimationMETHOD,
                                              key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                             technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                             technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                               removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                              formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                              SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
@@ -2430,7 +2430,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
           message('\nMIRT model: Compensatory 3PL Nominal response with lower or upper asymptote estimated')
           try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = '3PLuNRM', method = estimationMETHOD,
                                              key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                             technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                             technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                               removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                              formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                              SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
@@ -2445,7 +2445,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
         message('\nMIRT model: Compensatory 2PL Nominal response')
         try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = '2PLNRM', method = estimationMETHOD,
                                            key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                             removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                            formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                            SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = T)
@@ -2458,7 +2458,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
         message('\nMIRT model: Nominal response without keys')
         try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = 'nominal', method = estimationMETHOD,
                                            accelerate = accelerateINPUT, calcNull = T,
-                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                             removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                            formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                            SE.type = SE.type, survey.weights = survey.weights, key = NULL, ...), silent = F)
@@ -2483,7 +2483,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
         
         try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD,
                                            accelerate = accelerateINPUT, calcNull = T,
-                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                             removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                            formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                            SE.type = SE.type, survey.weights = survey.weights, group = group, invariance = invariance, ... = ...), silent = F)
@@ -2525,7 +2525,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
             
             try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = 'grsmIRT', method = estimationMETHOD,
                                                accelerate = accelerateINPUT, calcNull = T,
-                                               technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                               technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                                 removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                                formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                                SE.type = SE.type, survey.weights = survey.weights,
@@ -2546,7 +2546,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
             
             try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = 'grsm', method = estimationMETHOD,
                                                accelerate = accelerateINPUT, calcNull = T,
-                                               technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                               technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                                 removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                                formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                                SE.type = SE.type, survey.weights = survey.weights,
@@ -2577,7 +2577,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
         message('\nMIRT model: nominal response')
         try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = 'nominal', method = estimationMETHOD,
                                            accelerate = accelerateINPUT, calcNull = T,
-                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                             removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                            formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                            SE.type = SE.type, survey.weights = survey.weights,
@@ -2592,7 +2592,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
         message('\nMIRT model: Generalized partial credit')
         try(modTEMP <- mirt::multipleGroup(data = x, model = i, itemtype = 'gpcm', method = estimationMETHOD,
                                            accelerate = accelerateINPUT, calcNull = T,
-                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT, SEtol = SEtolINPUT,
+                                           technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                             removeEmptyRows = removeEmptyRowsConf), TOL = TOLINPUT, covdata = covdataINPUT,
                                            formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                            SE.type = SE.type, survey.weights = survey.weights,
@@ -2606,7 +2606,7 @@ fastMultipleGroup <- function(x, covdata = NULL, formula = NULL, SE = F, SE.type
       if(exists('modTEMP') == F){
         message('\nMIRT model: Graded response')
         try(modTEMP <- mirt::multipleGroup(data = x, model = i, method = estimationMETHOD, accelerate = accelerateINPUT,
-                                           calcNull = T, technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetric_SEMINPUT,
+                                           calcNull = T, technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
                                                                           SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf),
                                            TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
                                            optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
@@ -2914,7 +2914,7 @@ deepFAengine <- function(mirtModel){ # for search more factors with prevent loca
   for(i in start:end){
     try(invisible(gc()), silent = T)
     
-    try(invisible(tempModel <- mirt::mirt(data = mirtModel@Data$data, model = i, itemtype = mirtModel@Model$itemtype, SE = mirtModel@Options$SE, SE.type = mirtModel@Options$SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = mirtModel@Options$Moptim, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = mirtModel@Options$technical$NCYCLES, MAXQUAD = mirtModel@Options$technical$MAXQUAD, SEtol = mirtModel@Options$technical$SEtol, symmetric = mirtModel@Options$technical$symmetric_SEM, removeEmptyRows = mirtModel@Options$technical$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$technical$MHRM_SE_draws))), silent = T)
+    try(invisible(tempModel <- mirt::mirt(data = mirtModel@Data$data, model = i, itemtype = mirtModel@Model$itemtype, SE = mirtModel@Options$SE, SE.type = mirtModel@Options$SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = mirtModel@Options$Moptim, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = mirtModel@Options$technical$NCYCLES, MAXQUAD = mirtModel@Options$technical$MAXQUAD, SEtol = mirtModel@Options$technical$SEtol, symmetric = mirtModel@Options$technical$symmetric, removeEmptyRows = mirtModel@Options$technical$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$technical$MHRM_SE_draws))), silent = T)
     if(exists('tempModel')){
       if(tempModel@OptimInfo$converged && tempModel@OptimInfo$secondordertest == T){
         message(i, ' factors were converged; DIC: ', tempModel@Fit$DIC)
@@ -2930,7 +2930,7 @@ deepFAengine <- function(mirtModel){ # for search more factors with prevent loca
   if(bestModel == 1){
     return(mirtModel)
   } else {
-    return(mirt::mirt(data = mirtModel@Data$data, model = nfact[bestModel], itemtype = mirtModel@Model$itemtype, SE = mirtModel@Options$SE, SE.type = mirtModel@Options$SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = mirtModel@Options$Moptim, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = mirtModel@Options$technical$NCYCLES, MAXQUAD = mirtModel@Options$technical$MAXQUAD, SEtol = mirtModel@Options$technical$SEtol, symmetric = mirtModel@Options$technical$symmetric_SEM, removeEmptyRows = mirtModel@Options$technical$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$technical$MHRM_SE_draws)))
+    return(mirt::mirt(data = mirtModel@Data$data, model = nfact[bestModel], itemtype = mirtModel@Model$itemtype, SE = mirtModel@Options$SE, SE.type = mirtModel@Options$SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = mirtModel@Options$Moptim, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = mirtModel@Options$technical$NCYCLES, MAXQUAD = mirtModel@Options$technical$MAXQUAD, SEtol = mirtModel@Options$technical$SEtol, symmetric = mirtModel@Options$technical$symmetric, removeEmptyRows = mirtModel@Options$technical$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$technical$MHRM_SE_draws)))
   }
 }
 
