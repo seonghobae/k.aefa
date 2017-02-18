@@ -1905,7 +1905,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
                            autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
   workKeys <- itemkeys
   if(needGlobalOptimal == T && forceUIRT == F){
-    surveyFixMod <- deepFA(surveyFixMod)
+    surveyFixMod <- deepFA(surveyFixMod, survey.weights)
   }
   itemFitDone <- FALSE
   while (!itemFitDone) {
@@ -1940,7 +1940,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         workKeys <- workKeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
         if(needGlobalOptimal == T && forceUIRT == F){
-          surveyFixMod <- deepFA(surveyFixMod)
+          surveyFixMod <- deepFA(surveyFixMod, survey.weights)
         }
       } else if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems && surveyFixMod@Model$nfact == 1){
         message('\nremoving items df is NA')
@@ -1948,7 +1948,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
         if(needGlobalOptimal == T && forceUIRT == F){
-          surveyFixMod <- deepFA(surveyFixMod)
+          surveyFixMod <- deepFA(surveyFixMod, survey.weights)
         }
       } else if(sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) != 0 && surveyFixMod@Model$nfact == 1 && skipS_X2 == F){
         message('\nremoving items df is 0')
@@ -1956,7 +1956,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(surveyFixMod_itemFit$df.S_X2 == 0)], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
         if(needGlobalOptimal == T && forceUIRT == F){
-          surveyFixMod <- deepFA(surveyFixMod)
+          surveyFixMod <- deepFA(surveyFixMod, survey.weights)
         }
       } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems && surveyFixMod@Model$nfact == 1){
         message('\nremoving items p.S_X2 is NA')
@@ -1964,14 +1964,14 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(is.na(surveyFixMod_itemFit$p.S_X2) == TRUE)], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
         if(needGlobalOptimal == T && forceUIRT == F){
-          surveyFixMod <- deepFA(surveyFixMod)
+          surveyFixMod <- deepFA(surveyFixMod, survey.weights)
         }
       } else if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] == -Inf)) != 0){ # Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
         message('\nDrasgow, F., Levine, M. V., & Williams, E. A. (1985)')
         workKeys <- workKeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
         if(needGlobalOptimal == T && forceUIRT == F){
-          surveyFixMod <- deepFA(surveyFixMod)
+          surveyFixMod <- deepFA(surveyFixMod, survey.weights)
         }
       } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems] >= 3)) != 0 && skipS_X2 == F && surveyFixMod@Model$nfact == 1){ # Drasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995). Fitting polytomous item response theory models to multiple-choice tests. Applied Psychological Measurement, 19(2), 143-166.
         message('\nDrasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995)')
@@ -1979,7 +1979,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
         if(needGlobalOptimal == T && forceUIRT == F){
-          surveyFixMod <- deepFA(surveyFixMod)
+          surveyFixMod <- deepFA(surveyFixMod, survey.weights)
         }
       } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems] < .05)) != 0 && skipS_X2 == F && surveyFixMod@Model$nfact == 1){ # Kang, T., & Chen, T. T. (2008). Performance of the Generalized S‐X2 Item Fit Index for Polytomous IRT Models. Journal of Educational Measurement, 45(4), 391-406.; Reise, S. P. (1990). A comparison of item- and person-fit methods of assessing model-data fit in IRT. Applied Psychological Measurement, 14, 127-137.
         message('\nKang, T., & Chen, T. T. (2008); Reise, S. P. (1990)')
@@ -1987,7 +1987,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
         if(needGlobalOptimal == T && forceUIRT == F){
-          surveyFixMod <- deepFA(surveyFixMod)
+          surveyFixMod <- deepFA(surveyFixMod, survey.weights)
         }
       } else if (forceRasch == T) {
         if(length(which(abs(surveyFixMod_itemFit$z.infit[1:surveyFixMod@Data$nitems]) > 2)) != 0){
@@ -2890,16 +2890,18 @@ doMLCA <- function(data = ..., startN = 1, empiricalhist = F, group = NULL){
   return(class_prob)
 }
 
-deepFAengine <- function(mirtModel){ # for search more factors with prevent local optimal
+deepFAengine <- function(mirtModel, survey.weights){ # for search more factors with prevent local optimal
   DICindices <- vector()
   DICindices[1] <- mirtModel@Fit$DIC
   
   
   j <- 1
   
-  if(mirtModel@Options$method == 'EM' && length(attr(mirtModel@ParObjects$lrPars, 'formula')[[1]]) == 0) {
+  if(mirtModel@Options$method == 'EM' && length(attr(mirtModel@ParObjects$lrPars, 'formula')[[1]]) == 0 && length(survey.weights) == 0) {
     method <- 'MHRM'
-  } else if(mirtModel@Options$method == 'EM' | length(attr(mirtModel@ParObjects$lrPars, 'formula')[[1]]) != 0) {
+  } else if(length(survey.weights) != 0) {
+    method <- 'QMCEM'
+  } else if(mirtModel@Options$method == 'EM' && length(attr(mirtModel@ParObjects$lrPars, 'formula')[[1]]) != 0) {
     method <- 'QMCEM'
   } else {
     method <- mirtModel@Options$method
@@ -2934,7 +2936,7 @@ deepFAengine <- function(mirtModel){ # for search more factors with prevent loca
   }
 }
 
-deepFA <- function(mirtModel){
+deepFA <- function(mirtModel, survey.weights){
   init_nfact <- mirtModel@Model$nfact
   
   deepModel <- deepFAengine(mirtModel)
