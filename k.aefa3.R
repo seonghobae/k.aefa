@@ -3082,7 +3082,11 @@ cmleRaschEst <- function(data, model = 'PCM'){
   return(Raschcmleresult)
 }
 
-autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , est.a.M="h" , est.a.Var="i", burnin = 10000, iter = 20000, Rhat = 1.05, autofix = T){
+autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
+                           est.a.M="h" , est.a.Var="i", burnin = 10000,
+                           iter = 20000, Rhat = 1.05, autofix = T, TargetTestLength = 10, # for 2PNO Multilevel
+                           testlets = rep(NA, ncol(data.frame(x))), survey.weights = NULL, est.slope = T, est.guess = T # for 3PNO testlet
+                           ){
   if(!require('sirt')){
     install.packages('sirt')
     library('sirt')
@@ -3122,8 +3126,12 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , 
   message('Current number of groups: ', numberOfGroups)
   
   group <- as.integer(group)
+  if(length(group) == 0){
+    init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = testlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = burnin/10)
+  } else {
+    init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = burnin/10)
+  }
   
-  init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = burnin/10)
   
   STOP <- FALSE
   while(!STOP){
@@ -3147,14 +3155,17 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , 
         message('MCMC Trials: ', iterationTrials)
         message('Current number of items: ', ncol(initData))
         
-        init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = burnin/10)
-        
+        if(length(group) == 0){
+          init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = testlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = burnin/10)
+        } else {
+          init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = burnin/10)
+        }        
       } else {
         STOP <- TRUE
       }
     } else if(sum(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)] < 0) != 0 && autofix){
       excludeVar <- unique(na.omit(as.numeric(unlist(strsplit(unlist(as.character(init$summary.mcmcobj$parameter[which(min(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)]) == (init$summary.mcmcobj$MAP))])), "[^0-9]+")))))
-      if(length(excludeVar) != 0 && ncol(initData) > 3){
+      if(length(excludeVar) != 0 && ncol(initData) > TargetTestLength){
         message('Removing a item ', names(initData[excludeVar]),' / ', init$summary.mcmcobj$parameter[which(min(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)]) == (init$summary.mcmcobj$MAP))], ' value: ', min(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)]))
         
         initData <- initData[,-excludeVar]
@@ -3165,8 +3176,11 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i" , 
         message('MCMC Trials: ', iterationTrials)
         message('Current number of items: ', ncol(initData))
         
-        init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = burnin/10)
-        
+        if(length(group) == 0){
+          init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = testlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = burnin/10)
+        } else {
+          init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = burnin/10)
+        }        
       } else {
         STOP <- TRUE
       }
