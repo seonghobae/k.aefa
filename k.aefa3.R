@@ -3130,12 +3130,16 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
   message('Current number of groups: ', numberOfGroups)
   
   group <- as.integer(group)
+  
+  if(length(testlets) != 0){
+    ActualTestlets <- testlets
+  }
  
   
   if(length(group) == 0 && length(testlets) == 0 && link == 'logit'){
     init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, progress.iter = burnin/10)
   } else if(length(group) == 0 && length(testlets) != 0 && link == 'logit'){
-    init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = testlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, progress.iter = burnin/10)
+    init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, progress.iter = burnin/10)
   } else {
     init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = burnin/10)
   }
@@ -3152,10 +3156,14 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
       }
       excludeVar <- unique(na.omit(as.numeric(unlist(strsplit(unlist(as.character(parmList[which(max(parmList$Rhat) == parmList$Rhat),]$parameter)), "[^0-9]+")))))
       
-      if(length(excludeVar) != 0 && ncol(initData) > 3){
+      if(length(excludeVar) != 0 && ncol(initData) > TargetTestLength){
         message('Removing a item ', names(initData[excludeVar]),' / ', parmList[which(max(parmList$Rhat) == parmList$Rhat),]$parameter, ' Rhat: ', max(parmList$Rhat))
         
         initData <- initData[,-excludeVar]
+        if(length(testlets) != 0){
+          ActualTestlets <- ActualTestlets[,-excludeVar]
+        }
+        
         
         iterationTrials <- iterationTrials+1
         
@@ -3166,7 +3174,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
         if(length(group) == 0 && length(testlets) == 0 && link == 'logit'){
           init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, progress.iter = burnin/10)
         } else if(length(group) == 0 && length(testlets) != 0 && link == 'logit'){
-          init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = testlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, progress.iter = burnin/10)
+          init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, progress.iter = burnin/10)
         } else {
           init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = burnin/10)
         }
@@ -3179,7 +3187,9 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
         message('Removing a item ', names(initData[excludeVar]),' / ', init$summary.mcmcobj$parameter[which(min(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)]) == (init$summary.mcmcobj$MAP))], ' value: ', min(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)]))
         
         initData <- initData[,-excludeVar]
-        
+        if(length(testlets) != 0){
+          ActualTestlets <- ActualTestlets[,-excludeVar]
+        }
         iterationTrials <- iterationTrials+1
         
         
@@ -3189,7 +3199,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
         if(length(group) == 0 && length(testlets) == 0 && link == 'logit'){
           init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, progress.iter = burnin/10)
         } else if(length(group) == 0 && length(testlets) != 0 && link == 'logit'){
-          init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = testlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, progress.iter = burnin/10)
+          init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, progress.iter = burnin/10)
         } else {
           init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = burnin/10)
         }
