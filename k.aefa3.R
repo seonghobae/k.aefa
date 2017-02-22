@@ -3161,7 +3161,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
         
         initData <- initData[,-excludeVar]
         if(length(testlets) != 0){
-          ActualTestlets <- ActualTestlets[,-excludeVar]
+          ActualTestlets <- ActualTestlets[-excludeVar]
         }
         
         
@@ -3188,7 +3188,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
         
         initData <- initData[,-excludeVar]
         if(length(testlets) != 0){
-          ActualTestlets <- ActualTestlets[,-excludeVar]
+          ActualTestlets <- ActualTestlets[-excludeVar]
         }
         iterationTrials <- iterationTrials+1
         
