@@ -3091,6 +3091,10 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
     install.packages('sirt')
     library('sirt')
   }
+  if(!require('plyr')){
+    install.packages('plyr')
+    library('plyr')
+  }
   
   if(range(x[1], na.rm = T)[2] - range(x[1], na.rm = T)[1] > 1){
     link <- 'normal'
@@ -3133,6 +3137,8 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
   
   if(length(testlets) != 0){
     ActualTestlets <- testlets
+    
+    ActualTestlets <- plyr::mapvalues(ActualTestlets, names(which(table(ActualTestlets) == 1)), rep(NA, length(names(which(table(ActualTestlets) == 1)))))
   }
  
   
@@ -3162,6 +3168,8 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
         initData <- initData[,-excludeVar]
         if(length(testlets) != 0){
           ActualTestlets <- ActualTestlets[-excludeVar]
+          ActualTestlets <- plyr::mapvalues(ActualTestlets, names(which(table(ActualTestlets) == 1)), rep(NA, length(names(which(table(ActualTestlets) == 1)))))
+          
         }
         
         
@@ -3189,6 +3197,8 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
         initData <- initData[,-excludeVar]
         if(length(testlets) != 0){
           ActualTestlets <- ActualTestlets[-excludeVar]
+          ActualTestlets <- plyr::mapvalues(ActualTestlets, names(which(table(ActualTestlets) == 1)), rep(NA, length(names(which(table(ActualTestlets) == 1)))))
+          
         }
         iterationTrials <- iterationTrials+1
         
