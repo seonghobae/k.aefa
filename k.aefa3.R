@@ -3084,7 +3084,7 @@ cmleRaschEst <- function(data, model = 'PCM'){
 
 autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
                            est.a.M="h" , est.a.Var="i", burnin = 10000,
-                           iter = 20000, Rhat = 1.05, autofix = T, TargetTestLength = 10, # for 2PNO Multilevel
+                           iter = 20000, Rhat = 1.05, autofix = T, TargetTestLength = 3, # for 2PNO Multilevel
                            testlets = rep(NA, ncol(data.frame(x))), survey.weights = NULL, est.slope = T, est.guess = T # for 3PNO testlet
                            ){
   if(!require('sirt')){
