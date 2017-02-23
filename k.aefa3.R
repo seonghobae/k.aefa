@@ -3156,10 +3156,11 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
     if(sum(init$summary.mcmcobj$Rhat > Rhat) != 0){
       parmList <- init$summary.mcmcobj
       
-      if(length(grep("^sigma[0-9]", as.character(init$summary.mcmcobj$parameter))) != 0){
-        parmList <- parmList[-grep("^sigma[0-9]", as.character(parmList$parameter)),]
-        parmList <- parmList[-grep("^sigma.testlet[0-9]", as.character(parmList$parameter)),]
-        # print(parmList)
+      # if(length(grep("^sigma[0-9]", as.character(init$summary.mcmcobj$parameter))) != 0){
+        # parmList <- parmList[-grep("^sigma[0-9]", as.character(parmList$parameter)),]
+      # }
+      if(length(grep("^sigma", as.character(init$summary.mcmcobj$parameter))) != 0){
+        parmList <- parmList[-grep("^sigma", as.character(parmList$parameter)),]
       }
       excludeVar <- unique(na.omit(as.numeric(unlist(strsplit(unlist(as.character(parmList[which(max(parmList$Rhat) == parmList$Rhat),]$parameter)), "[^0-9]+")))))
       
