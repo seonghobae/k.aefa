@@ -1440,9 +1440,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         }
       }
       
-      
-      if(exists('modTEMP') == F && i == 1){
-        
+      if(exists('modTEMP') == F && i == 1 && diagnosis == F){
         
         message('\nMIRT model: Rasch')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD,
@@ -1456,9 +1454,16 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
             rm(modTEMP)
           }
         }
+      }
+      
+      if(exists('modTEMP') == F && i == 1){
         
         message('\nMIRT model: spline response')
-        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'spline', method = estimationMETHOD,
+        if(estimationMETHOD == 'MHRM'){
+          message('switching MHRM to QMCEM...')
+        }
+        
+        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'spline', method = 'QMCEM',
                                   accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
