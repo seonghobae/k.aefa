@@ -1919,15 +1919,21 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
       iteration_num <- iteration_num + 1
       message('Iteration: ', iteration_num, '\n')
       
+      if(sum(surveyFixMod@Model$itemtype %in% 'spline') > 0){
+        fscoreMethod <- 'EAP'
+      } else {
+        fscoreMethod <- 'MAP'
+      }
+      
       if(sum(is.na(surveyFixMod@Data$data)) == 0){
         try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
-                                                  method = 'MAP',
+                                                  method = fscoreMethod,
                                                   QMC = T, rotate = rotateCriteria, maxit = 1e+5))
       } else {
         mirtCluster()
         try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
                                                   impute = 100,
-                                                  method = 'MAP',
+                                                  method = fscoreMethod,
                                                   QMC = T, rotate = rotateCriteria, maxit = 1e+5))
         mirtCluster(remove = T)
       }
@@ -3086,7 +3092,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
                            est.a.M="h" , est.a.Var="i", burnin = 10000,
                            iter = 20000, Rhat = 1.05, autofix = T, TargetTestLength = 3, # for 2PNO Multilevel
                            testlets = NULL, survey.weights = NULL, est.slope = T, est.guess = T # for 1-3PNO testlet
-                           ){
+){
   if(!require('sirt')){
     install.packages('sirt')
     library('sirt')
@@ -3140,7 +3146,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
     
     ActualTestlets <- plyr::mapvalues(ActualTestlets, names(which(table(ActualTestlets) == 1)), rep(NA, length(names(which(table(ActualTestlets) == 1)))))
   }
- 
+  
   
   if(length(group) == 0 && length(testlets) == 0 && link == 'logit'){
     init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = burnin/10)
@@ -3157,7 +3163,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
       parmList <- init$summary.mcmcobj
       
       # if(length(grep("^sigma[0-9]", as.character(init$summary.mcmcobj$parameter))) != 0){
-        # parmList <- parmList[-grep("^sigma[0-9]", as.character(parmList$parameter)),]
+      # parmList <- parmList[-grep("^sigma[0-9]", as.character(parmList$parameter)),]
       # }
       if(length(grep("^sigma", as.character(init$summary.mcmcobj$parameter))) != 0){
         parmList <- parmList[-grep("^sigma", as.character(parmList$parameter)),]
