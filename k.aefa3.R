@@ -2189,21 +2189,21 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
   } # the end of while loop
   
   if(autofix == T){
-    
-    message('\nChecking aberrant responses')
-    iteration_num <- iteration_num + 1
-    message('Iteration: ', iteration_num, '\n')
-    
-    surveyFixModRAW <- data.frame(mirt::extract.mirt(surveyFixMod, 'data'))
-    surveyFixModCOV <- data.frame(attr(surveyFixMod@ParObjects$lrPars, "df"))
-    
-    noAberrant <- k.faking(surveyFixModRAW, IRTonly = T, itemkeys = itemkeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
-    if(length(covdata) == 0){ # anyway, covdata is NULL
-      surveyFixMod <- fastFIFA(surveyFixModRAW[which(noAberrant$normal==TRUE),], itemkeys = itemkeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights[which(noAberrant$normal==TRUE)], allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
-    } else {
-      covdata_workout <- surveyFixModCOV
-      surveyFixMod <- fastFIFA(surveyFixModRAW[which(noAberrant$normal==TRUE),], itemkeys = itemkeys, covdata = covdata_workout[which(noAberrant$normal==TRUE),], formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights[which(noAberrant$normal==TRUE)], allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
-    }
+    # 
+    # message('\nChecking aberrant responses')
+    # iteration_num <- iteration_num + 1
+    # message('Iteration: ', iteration_num, '\n')
+    # 
+    # surveyFixModRAW <- data.frame(mirt::extract.mirt(surveyFixMod, 'data'))
+    # surveyFixModCOV <- data.frame(attr(surveyFixMod@ParObjects$lrPars, "df"))
+    # 
+    # noAberrant <- k.faking(surveyFixModRAW, IRTonly = T, itemkeys = itemkeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
+    # if(length(covdata) == 0){ # anyway, covdata is NULL
+    #   surveyFixMod <- fastFIFA(surveyFixModRAW[which(noAberrant$normal==TRUE),], itemkeys = itemkeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights[which(noAberrant$normal==TRUE)], allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
+    # } else {
+    #   covdata_workout <- surveyFixModCOV
+    #   surveyFixMod <- fastFIFA(surveyFixModRAW[which(noAberrant$normal==TRUE),], itemkeys = itemkeys, covdata = covdata_workout[which(noAberrant$normal==TRUE),], formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights[which(noAberrant$normal==TRUE)], allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, ...)
+    # }
     
     if(printFactorStructureRealtime == T){
       message('\nRealtime Factor Structure after iteration')
