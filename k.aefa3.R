@@ -2083,8 +2083,11 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         }
       } else if(S_X2ErrorFlag == F) { # if Chi-squared can be calculate
         
-        
-        if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems && surveyFixMod@Model$nfact == 1){
+        if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) == 0 && sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) == 0){ # avoid unexpected situation
+          message('all items df are 0. skipping evaluation...')
+          itemFitDone <- TRUE
+          
+        } else if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems && surveyFixMod@Model$nfact == 1){
           message('\nremoving items df is NA')
           workKeys <- workKeys[-which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)]
           
