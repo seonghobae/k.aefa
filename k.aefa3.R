@@ -1958,7 +1958,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
 surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
                      SE.type = "Oakes", skipNominal = F, forceGRSM = F,
                      assumingFake = F, masterThesis = F, forceRasch = F,
-                     unstable = F, forceNormalEM = F, forceMHRM = F,
+                     unstable = F, forceNormalEM = T, forceMHRM = F,
                      printFactorStructureRealtime = F, itemkeys = NULL,
                      survey.weights = NULL, allowMixedResponse = T, autofix = F,
                      forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4,
