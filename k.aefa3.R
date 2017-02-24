@@ -1116,7 +1116,7 @@ k.fixdata <- function(data, start, end, bioend){
 fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes", skipNominal = F,
                      forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F,
                      forceMHRM = F, forceNormalEM = T, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T,
-                     forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, forceNRM = F, dignosis = F, ...){
+                     forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, forceNRM = F, diagnosis = F, ...){
   
   for(i in 1:100){
     try(invisible(gc()), silent = T) # garbage cleaning
@@ -1325,7 +1325,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       
       if(nrow(x) >= 100){
         
-        if(nrow(x) >= 200 && dignosis == F){
+        if(nrow(x) >= 200 && diagnosis == F){
           message('\nMIRT model: Compensatory 4PL')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
@@ -1341,7 +1341,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         }
         
         
-        if(exists('modTEMP') == F && dignosis == F){
+        if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Compensatory 3PL with upper asymptote (slip) estimated')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PLu', method = estimationMETHOD,
@@ -1357,7 +1357,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           }
         }
         
-        if(exists('modTEMP') == F && i == 1 && dignosis == F){
+        if(exists('modTEMP') == F && i == 1 && diagnosis == F){
           
           message('\nMIRT model: Partially compensatory 3PL')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'PC3PL', method = estimationMETHOD,
@@ -1373,7 +1373,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           }
         }
         
-        if(exists('modTEMP') == F && dignosis == F){
+        if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Compensatory 3PL')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PL', method = estimationMETHOD,
@@ -1408,7 +1408,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       }
       
       
-      if(exists('modTEMP') == F && i == 1 && dignosis == F){
+      if(exists('modTEMP') == F && i == 1 && diagnosis == F){
         
         message('\nMIRT model: Partially compensatory 2PL')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'PC2PL', method = estimationMETHOD,
@@ -1424,7 +1424,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         }
       }
       
-      if(exists('modTEMP') == F && dignosis == F){
+      if(exists('modTEMP') == F && diagnosis == F){
         
         message('\nMIRT model: Compensatory 2PL')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '2PL', method = estimationMETHOD,
@@ -1443,19 +1443,17 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       
       if(exists('modTEMP') == F && i == 1){
         
-        if(dignosis == F){
-          
-          message('\nMIRT model: Rasch')
-          try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD,
-                                    accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
-          if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
-              rm(modTEMP)
-            }
+        
+        message('\nMIRT model: Rasch')
+        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD,
+                                  accelerate = accelerateINPUT, calcNull = T,
+                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                   removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+        if(exists('modTEMP')){
+          if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+            rm(modTEMP)
           }
         }
         
