@@ -1473,23 +1473,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         
       }
       
-      if(exists('modTEMP') == F && skipIdealPoint == F){
-        
-        message('\nMIRT model: ideal point')
-        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'ideal', method = estimationMETHOD,
-                                  accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
-        if(exists('modTEMP')){
-          if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
-            rm(modTEMP)
-          }
-        }
-      }
-      
-      
       if(exists('modTEMP') == F && i == 1 && diagnosis == F){
         
         message('\nMIRT model: Partially compensatory 2PL')
@@ -1510,6 +1493,22 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         
         message('\nMIRT model: Compensatory 2PL')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '2PL', method = estimationMETHOD,
+                                  accelerate = accelerateINPUT, calcNull = T,
+                                  technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                   removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+        if(exists('modTEMP')){
+          if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+            rm(modTEMP)
+          }
+        }
+      }
+      
+      if(exists('modTEMP') == F && skipIdealPoint == F){
+        
+        message('\nMIRT model: ideal point')
+        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'ideal', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
