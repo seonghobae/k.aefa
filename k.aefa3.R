@@ -3590,3 +3590,36 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   return(z)
 }
 
+  fastBifactorCFA <- function(x, itemtype = NULL){
+    if(!require('mokken')){
+      install.packages('mokken')
+      library('mokken')
+    } else if(!require('mirt')){
+      install.packages('mirt')
+      library('mirt')
+    }
+    
+    message('finding testlet structures using mokken scale analysis...')
+    if(ncol(x) > 5){
+      try(modMokken <- mokken::aisp(data.frame(x), verbose = T, search = 'ga', popsize = log2(nrow(x))), silent = T) 
+    } else {
+      try(modMokken <- mokken::aisp(data.frame(x), verbose = T), silent = T)
+    }
+    
+    if(sum(modMokken == 0) == ncol(x)){
+      # print(modMokken)
+      
+      modBfactor <- mirt::mirt(data = data.frame(x), model = 1, itemtype = itemtype, SE = T, technical = list(NCYCLES = 4000))
+      
+    } else {
+      # print(modMokken)
+      message('testlet structure was found')
+      modMokken[which(modMokken == 0)] <- NA
+      modBfactor <- mirt::bfactor(data = data.frame(x), model = modMokken,
+                                  itemtype = itemtype, SE = T, technical = list(NCYCLES = 4000))
+      
+    }
+    
+    return(modBfactor)
+    
+  }
