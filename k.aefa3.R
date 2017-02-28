@@ -1407,7 +1407,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       
       if(nrow(x) >= 100){
         
-        if(nrow(x) >= 200 && diagnosis == F){
+        if(diagnosis == F){
           message('\nMIRT model: Compensatory 4PL')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
@@ -3413,8 +3413,8 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
         STOP <- TRUE
       }
     } else if(#sum(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)] < 0) != 0 
-              sum(cbind( init$summary.mcmcobj$Q2.5[grep("^a",init$summary.mcmcobj$parameter)] <= 0 & init$summary.mcmcobj$Q97.5[grep("^a",init$summary.mcmcobj$parameter)] >= 0 )) > 0
-              && autofix){
+      sum(cbind( init$summary.mcmcobj$Q2.5[grep("^a",init$summary.mcmcobj$parameter)] <= 0 & init$summary.mcmcobj$Q97.5[grep("^a",init$summary.mcmcobj$parameter)] >= 0 )) > 0
+      && autofix){
       excludeVar <- unique(na.omit(as.numeric(unlist(strsplit(unlist(as.character(init$summary.mcmcobj$parameter[which(min(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)]) == (init$summary.mcmcobj$MAP))])), "[^0-9]+")))))
       if(length(excludeVar) != 0 && ncol(initData) > TargetTestLength){
         message('Removing a item ', names(initData[excludeVar]),' / ', init$summary.mcmcobj$parameter[which(min(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)]) == (init$summary.mcmcobj$MAP))], ' value: ', min(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)]))
