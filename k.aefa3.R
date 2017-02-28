@@ -3412,6 +3412,35 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
       } else {
         STOP <- TRUE
       }
+    } else if(#sum(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)] < 0) != 0 
+              sum(cbind( init$summary.mcmcobj$Q2.5[grep("^a",init$summary.mcmcobj$parameter)] <= 0 & init$summary.mcmcobj$Q97.5[grep("^a",init$summary.mcmcobj$parameter)] >= 0 )) > 0
+              && autofix){
+      excludeVar <- unique(na.omit(as.numeric(unlist(strsplit(unlist(as.character(init$summary.mcmcobj$parameter[which(min(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)]) == (init$summary.mcmcobj$MAP))])), "[^0-9]+")))))
+      if(length(excludeVar) != 0 && ncol(initData) > TargetTestLength){
+        message('Removing a item ', names(initData[excludeVar]),' / ', init$summary.mcmcobj$parameter[which(min(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)]) == (init$summary.mcmcobj$MAP))], ' value: ', min(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)]))
+        
+        initData <- initData[,-excludeVar]
+        if(length(testlets) != 0){
+          ActualTestlets <- ActualTestlets[-excludeVar]
+          ActualTestlets <- plyr::mapvalues(ActualTestlets, names(which(table(ActualTestlets) == 1)), rep(NA, length(names(which(table(ActualTestlets) == 1)))))
+          
+        }
+        iterationTrials <- iterationTrials+1
+        
+        
+        message('MCMC Trials: ', iterationTrials)
+        message('Current number of items: ', ncol(initData))
+        
+        if(length(group) == 0 && length(testlets) == 0 && link == 'logit'){
+          init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = burnin/10)
+        } else if(length(group) == 0 && length(testlets) != 0 && link == 'logit'){
+          init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = burnin/10)
+        } else {
+          init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = burnin/10)
+        }
+      } else {
+        STOP <- TRUE
+      }
     } else {
       STOP <- TRUE
     }
@@ -3590,41 +3619,41 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   return(z)
 }
 
-  fastBifactorCFA <- function(x, itemtype = NULL){
-    if(!require('mokken')){
-      install.packages('mokken')
-      library('mokken')
-    } else if(!require('mirt')){
-      install.packages('mirt')
-      library('mirt')
-    }
+fastBifactorCFA <- function(x, itemtype = NULL){
+  if(!require('mokken')){
+    install.packages('mokken')
+    library('mokken')
+  } else if(!require('mirt')){
+    install.packages('mirt')
+    library('mirt')
+  }
+  
+  message('finding testlet structures using mokken scale analysis...')
+  if(ncol(x) > 5){
+    try(modMokken <- mokken::aisp(data.frame(x), verbose = T, search = 'ga', popsize = log2(nrow(x))), silent = T) 
+  } else {
+    try(modMokken <- mokken::aisp(data.frame(x), verbose = T), silent = T)
+  }
+  
+  if(sum(modMokken == 0) == ncol(x)){
+    # print(modMokken)
     
-    message('finding testlet structures using mokken scale analysis...')
-    if(ncol(x) > 5){
-      try(modMokken <- mokken::aisp(data.frame(x), verbose = T, search = 'ga', popsize = log2(nrow(x))), silent = T) 
-    } else {
-      try(modMokken <- mokken::aisp(data.frame(x), verbose = T), silent = T)
-    }
+    modBfactor <- mirt::mirt(data = data.frame(x), model = 1, itemtype = itemtype, SE = T, technical = list(NCYCLES = 4000))
     
-    if(sum(modMokken == 0) == ncol(x)){
-      # print(modMokken)
-      
-      modBfactor <- mirt::mirt(data = data.frame(x), model = 1, itemtype = itemtype, SE = T, technical = list(NCYCLES = 4000))
-      
-    } else {
-      # print(modMokken)
-      message('testlet structure was found')
-      modMokken[which(modMokken == 0)] <- NA
-      modBfactor <- mirt::bfactor(data = data.frame(x), model = modMokken,
-                                  itemtype = itemtype, SE = T, technical = list(NCYCLES = 4000))
-      
-    }
-    
-    return(modBfactor)
+  } else {
+    # print(modMokken)
+    message('testlet structure was found')
+    modMokken[which(modMokken == 0)] <- NA
+    modBfactor <- mirt::bfactor(data = data.frame(x), model = modMokken,
+                                itemtype = itemtype, SE = T, technical = list(NCYCLES = 4000))
     
   }
+  
+  return(modBfactor)
+  
+}
 
-    
+
 doFastBifactorCFA <- function(data = NULL, itemtype = NULL) {
   message('---------------------------------------------------------')
   message(' k.aefa: kwangwoon automated exploratory factor analysis ')
@@ -3635,7 +3664,7 @@ doFastBifactorCFA <- function(data = NULL, itemtype = NULL) {
   iteration_num <- 1
   message('Iteration: ', iteration_num, '\n')
   surveyFixMod <- fastBifactorCFA(x = as.data.frame(data), itemtype = itemtype)
-
+  
   itemFitDone <- FALSE
   while (!itemFitDone) {
     surveyFixModRAW <- data.frame(mirt::extract.mirt(surveyFixMod, 'data'))
@@ -3837,7 +3866,7 @@ doFastBifactorCFA <- function(data = NULL, itemtype = NULL) {
     
   } # the end of while loop
   
-
+  
   return(surveyFixMod)
   
 }
