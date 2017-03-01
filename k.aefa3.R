@@ -1927,7 +1927,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       return(modTEMP)
     }
     
-    if(i == 1 && modTEMP@OptimInfo$converged == F){
+    if(i == 1 && modTEMP@OptimInfo$converged == F && sum(modTEMP@Model$itemtype %in% 'spline') == 0){
       stop('No convergence')
     }
     
