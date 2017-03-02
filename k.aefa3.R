@@ -1405,7 +1405,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         try(return(modTEMP))
       }
       
-      if(nrow(x) >= 100){
+      if(nrow(x) >= 50){
         
         if(diagnosis == F){
           message('\nMIRT model: Compensatory 4PL')
@@ -1521,7 +1521,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         }
       }
       
-      if(exists('modTEMP') == F && i == 1 && diagnosis == F){
+      if(exists('modTEMP') == F && i == 1){
         
         message('\nMIRT model: Rasch')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD,
