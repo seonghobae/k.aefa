@@ -3130,7 +3130,7 @@ deepFAengine <- function(mirtModel, survey.weights){ # for search more factors w
   }
 }
 
-deepFA <- function(mirtModel, survey.weights){
+deepFA <- function(mirtModel, survey.weights = NULL){
   init_nfact <- mirtModel@Model$nfact
   
   deepModel <- deepFAengine(mirtModel, survey.weights)
