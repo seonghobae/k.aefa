@@ -1405,7 +1405,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         try(return(modTEMP))
       }
       
-      if(nrow(x) >= 50){
+      # if(nrow(x) >= 50){
         
         if(diagnosis == F){
           message('\nMIRT model: Compensatory 4PL')
@@ -1471,7 +1471,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           }
         }
         
-      }
+      # }
       
       if(exists('modTEMP') == F && i == 1 && diagnosis == F){
         
