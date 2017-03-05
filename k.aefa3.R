@@ -1397,7 +1397,10 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         install.packages('plyr')
         library('plyr')
       }
+      TestletActivated <- T
       ActualTestlets <- plyr::mapvalues(ActualTestlets, names(which(table(ActualTestlets) == 1)), rep(NA, length(names(which(table(ActualTestlets) == 1)))))
+    } else {
+      TestletActivated <- F
     }
     
     if(max(x, na.rm = T) - min(x, na.rm = T) == 1){ # dichotomous items
@@ -2093,7 +2096,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         
         if(skipNominal == F){
           message('\nMIRT model: nominal response')
-          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'nominal', method = estimationMETHOD,
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'nominal',
                                        accelerate = accelerateINPUT, calcNull = T,
                                        technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
@@ -2107,7 +2110,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         # generalized partial credit model (non-sequential)
         if(exists('modTEMP') == F && forceNRM == F){
           message('\nMIRT model: Generalized partial credit')
-          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'gpcm', method = estimationMETHOD,
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'gpcm',
                                        accelerate = accelerateINPUT, calcNull = T,
                                        technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
@@ -2188,13 +2191,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       }
     }
     
-    if(i == 1){ # ICC printing
+    if(i == 1 && length(testlets) == 0){ # ICC printing
       try(print(plot(modTEMP, type = 'infoSE')))
       try(print(plot(modTEMP, type = 'infotrace', facet_items = TRUE)))
       try(print(plot(modTEMP, type = 'trace')))
     }
     
-    if(forceUIRT == T){
+    if(forceUIRT == T | TestletActivated == T){
       return(modTEMP)
     }
     
@@ -2264,10 +2267,10 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
                            forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM,
                            itemkeys = itemkeys, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse,
                            autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM,
-                           forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, ...)
+                           forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = testlets, ...)
   workKeys <- itemkeys
   workTestlets <- testlets
-  if(needGlobalOptimal == T && forceUIRT == F){
+  if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
     surveyFixMod <- deepFA(surveyFixMod, survey.weights)
   }
   itemFitDone <- FALSE
@@ -2334,7 +2337,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         workTestlets <- workTestlets[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                  forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
-        if(needGlobalOptimal == T && forceUIRT == F){
+        if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
           surveyFixMod <- deepFA(surveyFixMod, survey.weights)
         }
         rm(surveyFixMod_itemFit)
@@ -2346,7 +2349,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                  forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
-        if(needGlobalOptimal == T && forceUIRT == F){
+        if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
           surveyFixMod <- deepFA(surveyFixMod, survey.weights)
         }
         rm(surveyFixMod_itemFit)
@@ -2360,7 +2363,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           workTestlets <- workTestlets[-which(max(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                    forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
-          if(needGlobalOptimal == T && forceUIRT == F){
+          if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             surveyFixMod <- deepFA(surveyFixMod, survey.weights)
           }
           rm(surveyFixMod_itemFit)
@@ -2383,7 +2386,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                    forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
-          if(needGlobalOptimal == T && forceUIRT == F){
+          if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             surveyFixMod <- deepFA(surveyFixMod, survey.weights)
           }
           rm(surveyFixMod_itemFit)
@@ -2397,7 +2400,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(surveyFixMod_itemFit$df.S_X2 == 0)], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                    forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
-          if(needGlobalOptimal == T && forceUIRT == F){
+          if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             surveyFixMod <- deepFA(surveyFixMod, survey.weights)
           }
           rm(surveyFixMod_itemFit)
@@ -2411,7 +2414,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(is.na(surveyFixMod_itemFit$p.S_X2) == TRUE)], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                    forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
-          if(needGlobalOptimal == T && forceUIRT == F){
+          if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             surveyFixMod <- deepFA(surveyFixMod, survey.weights)
           }
           rm(surveyFixMod_itemFit)
@@ -2425,7 +2428,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                    forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
-          if(needGlobalOptimal == T && forceUIRT == F){
+          if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             surveyFixMod <- deepFA(surveyFixMod, survey.weights)
           }
           rm(surveyFixMod_itemFit)
@@ -2439,7 +2442,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                    forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
-          if(needGlobalOptimal == T && forceUIRT == F){
+          if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             surveyFixMod <- deepFA(surveyFixMod, survey.weights)
           }
           rm(surveyFixMod_itemFit)
