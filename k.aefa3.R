@@ -1117,7 +1117,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
                      forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F,
                      forceMHRM = F, forceNormalEM = T, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T,
                      forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, forceNRM = F,
-                     diagnosis = F, forceDefalutAccelerater = F, forceDefaultOptimizer = F, EnableFMHRM = F, ...){
+                     diagnosis = F, forceDefalutAccelerater = F, forceDefaultOptimizer = F, EnableFMHRM = F, testlets = NULL, ...){
   
   for(i in 1:100){
     try(invisible(gc()), silent = T) # garbage cleaning
@@ -1390,6 +1390,16 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       removeEmptyRowsConf <- TRUE
     }
     
+    # testlets
+    ActualTestlets <- testlets
+    if(length(testlets) != 0){
+      if(!require('plyr')){
+        install.packages('plyr')
+        library('plyr')
+      }
+      ActualTestlets <- plyr::mapvalues(ActualTestlets, names(which(table(ActualTestlets) == 1)), rep(NA, length(names(which(table(ActualTestlets) == 1)))))
+    }
+    
     if(max(x, na.rm = T) - min(x, na.rm = T) == 1){ # dichotomous items
       
       # forceRasch (dichotomous)
@@ -1406,6 +1416,140 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       }
       
       # if(nrow(x) >= 50){
+      
+      if(length(ActualTestlets) != 0){
+        
+        if(diagnosis == F){
+          message('\nMIRT model: Compensatory 4PL')
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = '4PL',
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        
+        
+        if(exists('modTEMP') == F && diagnosis == F){
+          
+          message('\nMIRT model: Compensatory 3PL with upper asymptote (slip) estimated')
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = '3PLu',
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        
+        if(exists('modTEMP') == F && diagnosis == F){
+          
+          message('\nMIRT model: Partially compensatory 3PL')
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'PC3PL',
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        
+        if(exists('modTEMP') == F && diagnosis == F){
+          
+          message('\nMIRT model: Compensatory 3PL')
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = '3PL',
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        
+        # }
+        
+        if(exists('modTEMP') == F && diagnosis == F){
+          
+          message('\nMIRT model: Partially compensatory 2PL')
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'PC2PL',
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        
+        if(exists('modTEMP') == F && diagnosis == F){
+          
+          message('\nMIRT model: Compensatory 2PL')
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = '2PL',
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        
+        if(exists('modTEMP') == F && skipIdealPoint == F){
+          
+          message('\nMIRT model: ideal point')
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'ideal',
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        
+        if(exists('modTEMP') == F){
+          
+          message('\nMIRT model: Rasch')
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'Rasch',
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        
+      } else {
         
         if(diagnosis == F){
           message('\nMIRT model: Compensatory 4PL')
@@ -1471,71 +1615,73 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           }
         }
         
-      # }
-      
-      if(exists('modTEMP') == F && i == 1 && diagnosis == F){
+        # }
         
-        message('\nMIRT model: Partially compensatory 2PL')
-        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'PC2PL', method = estimationMETHOD,
-                                  accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
-        if(exists('modTEMP')){
-          if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
-            rm(modTEMP)
+        if(exists('modTEMP') == F && i == 1 && diagnosis == F){
+          
+          message('\nMIRT model: Partially compensatory 2PL')
+          try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'PC2PL', method = estimationMETHOD,
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        
+        if(exists('modTEMP') == F && diagnosis == F){
+          
+          message('\nMIRT model: Compensatory 2PL')
+          try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '2PL', method = estimationMETHOD,
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        
+        if(exists('modTEMP') == F && skipIdealPoint == F){
+          
+          message('\nMIRT model: ideal point')
+          try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'ideal', method = estimationMETHOD,
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        
+        if(exists('modTEMP') == F && i == 1){
+          
+          message('\nMIRT model: Rasch')
+          try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD,
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
           }
         }
       }
       
-      if(exists('modTEMP') == F && diagnosis == F){
-        
-        message('\nMIRT model: Compensatory 2PL')
-        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '2PL', method = estimationMETHOD,
-                                  accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
-        if(exists('modTEMP')){
-          if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
-            rm(modTEMP)
-          }
-        }
-      }
-      
-      if(exists('modTEMP') == F && skipIdealPoint == F){
-        
-        message('\nMIRT model: ideal point')
-        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'ideal', method = estimationMETHOD,
-                                  accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
-        if(exists('modTEMP')){
-          if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
-            rm(modTEMP)
-          }
-        }
-      }
-      
-      if(exists('modTEMP') == F && i == 1){
-        
-        message('\nMIRT model: Rasch')
-        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD,
-                                  accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
-        if(exists('modTEMP')){
-          if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
-            rm(modTEMP)
-          }
-        }
-      }
       
       if(exists('modTEMP') == F && i == 1){
         
@@ -1568,7 +1714,81 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       }
       
     } else if(length(itemkeys) != 0){ # 2-4PLNRM
-      if(nrow(x) >= 50){
+      
+      if(length(ActualTestlets) != 0){
+        
+        message('\nMIRT model: Compensatory 4PL Nominal response')
+        try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = '4PLNRM', 
+                                     key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
+                                     technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+        if(exists('modTEMP')){
+          if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+        }
+        
+        if(exists('modTEMP') == F){
+          
+          message('\nMIRT model: Compensatory 3PL Nominal response')
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = '3PLNRM', 
+                                       key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          }
+        }
+        
+        
+        if(exists('modTEMP') == F){
+          
+          message('\nMIRT model: Compensatory 3PL Nominal response with upper asymptote estimated')
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = '3PLuNRM', 
+                                       key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          }
+        }
+        # }
+        
+        if(exists('modTEMP') == F){
+          
+          message('\nMIRT model: Compensatory 2PL Nominal response')
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = '2PLNRM', 
+                                       key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          }
+        }
+        
+        if(exists('modTEMP') == F){
+          message('\nMIRT model: Nominal response without keys')
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'nominal', 
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, key = NULL, ...), silent = F)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              message('Model may unstable but Trying to remedy automatically')
+            }
+          }
+        }
+        
+      } else {
+        
         message('\nMIRT model: Compensatory 4PL Nominal response')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PLNRM', method = estimationMETHOD,
                                   key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
@@ -1608,36 +1828,38 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
           }
         }
-      }
-      
-      if(exists('modTEMP') == F){
+        # }
         
-        message('\nMIRT model: Compensatory 2PL Nominal response')
-        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '2PLNRM', method = estimationMETHOD,
-                                  key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
-        if(exists('modTEMP')){
-          if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+        if(exists('modTEMP') == F){
+          
+          message('\nMIRT model: Compensatory 2PL Nominal response')
+          try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '2PLNRM', method = estimationMETHOD,
+                                    key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          }
         }
-      }
-      
-      if(exists('modTEMP') == F){
-        message('\nMIRT model: Nominal response without keys')
-        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'nominal', method = estimationMETHOD,
-                                  accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, key = NULL, ...), silent = F)
-        if(exists('modTEMP')){
-          if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
-            message('Model may unstable but Trying to remedy automatically')
+        
+        if(exists('modTEMP') == F){
+          message('\nMIRT model: Nominal response without keys')
+          try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'nominal', method = estimationMETHOD,
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, key = NULL, ...), silent = F)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              message('Model may unstable but Trying to remedy automatically')
+            }
           }
         }
       }
+
       
       if(exists('modTEMP') == F){
         if(i == 1){
@@ -1647,7 +1869,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         }
       }
       
-    } else if((sum(psych::describe(x)$range == 1) != 0) && allowMixedResponse == T) { # mixed format (Construct Responses + Multiple Choices)
+    } else if((sum(psych::describe(x)$range == 1) != 0) && allowMixedResponse == T) { # mixed format (Construct Responses + Multiple Choices, under construction)
       if(skipNominal == F){
         if(skipIdealPoint == F){
           
@@ -1866,46 +2088,95 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       
       # polytomous
       # nominal model
-      if(skipNominal == F){
-        message('\nMIRT model: nominal response')
-        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'nominal', method = estimationMETHOD,
-                                  accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
-        if(exists('modTEMP')){
-          if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
-        }
-      }
       
-      # generalized partial credit model (non-sequential)
-      if(exists('modTEMP') == F && forceNRM == F){
-        message('\nMIRT model: Generalized partial credit')
-        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'gpcm', method = estimationMETHOD,
-                                  accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                   removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
-        if(exists('modTEMP')){
-          if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+      if(length(ActualTestlets) != 0){
+        
+        if(skipNominal == F){
+          message('\nMIRT model: nominal response')
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'nominal', method = estimationMETHOD,
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          }
+        }
+        
+        # generalized partial credit model (non-sequential)
+        if(exists('modTEMP') == F && forceNRM == F){
+          message('\nMIRT model: Generalized partial credit')
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'gpcm', method = estimationMETHOD,
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          }
+        }
+        
+        # graded response model (sequential)
+        if(exists('modTEMP') == F && forceNRM == F){
+          message('\nMIRT model: Graded response')
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, accelerate = accelerateINPUT,
+                                       calcNull = T, technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
+                                                                      SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
+                                       TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
+                                       optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          }
+        }
+        
+      } else {
+        if(skipNominal == F){
+          message('\nMIRT model: nominal response')
+          try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'nominal', method = estimationMETHOD,
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          }
+        }
+        
+        # generalized partial credit model (non-sequential)
+        if(exists('modTEMP') == F && forceNRM == F){
+          message('\nMIRT model: Generalized partial credit')
+          try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'gpcm', method = estimationMETHOD,
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          }
+        }
+        
+        # graded response model (sequential)
+        if(exists('modTEMP') == F && forceNRM == F){
+          message('\nMIRT model: Graded response')
+          try(modTEMP <- mirt::mirt(data = x, model = i, method = estimationMETHOD, accelerate = accelerateINPUT,
+                                    calcNull = T, technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
+                                                                   SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
+                                    TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
+                                    optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          }
         }
       }
+        
       
-      # graded response model (sequential)
-      if(exists('modTEMP') == F && forceNRM == F){
-        message('\nMIRT model: Graded response')
-        try(modTEMP <- mirt::mirt(data = x, model = i, method = estimationMETHOD, accelerate = accelerateINPUT,
-                                  calcNull = T, technical = list(BURNIN = 800, SEMCYCLES = 200, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
-                                                                 SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
-                                  TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
-                                  optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
-        if(exists('modTEMP')){
-          if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
-        }
-      }
+
       
       # finally, if can not converge
       if(exists('modTEMP') == F){
@@ -1966,7 +2237,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
                      survey.weights = NULL, allowMixedResponse = T, autofix = F,
                      forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4,
                      bifactorSolution = T, skipS_X2 = F, forceNRM = F, needGlobalOptimal = T,
-                     pilotTestMode = F, forceConsiderPositiveZh = F, forceDefalutAccelerater = F, forceDefaultOptimizer = F, EnableFMHRM = F, ...) {
+                     pilotTestMode = F, forceConsiderPositiveZh = F, forceDefalutAccelerater = F, forceDefaultOptimizer = F, EnableFMHRM = F, testlets = NULL, ...) {
   message('---------------------------------------------------------')
   message(' k.aefa: kwangwoon automated exploratory factor analysis ')
   message('---------------------------------------------------------\n')
@@ -1995,6 +2266,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
                            autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM,
                            forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, ...)
   workKeys <- itemkeys
+  workTestlets <- testlets
   if(needGlobalOptimal == T && forceUIRT == F){
     surveyFixMod <- deepFA(surveyFixMod, survey.weights)
   }
@@ -2059,8 +2331,9 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
       if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -1.96)) != 0 && sum(is.na(surveyFixModRAW)) == 0){ # Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
         message('\nDrasgow, F., Levine, M. V., & Williams, E. A. (1985) / removing ', paste(surveyFixMod_itemFit$item[which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]))
         workKeys <- workKeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
+        workTestlets <- workTestlets[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                 forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, ...)
+                                 forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
         if(needGlobalOptimal == T && forceUIRT == F){
           surveyFixMod <- deepFA(surveyFixMod, survey.weights)
         }
@@ -2069,8 +2342,10 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
       } else if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] == -Inf)) != 0){ # Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
         message('\nDrasgow, F., Levine, M. V., & Williams, E. A. (1985) / removing ', paste(surveyFixMod_itemFit$item[which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]))
         workKeys <- workKeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
+        workTestlets <- workTestlets[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
+        
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                 forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, ...)
+                                 forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
         if(needGlobalOptimal == T && forceUIRT == F){
           surveyFixMod <- deepFA(surveyFixMod, survey.weights)
         }
@@ -2082,8 +2357,9 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] > 1.96)) != 0 && sum(is.na(surveyFixModRAW)) == 0 && forceConsiderPositiveZh){ # Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
           message('\nDrasgow, F., Levine, M. V., & Williams, E. A. (1985) / removing ', paste(surveyFixMod_itemFit$item[which(max(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]))
           workKeys <- workKeys[-which(max(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
+          workTestlets <- workTestlets[-which(max(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, ...)
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
           if(needGlobalOptimal == T && forceUIRT == F){
             surveyFixMod <- deepFA(surveyFixMod, survey.weights)
           }
@@ -2103,9 +2379,10 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         } else if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems && surveyFixMod@Model$nfact == 1){
           message('\nremoving items df is NA / ', paste(surveyFixMod_itemFit$item[which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)]))
           workKeys <- workKeys[-which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)]
+          workTestlets <- workTestlets[-which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)]
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, ...)
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
           if(needGlobalOptimal == T && forceUIRT == F){
             surveyFixMod <- deepFA(surveyFixMod, survey.weights)
           }
@@ -2116,9 +2393,10 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         } else if(sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) != 0 && surveyFixMod@Model$nfact == 1 && skipS_X2 == F){
           message('\nremoving items df is 0 / removing ', paste(surveyFixMod_itemFit$item[which(surveyFixMod_itemFit$df.S_X2 == 0)]))
           workKeys <- workKeys[-which(surveyFixMod_itemFit$df.S_X2 == 0)]
+          workTestlets <- workTestlets[-which(surveyFixMod_itemFit$df.S_X2 == 0)]
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(surveyFixMod_itemFit$df.S_X2 == 0)], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, ...)
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
           if(needGlobalOptimal == T && forceUIRT == F){
             surveyFixMod <- deepFA(surveyFixMod, survey.weights)
           }
@@ -2129,9 +2407,10 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems && surveyFixMod@Model$nfact == 1){
           message('\nremoving items p.S_X2 is NA / removing ', paste(surveyFixMod_itemFit$item[which(is.na(surveyFixMod_itemFit$p.S_X2) == TRUE)]))
           workKeys <- workKeys[-which(is.na(surveyFixMod_itemFit$p.S_X2) == TRUE)]
+          workTestlets <- workTestlets[-which(is.na(surveyFixMod_itemFit$p.S_X2) == TRUE)]
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(is.na(surveyFixMod_itemFit$p.S_X2) == TRUE)], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, ...)
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
           if(needGlobalOptimal == T && forceUIRT == F){
             surveyFixMod <- deepFA(surveyFixMod, survey.weights)
           }
@@ -2142,9 +2421,10 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems] >= 3)) != 0 && skipS_X2 == F && surveyFixMod@Model$nfact == 1){ # Drasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995). Fitting polytomous item response theory models to multiple-choice tests. Applied Psychological Measurement, 19(2), 143-166.
           message('\nDrasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995) / removing ', paste(surveyFixMod_itemFit$item[which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]))
           workKeys <- workKeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
+          workTestlets <- workTestlets[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, ...)
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
           if(needGlobalOptimal == T && forceUIRT == F){
             surveyFixMod <- deepFA(surveyFixMod, survey.weights)
           }
@@ -2155,9 +2435,10 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems] < .05)) != 0 && skipS_X2 == F && surveyFixMod@Model$nfact == 1){ # Kang, T., & Chen, T. T. (2008). Performance of the Generalized S‐X2 Item Fit Index for Polytomous IRT Models. Journal of Educational Measurement, 45(4), 391-406.; Reise, S. P. (1990). A comparison of item- and person-fit methods of assessing model-data fit in IRT. Applied Psychological Measurement, 14, 127-137.
           message('\nKang, T., & Chen, T. T. (2008); Reise, S. P. (1990) / removing ', paste(surveyFixMod_itemFit$item[which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]))
           workKeys <- workKeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
+          workTestlets <- workTestlets[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, ...)
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
           if(needGlobalOptimal == T && forceUIRT == F){
             surveyFixMod <- deepFA(surveyFixMod, survey.weights)
           }
