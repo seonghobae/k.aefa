@@ -1405,6 +1405,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       ActualTestlets <- as.integer(ActualTestlets)
       
       ActualTestlets <- plyr::mapvalues(ActualTestlets, names(which(table(ActualTestlets) == 1)), rep(NA, length(names(which(table(ActualTestlets) == 1)))))
+      if(sum(ActualTestlets %in% 1) == 0){
+        ActualTestlets <- ActualTestlets - min(ActualTestlets, na.rm = T) + 1
+      }
     } else {
       TestletActivated <- F
     }
@@ -3623,6 +3626,9 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
     ActualTestlets <- testlets
     
     ActualTestlets <- plyr::mapvalues(ActualTestlets, names(which(table(ActualTestlets) == 1)), rep(NA, length(names(which(table(ActualTestlets) == 1)))))
+    if(sum(ActualTestlets %in% 1) == 0){
+      ActualTestlets <- ActualTestlets - min(ActualTestlets, na.rm = T) + 1
+    }
   }
   
   
