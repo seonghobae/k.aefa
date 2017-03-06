@@ -1398,6 +1398,12 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         library('plyr')
       }
       TestletActivated <- T
+      
+      if(is.character(ActualTestlets)){
+        ActualTestlets <- as.factor(ActualTestlets)
+      }
+      ActualTestlets <- as.integer(ActualTestlets)
+      
       ActualTestlets <- plyr::mapvalues(ActualTestlets, names(which(table(ActualTestlets) == 1)), rep(NA, length(names(which(table(ActualTestlets) == 1)))))
     } else {
       TestletActivated <- F
@@ -1862,7 +1868,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           }
         }
       }
-
+      
       
       if(exists('modTEMP') == F){
         if(i == 1){
@@ -2177,9 +2183,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           }
         }
       }
-        
       
-
+      
+      
       
       # finally, if can not converge
       if(exists('modTEMP') == F){
