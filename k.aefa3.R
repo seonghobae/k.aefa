@@ -3923,7 +3923,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   return(z)
 }
 
-fastBifactorCFA <- function(x){
+fastBifactorCFA <- function(x, ga = T){
   if(!require('mokken')){
     install.packages('mokken')
     library('mokken')
@@ -3933,7 +3933,7 @@ fastBifactorCFA <- function(x){
   }
   
   message('finding testlet structures using mokken scale analysis...')
-  if(ncol(x) > 5){
+  if(ga){
     try(modMokken <- mokken::aisp(data.frame(x), verbose = T, search = 'ga', popsize = log2(nrow(x))), silent = T) 
   } else {
     try(modMokken <- mokken::aisp(data.frame(x), verbose = T), silent = T)
