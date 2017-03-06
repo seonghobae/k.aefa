@@ -3945,7 +3945,7 @@ fastBifactorCFA <- function(x, ga = T){
     modBfactor <- surveyFA(data = data.frame(x))
     
   } else {
-    # print(modMokken)
+    print(modMokken)
     message('testlet structure was found')
     modMokken[which(modMokken == 0)] <- NA
     modBfactor <- surveyFA(data = data.frame(x), testlets = modMokken)
