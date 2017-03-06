@@ -3923,7 +3923,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   return(z)
 }
 
-fastBifactorCFA <- function(x, ga = T){
+fastBifactorCFA <- function(x, ga = T, itemkeys = NULL){
   if(!require('mokken')){
     install.packages('mokken')
     library('mokken')
@@ -3939,16 +3939,16 @@ fastBifactorCFA <- function(x, ga = T){
     try(modMokken <- mokken::aisp(data.frame(x), verbose = T), silent = T)
   }
   
-  if(sum(modMokken == 0) == ncol(x)){
+  if(sum(modMokken == 0) == ncol(x) | sum(modMokken == 1) == ncol(x)){
     # print(modMokken)
     
-    modBfactor <- surveyFA(data = data.frame(x))
+    modBfactor <- surveyFA(data = data.frame(x), itemkeys = itemkeys)
     
   } else {
     print(modMokken)
     message('testlet structure was found')
     modMokken[which(modMokken == 0)] <- NA
-    modBfactor <- surveyFA(data = data.frame(x), testlets = modMokken)
+    modBfactor <- surveyFA(data = data.frame(x), testlets = modMokken, itemkeys = itemkeys)
     
   }
   
