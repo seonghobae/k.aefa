@@ -3946,7 +3946,8 @@ fastBifactorCFA <- function(x, ga = T, itemkeys = NULL){
   
   message('finding testlet structures using mokken scale analysis...')
   if(ga){
-    try(modMokken <- mokken::aisp(data.frame(x), verbose = T, search = 'ga', popsize = log2(nrow(x))), silent = T) 
+    message(1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))))
+    try(modMokken <- mokken::aisp(data.frame(x), verbose = T, search = 'ga', pxover = 1, pmutation = 1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))), popsize = log2(nrow(x))), silent = T) 
   } else {
     try(modMokken <- mokken::aisp(data.frame(x), verbose = T), silent = T)
   }
