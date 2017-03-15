@@ -9,14 +9,14 @@
 message("\n Check Packages: Processing......")
 
 # check packages
-try(update.packages(ask = F, repos = 'http://cran.nexr.com'))
+try(update.packages(ask = F, repos = 'http://cran.biodisk.org'))
 
 if(!require(depmixS4)) {
-  try(install.packages("depmixS4", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(depmixS4)
+  try(install.packages("depmixS4", dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent=TRUE); library(depmixS4)
 }
 
 if(!require(Rsolnp)) {
-  try(install.packages("Rsolnp", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(Rsolnp)
+  try(install.packages("Rsolnp", dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent=TRUE); library(Rsolnp)
 }
 
 #if(!require(Cairo)) {
@@ -26,15 +26,15 @@ if(!require(Rsolnp)) {
 #  try(install.packages("cairoDevice", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(cairoDevice)
 #}
 if(!require(stringr)) {
-  try(install.packages("stringr", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(stringr)
+  try(install.packages("stringr", dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent=TRUE); library(stringr)
 }
 
 if(!require(SQUAREM)) {
-  try(install.packages("SQUAREM", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(SQUAREM)
+  try(install.packages("SQUAREM", dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent=TRUE); library(SQUAREM)
 }
 
 if(!require(rrcovNA)) {
-  try(install.packages("rrcovNA", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent=TRUE); library(rrcovNA)
+  try(install.packages("rrcovNA", dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent=TRUE); library(rrcovNA)
 }
 
 # check packages
@@ -45,7 +45,7 @@ if(!require(rrcovNA)) {
 
 # check packages
 if(!require(bfa)) {
-  try(install.packages("bfa", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+  try(install.packages("bfa", dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
 }
 
 # check packages
@@ -57,68 +57,68 @@ if(!require(mirt)) {
     try(install_github('philchalmers/mirtCAT'), silent = T)
   }
   else {
-    try(install.packages("mirt", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+    try(install.packages("mirt", dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
   }
   
 }
 
 if(!require(latticeExtra)) {
-  try(install.packages('latticeExtra', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+  try(install.packages('latticeExtra', dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
 }
 
 if(!require(plyr)) {
-  try(install.packages('plyr', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+  try(install.packages('plyr', dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
 }
 
 if(!require(multilevel)) {
-  try(install.packages('multilevel', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+  try(install.packages('multilevel', dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
 }
 
 if(!require(nlme)) {
-  try(install.packages('nlme', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+  try(install.packages('nlme', dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
 }
 
 if(!require(lsr)) {
-  try(install.packages('lsr', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+  try(install.packages('lsr', dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
 }
 
 if(!require(meta)) {
-  try(install.packages('meta', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+  try(install.packages('meta', dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
 }
 
 if(!require(metafor)) {
-  try(install.packages('metafor', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+  try(install.packages('metafor', dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
 }
 
 if(!require(rmeta)) {
-  try(install.packages('rmeta', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+  try(install.packages('rmeta', dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
 }
 if(!require(psychometric)) {
-  try(install.packages('psychometric', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+  try(install.packages('psychometric', dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
 }
 if(!require(pracma)) {
-  try(install.packages('pracma', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+  try(install.packages('pracma', dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
 }
 if(!require(rsm)) {
-  try(install.packages('rsm', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+  try(install.packages('rsm', dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
 }
 if(!require(car)) {
-  try(install.packages('car', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+  try(install.packages('car', dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
 }
 if(!require(TAM)) {
-  try(install.packages('TAM', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+  try(install.packages('TAM', dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
 }
 if(!require(GPArotation)) {
-  try(install.packages('GPArotation', dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+  try(install.packages('GPArotation', dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
 }  
 if(!require(lavaan)) {
-  try(install.packages("lavaan", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+  try(install.packages("lavaan", dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
 }
 if(!require(semTools)) {
-  try(install.packages("semTools", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+  try(install.packages("semTools", dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
 }
 if(!require(psych)) {
-  try(install.packages("psych", dependencies = TRUE, repos = 'http://cran.nexr.com'), silent = T)
+  try(install.packages("psych", dependencies = TRUE, repos = 'http://cran.biodisk.org'), silent = T)
 }
 
 
