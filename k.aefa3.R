@@ -3958,7 +3958,7 @@ fastBifactorCFA <- function(x, ga = T, itemkeys = NULL, initSolution = F){
       modBfactor <- surveyFA(data = data.frame(x), itemkeys = itemkeys)
       
     } else {
-      modBfactor <- fastFIFA(data = data.frame(x), itemkeys = itemkeys)
+      modBfactor <- fastFIFA(x = data.frame(x), itemkeys = itemkeys)
       
     }
     
@@ -3970,7 +3970,7 @@ fastBifactorCFA <- function(x, ga = T, itemkeys = NULL, initSolution = F){
       modBfactor <- surveyFA(data = data.frame(x), testlets = modMokken, itemkeys = itemkeys)
       
     } else {
-      modBfactor <- fastFIFA(data = data.frame(x), testlets = modMokken, itemkeys = itemkeys)
+      modBfactor <- fastFIFA(x = data.frame(x), testlets = modMokken, itemkeys = itemkeys)
       
     }
     
