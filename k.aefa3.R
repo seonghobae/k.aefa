@@ -3954,7 +3954,7 @@ fastBifactorCFA <- function(x, ga = T, itemkeys = NULL, initSolution = F){
   
   if(sum(modMokken == 0) == ncol(x) | sum(modMokken == 1) == ncol(x)){
     # print(modMokken)
-    if(initSolution){
+    if(!initSolution){
       modBfactor <- surveyFA(data = data.frame(x), itemkeys = itemkeys)
       
     } else {
@@ -3966,7 +3966,7 @@ fastBifactorCFA <- function(x, ga = T, itemkeys = NULL, initSolution = F){
     print(modMokken)
     message('testlet structure was found')
     modMokken[which(modMokken == 0)] <- NA
-    if(initSolution){
+    if(!initSolution){
       modBfactor <- surveyFA(data = data.frame(x), testlets = modMokken, itemkeys = itemkeys)
       
     } else {
