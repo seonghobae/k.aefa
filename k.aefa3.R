@@ -3881,23 +3881,37 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   
   # print(items)
   
+  # try -2 to 2
   x <- xxIRT::ata(items, NumberOfForms, len = numberOfItems, maxselect = maximumItemSelection, debug=TRUE) %>%
-    xxIRT::ata.obj.relative(seq(-1, 1, .5), "max", flatten=0.1, negative = T, compensate = T) %>%
+    xxIRT::ata.obj.relative(seq(-2, 2, .5), "max", flatten=0.1, negative = T, compensate = T) %>%
     xxIRT::ata.solve(timeout=3600)
-
-  
   try(ataPlot <- plot(x), silent = T)
+  
   if(exists('ataPlot')){
     print(plot(x))
     
   } else {
-    rm(x)
-    x <- xxIRT::ata(items, NumberOfForms, len = numberOfItems, maxselect = maximumItemSelection, debug=TRUE)
-    x <- ata.obj.absolute(x, "b", meanOfdifficulty * numberOfItems)
-    x <- ata.obj.absolute(x, (x$pool$b - meanOfdifficulty)^2, sdOfdifficulty * numberOfItems)
-    x <- ata.solve(x)
     
-    print(plot(x))
+    # -1 to 1
+    x <- xxIRT::ata(items, NumberOfForms, len = numberOfItems, maxselect = maximumItemSelection, debug=TRUE) %>%
+      xxIRT::ata.obj.relative(seq(-1, 1, .5), "max", flatten=0.1, negative = T, compensate = T) %>%
+      xxIRT::ata.solve(timeout=3600)
+    try(ataPlot <- plot(x), silent = T)
+    
+    if(exists('ataPlot')){
+      print(plot(x))
+      
+    } else {
+      
+      rm(x)
+      x <- xxIRT::ata(items, NumberOfForms, len = numberOfItems, maxselect = maximumItemSelection, debug=TRUE)
+      x <- ata.obj.absolute(x, "b", meanOfdifficulty * numberOfItems)
+      x <- ata.obj.absolute(x, (x$pool$b - meanOfdifficulty)^2, sdOfdifficulty * numberOfItems)
+      x <- ata.solve(x)
+      
+      print(plot(x))
+    }
+
     
   }
   y <- ata.get.items(x, as.list=TRUE)
