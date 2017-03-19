@@ -3881,18 +3881,12 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   
   # print(items)
   
-  x <- ata(items, NumberOfForms, len = numberOfItems, maxselect = maximumItemSelection, debug=TRUE) %>%
-    ata_obj_relative(seq(-1, 1, .5), "max", flatten=0.1) %>%
-    ata_solve(timeout=3600)
-  
-  # x <- ata.obj.relative(x, seq(-1, 1, .5), "max", negative=FALSE, flatten=.1)
-  
+  x <- xxIRT::ata(items, NumberOfForms, len = numberOfItems, maxselect = maximumItemSelection, debug=TRUE) %>%
+    xxIRT::ata.obj.relative(seq(-1, 1, .5), "max", flatten=0.1, negative = T, compensate = T) %>%
+    xxIRT::ata.solve(timeout=3600)
   # x <- ata.obj.absolute(x, "b", meanOfdifficulty * numberOfItems)
   # x <- ata.obj.absolute(x, (x$pool$b - meanOfdifficulty)^2, sdOfdifficulty * numberOfItems)
-  
-  # x <- ata.obj.relative(x, "b", "max")
-  # x <- ata.constraint(x, 1, numberOfItems, numberOfItems)
-  # x <- ata.item.maxselect(x, 1)
+  # 
   # x <- ata.solve(x)
   print(plot(x))
   y <- ata.get.items(x, as.list=TRUE)
