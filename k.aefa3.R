@@ -3765,7 +3765,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
   return(init)
 }
 
-testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdifficulty = 0, sdOfdifficulty = 1.0, numberOfItems = 16, maximumItemSelection = 1, oldFormYMIRTmodel = NULL, SCLmethod = 'Haebara', oldFormYCommonItemNumber = NULL, newFormXCommonItemNumber = NULL){
+testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdifficulty = 0, sdOfdifficulty = 2.0, numberOfItems = 16, maximumItemSelection = 1, oldFormYMIRTmodel = NULL, SCLmethod = 'Haebara', oldFormYCommonItemNumber = NULL, newFormXCommonItemNumber = NULL){
   if(!require('xxIRT')){
     install.packages('xxIRT')
     library('xxIRT')
