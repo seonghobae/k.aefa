@@ -3911,7 +3911,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
       
       print(plot(x))
     }
-
+    
     
   }
   y <- ata.get.items(x, as.list=TRUE)
@@ -3938,15 +3938,20 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
       ATAFormData[[i]] <- ATAFormData[[i]][colnames(ATAFormData[[i]]) %in% rownames(y[[i]])]
     }
     
-    ATAFormModelValues[[i]] <- mirt::mirt(data = ATAFormData[[i]], model = 1, itemtype = '3PL', pars = 'values')
-    ATAFormModelValues[[i]][which(ATAFormModelValues[[i]]$name == 'a1'),"value"] <- y[[i]]$a
-    ATAFormModelValues[[i]][which(ATAFormModelValues[[i]]$name == 'd'),"value"] <- -1*y[[i]]$a*y[[i]]$b
-    ATAFormModelValues[[i]][which(ATAFormModelValues[[i]]$name == 'g'),"value"] <- y[[i]]$c
-    
-    ATAFormModelValues[[i]]$est <- FALSE
-    
-    ATAFormModel[[i]] <- mirt::mirt(data = ATAFormData[[i]], model = 1, itemtype = '3PL', pars = ATAFormModelValues[[i]])
-    names(ATAFormModel)[[i]] <- paste0('form', i)
+    if(ncol(ATAFormData[[i]]) != 0){
+      ATAFormModelValues[[i]] <- mirt::mirt(data = ATAFormData[[i]], model = 1, itemtype = '3PL', pars = 'values')
+      ATAFormModelValues[[i]][which(ATAFormModelValues[[i]]$name == 'a1'),"value"] <- y[[i]]$a
+      ATAFormModelValues[[i]][which(ATAFormModelValues[[i]]$name == 'd'),"value"] <- -1*y[[i]]$a*y[[i]]$b
+      ATAFormModelValues[[i]][which(ATAFormModelValues[[i]]$name == 'g'),"value"] <- y[[i]]$c
+      
+      ATAFormModelValues[[i]]$est <- FALSE
+      
+      ATAFormModel[[i]] <- mirt::mirt(data = ATAFormData[[i]], model = 1, itemtype = '3PL', pars = ATAFormModelValues[[i]])
+      names(ATAFormModel)[[i]] <- paste0('form', i)
+    } else {
+      message('warning: variable names are contain spaces?')
+    }
+
   }
   
   
@@ -4000,3 +4005,4 @@ fastBifactorCFA <- function(x, ga = T, itemkeys = NULL, initSolution = F){
   return(modBfactor)
   
 }
+
