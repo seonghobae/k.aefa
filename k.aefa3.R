@@ -3763,7 +3763,9 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
     }
   }
   
-  return(init)
+  ReturnList <- list(Solution = init, testlet = ActualTestlets)
+  
+  return(ReturnList)
 }
 
 testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdifficulty = 0, sdOfdifficulty = 2.0, numberOfItems = 16, maximumItemSelection = 1, oldFormYMIRTmodel = NULL, SCLmethod = 'Haebara', oldFormYCommonItemNumber = NULL, newFormXCommonItemNumber = NULL){
