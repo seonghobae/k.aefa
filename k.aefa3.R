@@ -3629,6 +3629,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
   message('MCMC Trials: ', iterationTrials)
   message('Current number of items: ', ncol(initData))
   message('Current number of groups: ', numberOfGroups)
+  message('Rhat cutoff: ', Rhat)
   
   group <- as.integer(group)
   
