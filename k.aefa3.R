@@ -1687,7 +1687,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           }
         }
         
-        if(exists('modTEMP') == F && i == 1){
+        if(exists('modTEMP') == F && i == 1 && diagnosis == F){
           
           message('\nMIRT model: Rasch')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD,
@@ -3954,7 +3954,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
     } else {
       message('warning: variable names are contain spaces?')
     }
-
+    
   }
   
   
