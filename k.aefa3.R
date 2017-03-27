@@ -3884,7 +3884,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   
   # print(items)
   
-  # try -2 to 2
+  # try -2 to 2 (flat information)
   x <- xxIRT::ata(items, NumberOfForms, len = numberOfItems, maxselect = maximumItemSelection, debug=TRUE) %>%
     xxIRT::ata.obj.relative(seq(-2, 2, .5), "max", flatten=0.1, negative = T, compensate = T) %>%
     xxIRT::ata.solve(timeout=3600)
@@ -3895,7 +3895,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
     
   } else {
     
-    # -1 to 1
+    # -1 to 1 (flat information)
     x <- xxIRT::ata(items, NumberOfForms, len = numberOfItems, maxselect = maximumItemSelection, debug=TRUE) %>%
       xxIRT::ata.obj.relative(seq(-1, 1, .5), "max", flatten=0.1, negative = T, compensate = T) %>%
       xxIRT::ata.solve(timeout=3600)
@@ -3941,7 +3941,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
       ATAFormData[[i]] <- ATAFormData[[i]][colnames(ATAFormData[[i]]) %in% rownames(y[[i]])]
     }
     
-    if(ncol(ATAFormData[[i]]) != 0){
+    if(ncol(ATAFormData[[i]]) != 0 && sum(psych::describe(ATAFormData[[i]])$range == 1) == ncol(ATAFormData[[i]])){
       ATAFormModelValues[[i]] <- mirt::mirt(data = ATAFormData[[i]], model = 1, itemtype = '3PL', pars = 'values')
       ATAFormModelValues[[i]][which(ATAFormModelValues[[i]]$name == 'a1'),"value"] <- y[[i]]$a
       ATAFormModelValues[[i]][which(ATAFormModelValues[[i]]$name == 'd'),"value"] <- -1*y[[i]]$a*y[[i]]$b
@@ -3952,14 +3952,22 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
       ATAFormModel[[i]] <- mirt::mirt(data = ATAFormData[[i]], model = 1, itemtype = '3PL', pars = ATAFormModelValues[[i]])
       names(ATAFormModel)[[i]] <- paste0('form', i)
     } else {
-      message('warning: variable names are contain spaces?')
+      
+      if(sum(psych::describe(ATAFormData[[i]])$range == 1) != ncol(ATAFormData[[i]])){
+        message('warning: items were polytomous?') ## FIXME: ADD 3PLNRM
+        
+      } else {
+        message('warning: variable names are contain spaces?')
+      }
+      
+      # NULL
     }
     
   }
   
   
   
-  z <- list(OriginalParms = items, ATAforms = y, ATAFormModel = ATAFormModel)
+  z <- list(OriginalParms = items, ATAforms = y, ATAFormModel = ATAFormModel, ATAFormSolutions = x)
   
   return(z)
 }
