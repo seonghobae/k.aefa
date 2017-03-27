@@ -3953,12 +3953,12 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
       names(ATAFormModel)[[i]] <- paste0('form', i)
     } else {
       
-      if(sum(psych::describe(ATAFormData[[i]])$range == 1) != ncol(ATAFormData[[i]])){
-        message('warning: items were polytomous?') ## FIXME: ADD 3PLNRM
+      # if(){
+        message('warning: items were polytomous? or variable names are contain spaces?') ## FIXME: ADD 3PLNRM
         
-      } else {
-        message('warning: variable names are contain spaces?')
-      }
+      # } else {
+        # message('warning: ')
+      # }
       
       # NULL
     }
