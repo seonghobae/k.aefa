@@ -3886,7 +3886,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   
   # try -2 to 2 (flat information)
   x <- xxIRT::ata(items, NumberOfForms, len = numberOfItems, maxselect = maximumItemSelection, debug=TRUE) %>%
-    xxIRT::ata.obj.relative(seq(-2, 2, .5), "max", flatten=0.1, negative = T, compensate = T) %>%
+    xxIRT::ata.obj.relative(seq(min(items$b), max(items$b), .1), "max", flatten=0.1, negative = T, compensate = T) %>%
     xxIRT::ata.solve(timeout=3600)
   try(ataPlot <- plot(x), silent = T)
   
@@ -3897,7 +3897,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
     
     # -1 to 1 (flat information)
     x <- xxIRT::ata(items, NumberOfForms, len = numberOfItems, maxselect = maximumItemSelection, debug=TRUE) %>%
-      xxIRT::ata.obj.relative(seq(-1, 1, .5), "max", flatten=0.1, negative = T, compensate = T) %>%
+      xxIRT::ata.obj.relative(seq((min(items$b)+0.5), (max(items$b)-0.5), .1), "max", flatten=0.1, negative = T, compensate = T) %>%
       xxIRT::ata.solve(timeout=3600)
     try(ataPlot <- plot(x), silent = T)
     
@@ -3954,10 +3954,10 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
     } else {
       
       # if(){
-        message('warning: items were polytomous? or variable names are contain spaces?') ## FIXME: ADD 3PLNRM
-        
+      message('warning: items were polytomous? or variable names are contain spaces?') ## FIXME: ADD 3PLNRM
+      
       # } else {
-        # message('warning: ')
+      # message('warning: ')
       # }
       
       # NULL
