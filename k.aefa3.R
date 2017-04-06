@@ -1709,7 +1709,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         
         message('\nMIRT model: spline response')
         if(estimationMETHOD == 'MHRM'){
-          estimationMETHOD <- 'QMCEM'
+          estimationMETHOD <- 'EM'
           message('switching MHRM to ', estimationMETHOD, ' ...')
           
         }
