@@ -1163,22 +1163,22 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         }
       } else if(i < 2){
         if (forceNormalEM == T && unstable == T) {
-          estimationMETHOD <- 'EM'
+          estimationMETHOD <- 'SEM'
           if(forceDefaultOptimizer){
             optimINPUT <- NULL
           } else {
-            optimINPUT <- 'nlminb'
+            optimINPUT <- NULL
           }
           
           optimCTRL  <- NULL
           empiricalhist <- FALSE
           NCYCLES <- 4000
         } else if(unstable == T){
-          estimationMETHOD <- 'QMCEM'
+          estimationMETHOD <- 'SEM'
           if(forceDefaultOptimizer){
             optimINPUT <- NULL
           } else {
-            optimINPUT <- 'nlminb'
+            optimINPUT <- NULL
           }
           
           optimCTRL  <- NULL
