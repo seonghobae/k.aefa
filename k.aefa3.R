@@ -2398,7 +2398,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           message('all items df are 0. skipping evaluation...')
           itemFitDone <- TRUE
           
-        } else if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems && surveyFixMod@Model$nfact == 1){
+        } else if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems && surveyFixMod@Model$nfact == 1 && (sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) < length(1:surveyFixMod@Data$nitems)/2)){
           message('\nremoving items df is NA / ', paste(surveyFixMod_itemFit$item[which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)]))
           workKeys <- workKeys[-which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)]
           workTestlets <- workTestlets[-which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)]
@@ -2412,7 +2412,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           rm(S_X2ErrorFlag)
           
           
-        } else if(sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) != 0 && surveyFixMod@Model$nfact == 1 && skipS_X2 == F){
+        } else if(sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) != 0 && surveyFixMod@Model$nfact == 1 && skipS_X2 == F && (sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) < length(1:surveyFixMod@Data$nitems)/2)){
           message('\nremoving items df is 0 / removing ', paste(surveyFixMod_itemFit$item[which(surveyFixMod_itemFit$df.S_X2 == 0)]))
           workKeys <- workKeys[-which(surveyFixMod_itemFit$df.S_X2 == 0)]
           workTestlets <- workTestlets[-which(surveyFixMod_itemFit$df.S_X2 == 0)]
