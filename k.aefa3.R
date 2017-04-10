@@ -1163,7 +1163,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         }
       } else if(i < 2){
         if (forceNormalEM == T && unstable == T) {
-          estimationMETHOD <- 'MCEM'
+          estimationMETHOD <- 'SEM'
           if(forceDefaultOptimizer){
             optimINPUT <- NULL
           } else {
@@ -1174,7 +1174,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           empiricalhist <- FALSE
           NCYCLES <- 4000
         } else if(unstable == T){
-          estimationMETHOD <- 'MCEM'
+          estimationMETHOD <- 'SEM'
           if(forceDefaultOptimizer){
             optimINPUT <- NULL
           } else {
@@ -1444,11 +1444,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         if(diagnosis == F){
           message('\nMIRT model: Compensatory 4PL')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = '4PL',
-                                       accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
               rm(modTEMP)
@@ -1461,11 +1461,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           
           message('\nMIRT model: Compensatory 3PL with upper asymptote (slip) estimated')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = '3PLu',
-                                       accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
               rm(modTEMP)
@@ -1477,11 +1477,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           
           message('\nMIRT model: Partially compensatory 3PL')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = 'PC3PL',
-                                       accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
               rm(modTEMP)
@@ -1493,11 +1493,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           
           message('\nMIRT model: Compensatory 3PL')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = '3PL',
-                                       accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
               rm(modTEMP)
@@ -1512,11 +1512,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           
           message('\nMIRT model: Compensatory 2PL')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = '2PL',
-                                       accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
               rm(modTEMP)
@@ -1528,11 +1528,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           
           message('\nMIRT model: Partially compensatory 2PL')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = 'PC2PL',
-                                       accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
               rm(modTEMP)
@@ -1543,11 +1543,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           
           message('\nMIRT model: ideal point')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = 'ideal',
-                                       accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
               rm(modTEMP)
@@ -1559,11 +1559,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           
           message('\nMIRT model: Rasch')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = 'Rasch',
-                                       accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
               rm(modTEMP)
@@ -1741,11 +1741,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         
         message('\nMIRT model: Compensatory 4PL Nominal response')
         try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = '4PLNRM', 
-                                     key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                     technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+                                  key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
+                                  technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                   removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
         if(exists('modTEMP')){
           if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
         }
@@ -1754,11 +1754,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           
           message('\nMIRT model: Compensatory 3PL Nominal response')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = '3PLNRM', 
-                                       key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+                                    key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
           }
@@ -1769,11 +1769,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           
           message('\nMIRT model: Compensatory 3PL Nominal response with upper asymptote estimated')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = '3PLuNRM', 
-                                       key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+                                    key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
           }
@@ -1784,11 +1784,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           
           message('\nMIRT model: Compensatory 2PL Nominal response')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = '2PLNRM', 
-                                       key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+                                    key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
           }
@@ -1797,11 +1797,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         if(exists('modTEMP') == F){
           message('\nMIRT model: Nominal response without keys')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = 'nominal', 
-                                       accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, key = NULL, ...), silent = F)
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, key = NULL, ...), silent = F)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
               message('Model may unstable but Trying to remedy automatically')
@@ -2116,11 +2116,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         if(skipNominal == F){
           message('\nMIRT model: nominal response')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = 'nominal',
-                                       accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
           }
@@ -2130,11 +2130,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         if(exists('modTEMP') == F && forceNRM == F){
           message('\nMIRT model: Generalized partial credit')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = 'gpcm',
-                                       accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
-                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
+                                    accelerate = accelerateINPUT, calcNull = T,
+                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                     removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                    formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
           }
@@ -2144,11 +2144,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         if(exists('modTEMP') == F && forceNRM == F){
           message('\nMIRT model: Graded response')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, accelerate = accelerateINPUT,
-                                       calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
-                                                                      SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
-                                       TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
-                                       optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
+                                    calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
+                                                                   SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
+                                    TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
+                                    optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
           }
