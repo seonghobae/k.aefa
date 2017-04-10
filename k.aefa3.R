@@ -1163,7 +1163,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         }
       } else if(i < 2){
         if (forceNormalEM == T && unstable == T) {
-          estimationMETHOD <- 'SEM'
+          estimationMETHOD <- 'MCEM'
           if(forceDefaultOptimizer){
             optimINPUT <- NULL
           } else {
@@ -1174,7 +1174,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           empiricalhist <- FALSE
           NCYCLES <- 4000
         } else if(unstable == T){
-          estimationMETHOD <- 'SEM'
+          estimationMETHOD <- 'MCEM'
           if(forceDefaultOptimizer){
             optimINPUT <- NULL
           } else {
