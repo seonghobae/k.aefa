@@ -1443,7 +1443,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         
         if(diagnosis == F){
           message('\nMIRT model: Compensatory 4PL')
-          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = '4PL',
+          try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = '4PL',
                                        accelerate = accelerateINPUT, calcNull = T,
                                        technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
@@ -1460,7 +1460,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Compensatory 3PL with upper asymptote (slip) estimated')
-          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = '3PLu',
+          try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = '3PLu',
                                        accelerate = accelerateINPUT, calcNull = T,
                                        technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
@@ -1476,7 +1476,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Partially compensatory 3PL')
-          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'PC3PL',
+          try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = 'PC3PL',
                                        accelerate = accelerateINPUT, calcNull = T,
                                        technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
@@ -1492,7 +1492,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Compensatory 3PL')
-          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = '3PL',
+          try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = '3PL',
                                        accelerate = accelerateINPUT, calcNull = T,
                                        technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
@@ -1511,7 +1511,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Compensatory 2PL')
-          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = '2PL',
+          try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = '2PL',
                                        accelerate = accelerateINPUT, calcNull = T,
                                        technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
@@ -1527,7 +1527,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Partially compensatory 2PL')
-          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'PC2PL',
+          try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = 'PC2PL',
                                        accelerate = accelerateINPUT, calcNull = T,
                                        technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
@@ -1542,7 +1542,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         if(exists('modTEMP') == F && skipIdealPoint == F){
           
           message('\nMIRT model: ideal point')
-          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'ideal',
+          try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = 'ideal',
                                        accelerate = accelerateINPUT, calcNull = T,
                                        technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
@@ -1558,7 +1558,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         if(exists('modTEMP') == F){
           
           message('\nMIRT model: Rasch')
-          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'Rasch',
+          try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = 'Rasch',
                                        accelerate = accelerateINPUT, calcNull = T,
                                        technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
@@ -1740,7 +1740,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       if(length(ActualTestlets) != 0){
         
         message('\nMIRT model: Compensatory 4PL Nominal response')
-        try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = '4PLNRM', 
+        try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = '4PLNRM', 
                                      key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
                                      technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                       removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
@@ -1753,7 +1753,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         if(exists('modTEMP') == F){
           
           message('\nMIRT model: Compensatory 3PL Nominal response')
-          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = '3PLNRM', 
+          try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = '3PLNRM', 
                                        key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
                                        technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
@@ -1768,7 +1768,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         if(exists('modTEMP') == F){
           
           message('\nMIRT model: Compensatory 3PL Nominal response with upper asymptote estimated')
-          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = '3PLuNRM', 
+          try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = '3PLuNRM', 
                                        key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
                                        technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
@@ -1783,7 +1783,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         if(exists('modTEMP') == F){
           
           message('\nMIRT model: Compensatory 2PL Nominal response')
-          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = '2PLNRM', 
+          try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = '2PLNRM', 
                                        key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
                                        technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
@@ -1796,7 +1796,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         
         if(exists('modTEMP') == F){
           message('\nMIRT model: Nominal response without keys')
-          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'nominal', 
+          try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = 'nominal', 
                                        accelerate = accelerateINPUT, calcNull = T,
                                        technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
@@ -2115,7 +2115,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         
         if(skipNominal == F){
           message('\nMIRT model: nominal response')
-          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'nominal',
+          try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = 'nominal',
                                        accelerate = accelerateINPUT, calcNull = T,
                                        technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
@@ -2129,7 +2129,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         # generalized partial credit model (non-sequential)
         if(exists('modTEMP') == F && forceNRM == F){
           message('\nMIRT model: Generalized partial credit')
-          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'gpcm',
+          try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, itemtype = 'gpcm',
                                        accelerate = accelerateINPUT, calcNull = T,
                                        technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
@@ -2143,7 +2143,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         # graded response model (sequential)
         if(exists('modTEMP') == F && forceNRM == F){
           message('\nMIRT model: Graded response')
-          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, accelerate = accelerateINPUT,
+          try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, accelerate = accelerateINPUT,
                                        calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
                                                                       SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
                                        TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
@@ -4017,3 +4017,31 @@ fastBifactorCFA <- function(x, ga = T, itemkeys = NULL, initSolution = F){
   
 }
 
+bfactor2mod <- function(model, J){ # borrow from mirt::bfactor2mod
+  tmp <- tempfile('tempfile')
+  unique <- sort(unique(model))
+  index <- 1L:J
+  tmp2 <- c()
+  for(i in 1L:length(unique)){
+    ind <- na.omit(index[model == unique[i]])
+    comma <- rep(',', 2*length(ind))
+    TF <- rep(c(TRUE,FALSE), length(ind))
+    comma[TF] <- ind
+    comma[length(comma)] <- ""
+    tmp2 <- c(tmp2, c(paste('\nS', i, ' =', sep=''), comma))
+  }
+  cat(tmp2, file=tmp)
+  model <- mirt::mirt.model(file=tmp, quiet = TRUE)
+  unlink(tmp)
+  return(model)
+}
+
+doBfactor2mod <- function(mirtDat, testlet){
+  tmp <- any(sapply(colnames(mirtDat), grepl, x=paste0('G = 1-', ncol(mirtDat)))) # borrow from mirt::bfactor
+  model2 <- mirt::mirt.model(paste0('G = 1-', ncol(mirtDat)), itemnames = if(tmp) colnames(mirtDat) else NULL)
+  model <- bfactor2mod(testlet, length(testlet))
+  
+  model$x <- rbind(model2$x, model$x)
+  
+  return(model)
+}
