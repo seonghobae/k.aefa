@@ -1128,7 +1128,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
     } else {
       message('\nfactor numbers: ', paste0(i))
     }
-    
+    if(nrow(x) > 5000){
+      mirt::mirtCluster()
+    }
     # optimizer config
     if(length(covdata) == 0){ # if no covariate variables
       if(forceMHRM == T | forceGRSM == T | assumingFake == T | masterThesis == T){
@@ -2217,6 +2219,10 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           return(modOLD)
         }
       }
+    }
+    
+    if(nrow(x) > 5000){
+      mirt::mirtCluster(remove = T)
     }
     
     if(i == 1 && length(testlets) == 0){ # ICC printing
