@@ -1394,6 +1394,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
     # testlets
     ActualTestlets <- testlets
     if(length(testlets) != 0){
+      
+      forceMHRM <- T # have to activate MHRM until delivered to QMC estimation in mirt::bfactor
+      
       if(!require('plyr')){
         install.packages('plyr')
         library('plyr')
