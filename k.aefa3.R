@@ -2325,16 +2325,22 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         fscoreMethod <- 'MAP'
       }
       
+      if(sum(is.na(surveyFixMod@Data$data)) == 0 | nrow(surveyFixMod@Data$data) > 5000){ 
+        mirtCluster()
+      }
+      
       if(sum(is.na(surveyFixMod@Data$data)) == 0){
         try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
                                                   method = fscoreMethod,
                                                   QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
       } else {
-        mirtCluster()
         try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
                                                   impute = 100,
                                                   method = fscoreMethod,
                                                   QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
+      }
+      
+      if(sum(is.na(surveyFixMod@Data$data)) == 0 | nrow(surveyFixMod@Data$data) > 5000){
         mirtCluster(remove = T)
       }
       
