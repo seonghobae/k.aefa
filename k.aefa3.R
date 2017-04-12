@@ -1128,9 +1128,12 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
     } else {
       message('\nfactor numbers: ', paste0(i))
     }
-    if(nrow(x) > 5000){
-      # mirt::mirtCluster()
+    
+    
+    if(sum(is.na(x)) == 0 | nrow(x) > 5000){ 
+      mirtCluster(spec = (parallel::detectCores()/2))
     }
+    
     # optimizer config
     if(length(covdata) == 0){ # if no covariate variables
       if(forceMHRM == T | forceGRSM == T | assumingFake == T | masterThesis == T){
@@ -2208,7 +2211,9 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         }
       }
       
-      
+      if(sum(is.na(x)) == 0 | nrow(x) > 5000){
+        mirtCluster(remove = T)
+      }
       
       
       # finally, if can not converge
@@ -2221,9 +2226,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       }
     }
     
-    if(nrow(x) > 5000){
-      # mirt::mirtCluster(remove = T)
-    }
+
     
     if(i == 1 && length(testlets) == 0){ # ICC printing
       try(print(plot(modTEMP, type = 'infoSE')))
@@ -2325,10 +2328,6 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         fscoreMethod <- 'MAP'
       }
       
-      if(sum(is.na(surveyFixMod@Data$data)) == 0 | nrow(surveyFixMod@Data$data) > 5000){ 
-        mirtCluster()
-      }
-      
       if(sum(is.na(surveyFixMod@Data$data)) == 0){
         try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
                                                   method = fscoreMethod,
@@ -2340,9 +2339,6 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
                                                   QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
       }
       
-      if(sum(is.na(surveyFixMod@Data$data)) == 0 | nrow(surveyFixMod@Data$data) > 5000){
-        mirtCluster(remove = T)
-      }
       
       if(!exists('surveyFixMod_itemFit')){
         if(sum(is.na(surveyFixMod@Data$data)) == 0){
