@@ -2334,6 +2334,15 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         fscoreMethod <- 'MAP'
       }
       
+      if(sum(is.na(x)) == 0 | nrow(x) > 5000){ 
+        NofCores <- parallel::detectCores()
+        NofCores <- NofCores / 2
+        if(NofCores > 8){
+          NofCores <- 8
+        }
+        try(invisible(mirt::mirtCluster(spec = NofCores)), silent = T)
+      }
+      
       if(sum(is.na(surveyFixMod@Data$data)) == 0){
         try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
                                                   method = fscoreMethod,
@@ -2344,6 +2353,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
                                                   method = fscoreMethod,
                                                   QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
       }
+      try(invisible(mirt::mirtCluster(remove = T)), silent = T)
       
       
       if(!exists('surveyFixMod_itemFit')){
