@@ -1131,7 +1131,12 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
     
     
     if(sum(is.na(x)) == 0 | nrow(x) > 5000){ 
-      mirtCluster(spec = (parallel::detectCores()/2))
+      NofCores <- parallel::detectCores()
+      NofCores <- NofCores / 2
+      if(NofCores > 8){
+        NofCores <- 8
+      }
+      try(invisible(mirt::mirtCluster(spec = NofCores)), silent = T)
     }
     
     # optimizer config
@@ -2211,9 +2216,8 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         }
       }
       
-      if(sum(is.na(x)) == 0 | nrow(x) > 5000){
-        mirtCluster(remove = T)
-      }
+      try(invisible(mirt::mirtCluster(remove = T)), silent = T)
+      
       
       
       # finally, if can not converge
@@ -2312,6 +2316,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
   }
   itemFitDone <- FALSE
   while (!itemFitDone) {
+    try(invisible(gc()), silent = T) # garbage cleaning
+    
     surveyFixModRAW <- data.frame(mirt::extract.mirt(surveyFixMod, 'data'))
     surveyFixModCOV <- data.frame(attr(surveyFixMod@ParObjects$lrPars, "df"))
     
