@@ -1444,6 +1444,8 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = F,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
+        try(invisible(mirt::mirtCluster(remove = T)), silent = T)
+        
         try(return(modTEMP))
       }
       
