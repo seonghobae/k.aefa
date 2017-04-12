@@ -2353,8 +2353,6 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
                                                   method = fscoreMethod,
                                                   QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
       }
-      try(invisible(mirt::mirtCluster(remove = T)), silent = T)
-      
       
       if(!exists('surveyFixMod_itemFit')){
         if(sum(is.na(surveyFixMod@Data$data)) == 0){
