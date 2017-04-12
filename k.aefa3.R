@@ -2334,7 +2334,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         fscoreMethod <- 'MAP'
       }
       
-      if(sum(is.na(x)) == 0 | nrow(x) > 5000){ 
+      if(sum(is.na(surveyFixModRAW)) == 0 | nrow(surveyFixModRAW) > 5000){ 
         NofCores <- parallel::detectCores()
         NofCores <- NofCores / 2
         if(NofCores > 8){
@@ -2362,17 +2362,16 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
                                                     method = fscoreMethod,
                                                     QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
         } else {
-          mirtCluster()
           try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('Zh', 'infit'),
                                                     impute = 100,
                                                     method = fscoreMethod,
                                                     QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
-          mirtCluster(remove = T)
         }
         S_X2ErrorFlag <- T
       } else {
         S_X2ErrorFlag <- F
       }
+      try(invisible(mirt::mirtCluster(remove = T)), silent = T)
       
       print(surveyFixMod_itemFit)
       
