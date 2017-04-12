@@ -2498,7 +2498,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         }
         
         
-      } else if (forceRasch == T) {
+      } else if (forceRasch == T && surveyFixMod@Model$nfact == 1) {
         if(length(which(abs(surveyFixMod_itemFit$z.infit[1:surveyFixMod@Data$nitems]) > 2)) != 0){
           
           message('\nRasch outfit (|z|>2)')
