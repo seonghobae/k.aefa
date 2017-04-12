@@ -1141,7 +1141,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
     
     # optimizer config
     if(length(covdata) == 0){ # if no covariate variables
-      if(forceMHRM == T | forceGRSM == T | assumingFake == T | masterThesis == T){
+      if(forceMHRM == T | forceGRSM == T | assumingFake == T | masterThesis == T | length(testlets) > 0){
         estimationMETHOD <- 'MHRM'
         optimINPUT <- NULL
         optimCTRL  <- NULL
@@ -1409,16 +1409,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         library('plyr')
       }
       TestletActivated <- T
-      
-      if(TestletActivated){
-        # have to activate MHRM until delivered to QMC estimation in mirt::bfactor
-        message('swithcing EM to MHRM until delivered to QMC estimation in mirt::bfactor')
-        estimationMETHOD <- 'MHRM'
-        optimINPUT <- NULL
-        optimCTRL  <- NULL
-        empiricalhist <- FALSE
-        NCYCLES <- 4000 
-      }
       
       if(is.character(ActualTestlets)){
         ActualTestlets <- as.factor(ActualTestlets)
@@ -2232,7 +2222,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       }
     }
     
-
+    
     
     if(i == 1 && length(testlets) == 0){ # ICC printing
       try(print(plot(modTEMP, type = 'infoSE')))
