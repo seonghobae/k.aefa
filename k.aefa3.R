@@ -3671,6 +3671,8 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
       ActualTestlets <- plyr::mapvalues(ActualTestlets, as.numeric(attributes(as.factor(ActualTestlets))$levels), seq(length(attributes(as.factor(c(ActualTestlets)))$levels)))
       
     }
+  } else {
+    ActualTestlets <- NULL
   }
   
   
