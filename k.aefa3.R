@@ -3690,6 +3690,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
   
   STOP <- FALSE
   while(!STOP){
+    invisible(try(gc(), silent = T))
     if(sum(init$summary.mcmcobj$Rhat > Rhat) != 0){
       parmList <- init$summary.mcmcobj
       
