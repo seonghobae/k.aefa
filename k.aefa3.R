@@ -2233,6 +2233,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
     }
     
     if(forceUIRT == T | TestletActivated == T){
+      try(invisible(mirt::mirtCluster(remove = T)), silent = T)
       return(modTEMP)
     }
     
