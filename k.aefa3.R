@@ -1139,9 +1139,57 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       try(invisible(mirt::mirtCluster(spec = NofCores)), silent = T)
     }
     
+    # testlets
+    ActualTestlets <- testlets
+    if(length(testlets) != 0){
+      if(!require('plyr')){
+        install.packages('plyr')
+        library('plyr')
+      }
+      TestletActivated <- T
+      
+      if(is.character(ActualTestlets)){
+        ActualTestlets <- as.factor(ActualTestlets)
+      }
+      ActualTestlets <- as.integer(ActualTestlets)
+      
+      ActualTestlets <- plyr::mapvalues(ActualTestlets, names(which(table(ActualTestlets) == 1)), rep(NA, length(names(which(table(ActualTestlets) == 1)))))
+      # if(sum(ActualTestlets %in% 1) == 0){
+      #   ActualTestlets <- ActualTestlets - min(ActualTestlets, na.rm = T) + 1
+      # }
+      if(sum(is.na(ActualTestlets)) == length(ActualTestlets)){
+        ActualTestlets <- NULL
+        TestletActivated <- F
+        
+      } else {
+        ActualTestlets <- plyr::mapvalues(ActualTestlets, as.numeric(attributes(as.factor(ActualTestlets))$levels), seq(length(attributes(as.factor(c(ActualTestlets)))$levels)))
+        
+      }
+      
+    } else {
+      TestletActivated <- F
+    }
+    
+    
     # optimizer config
     if(length(covdata) == 0){ # if no covariate variables
-      if(forceMHRM == T | forceGRSM == T | assumingFake == T | masterThesis == T | length(testlets) > 0){
+      if(TestletActivated){
+        # print(ActualTestlets)
+        if(sum(na.omit(ActualTestlets) > 2) != 0){
+          estimationMETHOD <- 'MHRM'
+          optimINPUT <- NULL
+          optimCTRL  <- NULL
+          empiricalhist <- FALSE
+          NCYCLES <- 4000
+        } else {
+          estimationMETHOD <- 'EM'
+          optimINPUT <- NULL
+          optimCTRL  <- NULL
+          empiricalhist <- FALSE
+          NCYCLES <- 4000
+        }
+        
+      } else if(forceMHRM == T | forceGRSM == T | assumingFake == T | masterThesis == T) {
         estimationMETHOD <- 'MHRM'
         optimINPUT <- NULL
         optimCTRL  <- NULL
@@ -1401,36 +1449,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       removeEmptyRowsConf <- TRUE
     }
     
-    # testlets
-    ActualTestlets <- testlets
-    if(length(testlets) != 0){
-      if(!require('plyr')){
-        install.packages('plyr')
-        library('plyr')
-      }
-      TestletActivated <- T
-      
-      if(is.character(ActualTestlets)){
-        ActualTestlets <- as.factor(ActualTestlets)
-      }
-      ActualTestlets <- as.integer(ActualTestlets)
-      
-      ActualTestlets <- plyr::mapvalues(ActualTestlets, names(which(table(ActualTestlets) == 1)), rep(NA, length(names(which(table(ActualTestlets) == 1)))))
-      # if(sum(ActualTestlets %in% 1) == 0){
-      #   ActualTestlets <- ActualTestlets - min(ActualTestlets, na.rm = T) + 1
-      # }
-      if(sum(is.na(ActualTestlets)) == length(ActualTestlets)){
-        ActualTestlets <- NULL
-        TestletActivated <- F
-        
-      } else {
-        ActualTestlets <- plyr::mapvalues(ActualTestlets, as.numeric(attributes(as.factor(ActualTestlets))$levels), seq(length(attributes(as.factor(c(ActualTestlets)))$levels)))
-        
-      }
-      
-    } else {
-      TestletActivated <- F
-    }
+
     
     if(max(x, na.rm = T) - min(x, na.rm = T) == 1){ # dichotomous items
       
@@ -2226,7 +2245,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
     try(invisible(mirt::mirtCluster(remove = T)), silent = T)
     
     
-    if(i == 1 && length(testlets) == 0){ # ICC printing
+    if(i == 1 && length(ActualTestlets) == 0){ # ICC printing
       try(print(plot(modTEMP, type = 'infoSE')))
       try(print(plot(modTEMP, type = 'infotrace', facet_items = TRUE)))
       try(print(plot(modTEMP, type = 'trace')))
@@ -3999,31 +4018,32 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   return(z)
 }
 
-fastBifactorCFA <- function(x, ga = T, itemkeys = NULL, initSolution = F, skipNRM = T, excludeUnscalableVar = F){
+fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNRM = T, excludeUnscalableVar = T){
   if(!require('mokken')){
     install.packages('mokken')
     library('mokken')
-  } else if(!require('mirt')){
+  } 
+  if(!require('mirt')){
     install.packages('mirt')
     library('mirt')
   }
   
   message('finding testlet structures using mokken scale analysis...')
   if(ga){
-    message(1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))))
+    message('mutuation probability: ',1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))))
     if(length(itemkeys) != 0){
-      try(modMokken <- mokken::aisp(data.frame(mirt::key2binary(data.frame(x), key = itemkeys)), lowerbound = .4, verbose = T, search = 'ga', pxover = 1, pmutation = 1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))), popsize = log2(nrow(x))), silent = T) 
+      try(modMokken <- mokken::aisp(data.frame(mirt::key2binary(data.frame(x), key = itemkeys)), lowerbound = .5, verbose = T, search = 'ga', pxover = 1, pmutation = 1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))), popsize = log2(nrow(x))), silent = T) 
       
     } else {
-      try(modMokken <- mokken::aisp(data.frame(x), lowerbound = .4, verbose = T, search = 'ga', pxover = 1, pmutation = 1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))), popsize = log2(nrow(x))), silent = T) 
+      try(modMokken <- mokken::aisp(data.frame(x), lowerbound = .5, verbose = T, search = 'ga', pxover = 1, pmutation = 1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))), popsize = log2(nrow(x))), silent = T) 
       
     }
   } else {
     if(length(itemkeys) != 0){
-      try(modMokken <- mokken::aisp(data.frame(mirt::key2binary(data.frame(x), key = itemkeys), lowerbound = .4), verbose = T), silent = T) 
+      try(modMokken <- mokken::aisp(data.frame(mirt::key2binary(data.frame(x), key = itemkeys)), lowerbound = .5, verbose = T), silent = T)
       
     } else {
-      try(modMokken <- mokken::aisp(data.frame(x), verbose = T, lowerbound = .4), silent = T)
+      try(modMokken <- mokken::aisp(data.frame(x), verbose = T, lowerbound = .5), silent = T)
       
     }
   }
@@ -4046,10 +4066,15 @@ fastBifactorCFA <- function(x, ga = T, itemkeys = NULL, initSolution = F, skipNR
       message('excluding unscalable varaiables...')
       testDat <- data.frame(x)[-which(modMokken == 0)]
       modMokken <- modMokken[-which(modMokken == 0)]
-      print(modMokken)
+      modMokken[which(modMokken %in% as.numeric(names(which(table(modMokken) < 3))))] <- NA
+      
+      # print(modMokken)
     } else {
       testDat <- data.frame(x)
       modMokken[which(modMokken == 0)] <- NA
+      modMokken[which(modMokken %in% as.numeric(names(which(table(modMokken) < 3))))] <- NA
+      # print(modMokken)
+      
     }
     
     if(!initSolution){
