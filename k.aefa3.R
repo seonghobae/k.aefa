@@ -4000,7 +4000,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   return(z)
 }
 
-fastBifactorCFA <- function(x, ga = T, itemkeys = NULL, initSolution = F){
+fastBifactorCFA <- function(x, ga = T, itemkeys = NULL, initSolution = F, skipNRM = T){
   if(!require('mokken')){
     install.packages('mokken')
     library('mokken')
@@ -4032,10 +4032,10 @@ fastBifactorCFA <- function(x, ga = T, itemkeys = NULL, initSolution = F){
   if(sum(modMokken == 0) == ncol(x) | sum(modMokken == 1) == ncol(x)){
     # print(modMokken)
     if(!initSolution){
-      modBfactor <- surveyFA(data = data.frame(x), itemkeys = itemkeys)
+      modBfactor <- surveyFA(data = data.frame(x), itemkeys = itemkeys, skipNominal = skipNRM)
       
     } else {
-      modBfactor <- fastFIFA(x = data.frame(x), itemkeys = itemkeys)
+      modBfactor <- fastFIFA(x = data.frame(x), itemkeys = itemkeys, skipNominal = skipNRM)
       
     }
     
@@ -4044,10 +4044,10 @@ fastBifactorCFA <- function(x, ga = T, itemkeys = NULL, initSolution = F){
     message('testlet structure was found')
     modMokken[which(modMokken == 0)] <- NA
     if(!initSolution){
-      modBfactor <- surveyFA(data = data.frame(x), testlets = modMokken, itemkeys = itemkeys)
+      modBfactor <- surveyFA(data = data.frame(x), testlets = modMokken, itemkeys = itemkeys, skipNominal = skipNRM)
       
     } else {
-      modBfactor <- fastFIFA(x = data.frame(x), testlets = modMokken, itemkeys = itemkeys)
+      modBfactor <- fastFIFA(x = data.frame(x), testlets = modMokken, itemkeys = itemkeys, skipNominal = skipNRM)
       
     }
     
