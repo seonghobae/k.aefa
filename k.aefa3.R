@@ -1132,7 +1132,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
     
     if(sum(is.na(x)) == 0 | nrow(x) > 5000){ 
       NofCores <- parallel::detectCores()
-      NofCores <- NofCores / 2
+      NofCores <- round(NofCores / 1.1)
       if(NofCores > 8){
         NofCores <- 8
       }
@@ -2210,7 +2210,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         }
       }
       
-      try(invisible(mirt::mirtCluster(remove = T)), silent = T)
       
       
       
@@ -2224,6 +2223,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       }
     }
     
+    try(invisible(mirt::mirtCluster(remove = T)), silent = T)
     
     
     if(i == 1 && length(testlets) == 0){ # ICC printing
@@ -2233,7 +2233,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
     }
     
     if(forceUIRT == T | TestletActivated == T){
-      try(invisible(mirt::mirtCluster(remove = T)), silent = T)
       return(modTEMP)
     }
     
