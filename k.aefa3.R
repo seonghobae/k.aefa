@@ -1123,22 +1123,6 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
   for(i in 1:100){
     try(invisible(gc()), silent = T) # garbage cleaning
     
-    if (i == 1){
-      message('\nfactor number: ', paste0(i))
-    } else {
-      message('\nfactor numbers: ', paste0(i))
-    }
-    
-    
-    if(sum(is.na(x)) == 0 | nrow(x) > 5000){ 
-      NofCores <- parallel::detectCores()
-      NofCores <- round(NofCores / 1.1)
-      if(NofCores > 8){
-        NofCores <- 8
-      }
-      try(invisible(mirt::mirtCluster(spec = NofCores)), silent = T)
-    }
-    
     # testlets
     ActualTestlets <- testlets
     if(length(testlets) != 0){
@@ -1170,6 +1154,28 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       TestletActivated <- F
     }
     
+    
+    if(TestletActivated){
+      message('\nfactor numbers: ', paste0(i+max(na.omit(ActualTestlets))))
+      
+    } else {
+      if (i == 1){
+        message('\nfactor number: ', paste0(i))
+      } else {
+        message('\nfactor numbers: ', paste0(i))
+      }
+    }
+
+    
+    
+    if(sum(is.na(x)) == 0 | nrow(x) > 5000){ 
+      NofCores <- parallel::detectCores()
+      NofCores <- round(NofCores / 1.1)
+      if(NofCores > 8){
+        NofCores <- 8
+      }
+      try(invisible(mirt::mirtCluster(spec = NofCores)), silent = T)
+    }
     
     # optimizer config
     if(length(covdata) == 0){ # if no covariate variables
@@ -4059,7 +4065,7 @@ fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNR
     }
     
   } else {
-    print(modMokken)
+    # print(modMokken)
     message('testlet structure was found!')
     
     if(excludeUnscalableVar){
@@ -4076,7 +4082,7 @@ fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNR
       # print(modMokken)
       
     }
-    
+    message('number of testing variables: ', (ncol(testDat)), ' (', round(ncol(testDat)/ncol(data.frame(x))*100, digits = 2), '%)')
     if(!initSolution){
       modBfactor <- surveyFA(data = testDat, testlets = modMokken, itemkeys = itemkeys, skipNominal = skipNRM)
       
