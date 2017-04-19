@@ -2331,7 +2331,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
       
       if(sum(is.na(surveyFixModRAW)) == 0 | nrow(surveyFixModRAW) > 5000){ 
         NofCores <- parallel::detectCores()
-        NofCores <- NofCores / 2
+        NofCores <- round(NofCores / 1.1)
         if(NofCores > 8){
           NofCores <- 8
         }
