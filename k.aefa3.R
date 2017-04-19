@@ -4013,18 +4013,18 @@ fastBifactorCFA <- function(x, ga = T, itemkeys = NULL, initSolution = F){
   if(ga){
     message(1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))))
     if(length(itemkeys) != 0){
-      try(modMokken <- mokken::aisp(data.frame(mirt::key2binary(data.frame(x), key = itemkeys)), lowerbound = .4, verbose = T, search = 'ga', pxover = 1, pmutation = 1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))), popsize = log2(nrow(x))), silent = T) 
+      try(modMokken <- mokken::aisp(data.frame(mirt::key2binary(data.frame(x), key = itemkeys)), lowerbound = .5, verbose = T, search = 'ga', pxover = 1, pmutation = 1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))), popsize = log2(nrow(x))), silent = T) 
       
     } else {
-      try(modMokken <- mokken::aisp(data.frame(x), lowerbound = .4, verbose = T, search = 'ga', pxover = 1, pmutation = 1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))), popsize = log2(nrow(x))), silent = T) 
+      try(modMokken <- mokken::aisp(data.frame(x), lowerbound = .5, verbose = T, search = 'ga', pxover = 1, pmutation = 1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))), popsize = log2(nrow(x))), silent = T) 
       
     }
   } else {
     if(length(itemkeys) != 0){
-      try(modMokken <- mokken::aisp(data.frame(mirt::key2binary(data.frame(x), key = itemkeys), lowerbound = .4), verbose = T), silent = T) 
+      try(modMokken <- mokken::aisp(data.frame(mirt::key2binary(data.frame(x), key = itemkeys), lowerbound = .5), verbose = T), silent = T) 
       
     } else {
-      try(modMokken <- mokken::aisp(data.frame(x), verbose = T, lowerbound = .4), silent = T)
+      try(modMokken <- mokken::aisp(data.frame(x), verbose = T, lowerbound = .5), silent = T)
       
     }
   }
