@@ -4000,7 +4000,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   return(z)
 }
 
-fastBifactorCFA <- function(x, ga = T, itemkeys = NULL, initSolution = F, skipNRM = T){
+fastBifactorCFA <- function(x, ga = T, itemkeys = NULL, initSolution = F, skipNRM = T, excludeUnscalableVar = F){
   if(!require('mokken')){
     install.packages('mokken')
     library('mokken')
@@ -4041,13 +4041,23 @@ fastBifactorCFA <- function(x, ga = T, itemkeys = NULL, initSolution = F, skipNR
     
   } else {
     print(modMokken)
-    message('testlet structure was found')
-    modMokken[which(modMokken == 0)] <- NA
+    message('testlet structure was found!')
+    
+    if(excludeUnscalableVar){
+      message('excluding unscalable varaiables...')
+      testDat <- data.frame(x)[-which(modMokken == 0)]
+      modMokken <- modMokken[-which(modMokken == 0)]
+      print(modMokken)
+    } else {
+      testDat <- data.frame(x)
+      modMokken[which(modMokken == 0)] <- NA
+    }
+    
     if(!initSolution){
-      modBfactor <- surveyFA(data = data.frame(x), testlets = modMokken, itemkeys = itemkeys, skipNominal = skipNRM)
+      modBfactor <- surveyFA(data = testDat, testlets = modMokken, itemkeys = itemkeys, skipNominal = skipNRM)
       
     } else {
-      modBfactor <- fastFIFA(x = data.frame(x), testlets = modMokken, itemkeys = itemkeys, skipNominal = skipNRM)
+      modBfactor <- fastFIFA(x = testDat, testlets = modMokken, itemkeys = itemkeys, skipNominal = skipNRM)
       
     }
     
