@@ -4012,9 +4012,21 @@ fastBifactorCFA <- function(x, ga = T, itemkeys = NULL, initSolution = F){
   message('finding testlet structures using mokken scale analysis...')
   if(ga){
     message(1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))))
-    try(modMokken <- mokken::aisp(data.frame(x), verbose = T, search = 'ga', pxover = 1, pmutation = 1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))), popsize = log2(nrow(x))), silent = T) 
+    if(length(itemkeys) != 0){
+      try(modMokken <- mokken::aisp(data.frame(mirt::key2binary(data.frame(x), key = itemkeys)), verbose = T, search = 'ga', pxover = 1, pmutation = 1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))), popsize = log2(nrow(x))), silent = T) 
+      
+    } else {
+      try(modMokken <- mokken::aisp(data.frame(x), verbose = T, search = 'ga', pxover = 1, pmutation = 1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))), popsize = log2(nrow(x))), silent = T) 
+      
+    }
   } else {
-    try(modMokken <- mokken::aisp(data.frame(x), verbose = T), silent = T)
+    if(length(itemkeys) != 0){
+      try(modMokken <- mokken::aisp(data.frame(mirt::key2binary(data.frame(x), key = itemkeys)), verbose = T), silent = T) 
+      
+    } else {
+      try(modMokken <- mokken::aisp(data.frame(x), verbose = T), silent = T)
+      
+    }
   }
   
   if(sum(modMokken == 0) == ncol(x) | sum(modMokken == 1) == ncol(x)){
