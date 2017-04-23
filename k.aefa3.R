@@ -3445,15 +3445,21 @@ deepFAengine <- function(mirtModel, survey.weights){ # for search more factors w
   
   if(mirtModel@Options$method == 'EM' && length(attr(mirtModel@ParObjects$lrPars, 'formula')[[1]]) == 0 && length(survey.weights) == 0) {
     method <- 'MHRM'
+    optimizer <- 'NR1'
   } else if(length(survey.weights) != 0) {
     method <- 'QMCEM'
+    optimizer <- mirtModel@Options$Moptim
   } else if(mirtModel@Options$method == 'EM' && length(attr(mirtModel@ParObjects$lrPars, 'formula')[[1]]) != 0) {
     method <- 'QMCEM'
+    optimizer <- mirtModel@Options$Moptim
+    
   } else {
     method <- mirtModel@Options$method
+    optimizer <- mirtModel@Options$Moptim
+    
   }
   
-  message('searching global optimal... / estimation method: ', method)
+  message('searching global optimal... / estimation method: ', method, ' / optimizer: ', optimizer)
   start <- mirtModel@Model$nfact + 1
   end <- mirtModel@Model$nfact + 3 # see http://www.tandfonline.com/doi/abs/10.1080/00273171.2012.710386
   
@@ -3462,7 +3468,7 @@ deepFAengine <- function(mirtModel, survey.weights){ # for search more factors w
   for(i in start:end){
     try(invisible(gc()), silent = T)
     
-    try(invisible(tempModel <- mirt::mirt(data = mirtModel@Data$data, model = i, itemtype = mirtModel@Model$itemtype, SE = T, SE.type = mirtModel@Options$SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = mirtModel@Options$Moptim, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = mirtModel@Options$technical$NCYCLES, MAXQUAD = mirtModel@Options$technical$MAXQUAD, SEtol = mirtModel@Options$technical$SEtol, symmetric = mirtModel@Options$technical$symmetric, removeEmptyRows = mirtModel@Options$technical$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$technical$MHRM_SE_draws, BURNIN = 1500, SEMCYCLES = 1000))), silent = T)
+    try(invisible(tempModel <- mirt::mirt(data = mirtModel@Data$data, model = i, itemtype = mirtModel@Model$itemtype, SE = T, SE.type = mirtModel@Options$SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = optimizer, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = mirtModel@Options$technical$NCYCLES, MAXQUAD = mirtModel@Options$technical$MAXQUAD, SEtol = mirtModel@Options$technical$SEtol, symmetric = mirtModel@Options$technical$symmetric, removeEmptyRows = mirtModel@Options$technical$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$technical$MHRM_SE_draws, BURNIN = 1500, SEMCYCLES = 1000))), silent = T)
     if(exists('tempModel')){
       if(tempModel@OptimInfo$converged){ #       if(tempModel@OptimInfo$converged && tempModel@OptimInfo$secondordertest == T){
         message(i, ' factors were converged; DIC: ', tempModel@Fit$DIC)
