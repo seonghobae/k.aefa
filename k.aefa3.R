@@ -1165,7 +1165,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         message('\nfactor numbers: ', paste0(i))
       }
     }
-
+    
     
     
     if(sum(is.na(x)) == 0 | nrow(x) > 5000){ 
@@ -1455,7 +1455,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       removeEmptyRowsConf <- TRUE
     }
     
-
+    
     
     if(max(x, na.rm = T) - min(x, na.rm = T) == 1){ # dichotomous items
       
@@ -4060,7 +4060,7 @@ fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNR
       modBfactor <- surveyFA(data = data.frame(x), itemkeys = itemkeys, skipNominal = skipNRM)
       
     } else {
-      modBfactor <- fastFIFA(x = data.frame(x), itemkeys = itemkeys, skipNominal = skipNRM)
+      modBfactor <- deepFA(fastFIFA(x = data.frame(x), itemkeys = itemkeys, skipNominal = skipNRM))
       
     }
     
