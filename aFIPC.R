@@ -5,6 +5,7 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
   # print credits
   message('automated Fixed Item Parameter Calibration: aFIPC 0.2')
   message('Seongho Bae (seongho@kw.ac.kr)\n')
+  try(invisible(gc()), silent = T) # garbage cleaning
   
   # checking configure
   if(length(newformCommonItemNames) != length(oldformCommonItemNames)){
@@ -346,6 +347,13 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
     betaFormula <- attr(newFormModel@ParObjects$lrPars, 'formula')[[1]]
     betaCOVdata <- attr(newFormModel@ParObjects$lrPars, 'df')
     betaSE <- FALSE
+    betaEmpiricalhist <- FALSE
+    
+  } else if(empiricalhist == F){
+    
+    betaFormula <- NULL
+    betaCOVdata <- NULL
+    betaSE <- TRUE
     betaEmpiricalhist <- FALSE
   } else {
     betaFormula <- NULL
