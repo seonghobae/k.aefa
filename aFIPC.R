@@ -1,6 +1,6 @@
 source('https://raw.githubusercontent.com/seonghobae/k.aefa/master/k.aefa3.R')
 
-autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNames = ..., oldformCommonItemNames = ..., itemtype = '3PL', newformBILOGprior = NULL, oldformBILOGprior = NULL, tryFitwholeNewItems = T, tryFitwholeOldItems = T, checkIPD = T, tryEM = F, freeMEAN = T, forceNormalZeroOne = F, parameterOverwrite = F, ...){
+autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNames = ..., oldformCommonItemNames = ..., itemtype = '3PL', newformBILOGprior = NULL, oldformBILOGprior = NULL, tryFitwholeNewItems = T, tryFitwholeOldItems = T, checkIPD = T, tryEM = T, freeMEAN = T, forceNormalZeroOne = F, parameterOverwrite = F, empiricalhist = F, ...){
   
   # print credits
   message('automated Fixed Item Parameter Calibration: aFIPC 0.2')
@@ -275,9 +275,16 @@ autoFIPC <- function(newformXData = ..., oldformYData = ..., newformCommonItemNa
     mirt::mirtCluster()
     message('Discovering IPD')
     if(itemtype == 'nominal' | tryEM == T){
-      modIPD_MG <- multipleGroup(IPDData, model = 1, group = IPDgroup,
-                                 itemtype = itemtype, method = 'EM', invariance = names(IPDData), empiricalhist = T, technical = list(NCYCLES = 1e+5, removeEmptyRows=TRUE))
-      try(modIPD_DIF <- DIF(modIPD_MG, IPDParmNames, scheme = 'drop_sequential', method = 'EM', empiricalhist = T, technical = list(NCYCLES = 1e+5)))
+      if(empiricalhist == T){
+        modIPD_MG <- multipleGroup(IPDData, model = 1, group = IPDgroup,
+                                   itemtype = itemtype, method = 'EM', invariance = names(IPDData), empiricalhist = T, technical = list(NCYCLES = 1e+5, removeEmptyRows=TRUE))
+        try(modIPD_DIF <- DIF(modIPD_MG, IPDParmNames, scheme = 'drop_sequential', method = 'EM', empiricalhist = T, technical = list(NCYCLES = 1e+5)))
+      } else {
+        modIPD_MG <- multipleGroup(IPDData, model = 1, group = IPDgroup,
+                                   itemtype = itemtype, method = 'EM', invariance = names(IPDData), empiricalhist = F, technical = list(NCYCLES = 1e+5, removeEmptyRows=TRUE))
+        try(modIPD_DIF <- DIF(modIPD_MG, IPDParmNames, scheme = 'drop_sequential', method = 'EM', empiricalhist = F, technical = list(NCYCLES = 1e+5)))
+      }
+
     } else {
       modIPD_MG <- multipleGroup(IPDData, model = 1, group = IPDgroup,
                                  itemtype = itemtype, method = 'MHRM', invariance = names(IPDData), technical = list(NCYCLES = 1e+5, removeEmptyRows=TRUE))
