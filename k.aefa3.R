@@ -2398,6 +2398,19 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         message('S_X2 can not be calcuate normally...')
       }
       
+      # precalculation of CI for a1
+      ZeroList <- vector()
+      ZeroRange <- vector()
+      if(SE == T){
+        for(i in 2:NROW(coef(surveyFixMod))-1){
+          vec <- data.frame(coef(surveyFixMod)[i])
+          
+          ZeroList[length(ZeroList)+1] <- (vec[2,1] < 0 && vec[3,1] > 0)
+          ZeroRange[length(ZeroRange)+1] <- psych::describe(c(vec[2,1], vec[3,1]))$range
+        }
+      }
+
+      
       # Standardized Log-Likelihood
       if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -1.96)) != 0 && sum(is.na(surveyFixModRAW)) == 0){ # Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
         message('\nDrasgow, F., Levine, M. V., & Williams, E. A. (1985) / removing ', paste(surveyFixMod_itemFit$item[which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]))
@@ -2509,6 +2522,20 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           workTestlets <- workTestlets[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
+          if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
+            surveyFixMod <- deepFA(surveyFixMod, survey.weights)
+          }
+          rm(surveyFixMod_itemFit)
+          rm(S_X2ErrorFlag)
+          
+          
+        } else if(sum(ZeroList) > 0 && (bifactorSolution | length(testlets) > 0) && SE == T){ # which item include 0
+          message('\nItem discrimination include 0 / removing ', paste(surveyFixMod_itemFit$item[which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]))
+          workKeys <- workKeys[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
+          workTestlets <- workTestlets[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
+          
+          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                    forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             surveyFixMod <- deepFA(surveyFixMod, survey.weights)
