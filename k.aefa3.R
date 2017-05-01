@@ -2409,7 +2409,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           ZeroRange[length(ZeroRange)+1] <- psych::describe(c(vec[2,1], vec[3,1]))$range
         }
       }
-
+      
       
       # Standardized Log-Likelihood
       if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -1.96)) != 0 && sum(is.na(surveyFixModRAW)) == 0){ # Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
@@ -3970,9 +3970,9 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   # print(items)
   
   # try -2 to 2 (flat information)
-  x <- xxIRT::ata(items, NumberOfForms, len = numberOfItems, maxselect = maximumItemSelection, debug=TRUE) %>%
-    xxIRT::ata.obj.relative(seq(min(items$b), max(items$b), .1), "max", flatten=0.1, negative = T, compensate = T) %>%
-    xxIRT::ata.solve()
+  x <- xxIRT::ata(items, NumberOfForms, len = numberOfItems, maxselect = maximumItemSelection) %>%
+    xxIRT::ata_obj_relative(seq(min(items$b), max(items$b), .1), "max", flatten=0.1, negative = T) %>%
+    xxIRT::ata_solve()
   try(ataPlot <- plot(x), silent = T)
   
   if(exists('ataPlot')){
@@ -3981,9 +3981,9 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   } else {
     
     # -1 to 1 (flat information)
-    x <- xxIRT::ata(items, NumberOfForms, len = numberOfItems, maxselect = maximumItemSelection, debug=TRUE) %>%
-      xxIRT::ata.obj.relative(seq((min(items$b)+0.5), (max(items$b)-0.5), .1), "max", flatten=0.1, negative = T, compensate = T) %>%
-      xxIRT::ata.solve()
+    x <- xxIRT::ata(items, NumberOfForms, len = numberOfItems, maxselect = maximumItemSelection) %>%
+      xxIRT::ata_obj_relative(seq((min(items$b)+0.5), (max(items$b)-0.5), .1), "max", flatten=0.1, negative = T) %>%
+      xxIRT::ata_solve()
     try(ataPlot <- plot(x), silent = T)
     
     if(exists('ataPlot')){
@@ -3992,17 +3992,17 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
     } else {
       
       rm(x)
-      x <- xxIRT::ata(items, NumberOfForms, len = numberOfItems, maxselect = maximumItemSelection, debug=TRUE)
-      x <- ata.obj.absolute(x, "b", meanOfdifficulty * numberOfItems)
-      x <- ata.obj.absolute(x, (x$pool$b - meanOfdifficulty)^2, sdOfdifficulty * numberOfItems)
-      x <- ata.solve(x)
+      x <- xxIRT::ata(items, NumberOfForms, len = numberOfItems, maxselect = maximumItemSelection)
+      x <- xxIRT::ata_obj_absolute(x, "b", meanOfdifficulty * numberOfItems)
+      x <- xxIRT::ata_obj_absolute(x, (x$pool$b - meanOfdifficulty)^2, sdOfdifficulty * numberOfItems)
+      x <- xxIRT::ata_solve(x)
       
       print(plot(x))
     }
     
     
   }
-  y <- ata.get.items(x, as.list=TRUE)
+  y <- xxIRT::ata_get_items(x, as.list=TRUE) ## FIXME
   
   # get ATA data
   ATAFormData <- list()
@@ -4158,3 +4158,4 @@ doBfactor2mod <- function(mirtDat, testlet){
   
   return(model)
 }
+
