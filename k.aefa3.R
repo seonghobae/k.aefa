@@ -2454,13 +2454,13 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           itemFitDone <- TRUE
           
         }
-      } else if(S_X2ErrorFlag == F && surveyFixMod@Model$nfact == 1) { # if Chi-squared can be calculate
+      } else if(S_X2ErrorFlag == F && (surveyFixMod@Model$nfact == 1 | length(testlets) > 0)) { # if Chi-squared can be calculate
         
-        if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) == 0 && sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) == 0 && surveyFixMod@Model$nfact == 1){ # avoid unexpected situation
+        if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) == 0 && sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) == 0){ # avoid unexpected situation
           message('all items df are 0. skipping evaluation...')
           itemFitDone <- TRUE
           
-        } else if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems && surveyFixMod@Model$nfact == 1 && (sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) < length(1:surveyFixMod@Data$nitems)/2)){
+        } else if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems && (sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) < length(1:surveyFixMod@Data$nitems)/2)){
           message('\nremoving items df is NA / ', paste(surveyFixMod_itemFit$item[which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)]))
           workKeys <- workKeys[-which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)]
           workTestlets <- workTestlets[-which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)]
@@ -2474,7 +2474,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           rm(S_X2ErrorFlag)
           
           
-        } else if(sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) != 0 && surveyFixMod@Model$nfact == 1 && skipS_X2 == F && (sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) < length(1:surveyFixMod@Data$nitems)/2)){
+        } else if(sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) != 0 && skipS_X2 == F && (sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) < length(1:surveyFixMod@Data$nitems)/2)){
           message('\nremoving items df is 0 / removing ', paste(surveyFixMod_itemFit$item[which(surveyFixMod_itemFit$df.S_X2 == 0)]))
           workKeys <- workKeys[-which(surveyFixMod_itemFit$df.S_X2 == 0)]
           workTestlets <- workTestlets[-which(surveyFixMod_itemFit$df.S_X2 == 0)]
@@ -2488,7 +2488,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           rm(S_X2ErrorFlag)
           
           
-        } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems && surveyFixMod@Model$nfact == 1){
+        } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems){
           message('\nremoving items p.S_X2 is NA / removing ', paste(surveyFixMod_itemFit$item[which(is.na(surveyFixMod_itemFit$p.S_X2) == TRUE)]))
           workKeys <- workKeys[-which(is.na(surveyFixMod_itemFit$p.S_X2) == TRUE)]
           workTestlets <- workTestlets[-which(is.na(surveyFixMod_itemFit$p.S_X2) == TRUE)]
@@ -2502,7 +2502,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           rm(S_X2ErrorFlag)
           
           
-        } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems] >= 3)) != 0 && skipS_X2 == F && surveyFixMod@Model$nfact == 1){ # Drasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995). Fitting polytomous item response theory models to multiple-choice tests. Applied Psychological Measurement, 19(2), 143-166.
+        } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems] >= 3)) != 0 && skipS_X2 == F){ # Drasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995). Fitting polytomous item response theory models to multiple-choice tests. Applied Psychological Measurement, 19(2), 143-166.
           message('\nDrasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995) / removing ', paste(surveyFixMod_itemFit$item[which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]))
           workKeys <- workKeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
           workTestlets <- workTestlets[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
@@ -2516,7 +2516,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           rm(S_X2ErrorFlag)
           
           
-        } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems] < .05)) != 0 && skipS_X2 == F && surveyFixMod@Model$nfact == 1){ # Kang, T., & Chen, T. T. (2008). Performance of the Generalized S‐X2 Item Fit Index for Polytomous IRT Models. Journal of Educational Measurement, 45(4), 391-406.; Reise, S. P. (1990). A comparison of item- and person-fit methods of assessing model-data fit in IRT. Applied Psychological Measurement, 14, 127-137.
+        } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems] < .05)) != 0 && skipS_X2 == F){ # Kang, T., & Chen, T. T. (2008). Performance of the Generalized S‐X2 Item Fit Index for Polytomous IRT Models. Journal of Educational Measurement, 45(4), 391-406.; Reise, S. P. (1990). A comparison of item- and person-fit methods of assessing model-data fit in IRT. Applied Psychological Measurement, 14, 127-137.
           message('\nKang, T., & Chen, T. T. (2008); Reise, S. P. (1990) / removing ', paste(surveyFixMod_itemFit$item[which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]))
           workKeys <- workKeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
           workTestlets <- workTestlets[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
