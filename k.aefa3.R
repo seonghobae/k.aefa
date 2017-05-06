@@ -2454,7 +2454,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           itemFitDone <- TRUE
           
         }
-      } else if(S_X2ErrorFlag == F && (surveyFixMod@Model$nfact == 1 | length(testlets) > 0)) { # if Chi-squared can be calculate
+      } else if(S_X2ErrorFlag == F && (surveyFixMod@Model$nfact == 1 | length(workTestlets) > 0)) { # if Chi-squared can be calculate
         
         if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) == 0 && sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) == 0){ # avoid unexpected situation
           message('all items df are 0. skipping evaluation...')
@@ -2502,7 +2502,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           rm(S_X2ErrorFlag)
           
           
-        } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems] >= 3)) != 0 && skipS_X2 == F){ # Drasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995). Fitting polytomous item response theory models to multiple-choice tests. Applied Psychological Measurement, 19(2), 143-166.
+        } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems] >= 3)) != 0 && skipS_X2 == F && (surveyFixMod@Model$nfact == 1 | length(workTestlets) > 0)){ # Drasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995). Fitting polytomous item response theory models to multiple-choice tests. Applied Psychological Measurement, 19(2), 143-166.
           message('\nDrasgow, F., Levine, M. V., Tsien, S., Williams, B., & Mead, A. D. (1995) / removing ', paste(surveyFixMod_itemFit$item[which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]))
           workKeys <- workKeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
           workTestlets <- workTestlets[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
@@ -2516,7 +2516,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           rm(S_X2ErrorFlag)
           
           
-        } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems] < .05)) != 0 && skipS_X2 == F){ # Kang, T., & Chen, T. T. (2008). Performance of the Generalized S‐X2 Item Fit Index for Polytomous IRT Models. Journal of Educational Measurement, 45(4), 391-406.; Reise, S. P. (1990). A comparison of item- and person-fit methods of assessing model-data fit in IRT. Applied Psychological Measurement, 14, 127-137.
+        } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems] < .05)) != 0 && skipS_X2 == F && (surveyFixMod@Model$nfact == 1 | length(workTestlets) > 0)){ # Kang, T., & Chen, T. T. (2008). Performance of the Generalized S‐X2 Item Fit Index for Polytomous IRT Models. Journal of Educational Measurement, 45(4), 391-406.; Reise, S. P. (1990). A comparison of item- and person-fit methods of assessing model-data fit in IRT. Applied Psychological Measurement, 14, 127-137.
           message('\nKang, T., & Chen, T. T. (2008); Reise, S. P. (1990) / removing ', paste(surveyFixMod_itemFit$item[which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]))
           workKeys <- workKeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
           workTestlets <- workTestlets[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
@@ -2530,24 +2530,24 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           rm(S_X2ErrorFlag)
           
           
-        } else if(sum(ZeroList) > 0 && (bifactorSolution | length(testlets) > 0) && SE == T){ # which item include 0
-          message('\nItem discrimination include 0 / removing ', paste(surveyFixMod_itemFit$item[which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]))
-          workKeys <- workKeys[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
-          workTestlets <- workTestlets[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
-          
-          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
-          if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
-            surveyFixMod <- deepFA(surveyFixMod, survey.weights)
-          }
-          rm(surveyFixMod_itemFit)
-          rm(S_X2ErrorFlag)
-          
-          
         } else {
           itemFitDone <- TRUE
           
         }
+        
+        
+      } else if(sum(ZeroList) > 0 && (bifactorSolution | length(workTestlets) > 0) && SE == T){ # which item include 0
+        message('\nItem discrimination include 0 / removing ', paste(surveyFixMod_itemFit$item[which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]))
+        workKeys <- workKeys[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
+        workTestlets <- workTestlets[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
+        
+        surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
+                                 forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
+        if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
+          surveyFixMod <- deepFA(surveyFixMod, survey.weights)
+        }
+        rm(surveyFixMod_itemFit)
+        rm(S_X2ErrorFlag)
         
         
       } else if (forceRasch == T && surveyFixMod@Model$nfact == 1) {
