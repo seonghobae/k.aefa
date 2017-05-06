@@ -1181,7 +1181,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
     if(length(covdata) == 0){ # if no covariate variables
       if(TestletActivated){
         # print(ActualTestlets)
-        if(sum(na.omit(ActualTestlets) > 2) != 0){
+        if(sum(na.omit(ActualTestlets) > 2) != 0 | forceMHRM){
           estimationMETHOD <- 'MHRM'
           optimINPUT <- NULL
           optimCTRL  <- NULL
