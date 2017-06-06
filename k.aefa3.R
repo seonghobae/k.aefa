@@ -1459,7 +1459,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
     
     
     
-    if(max(x, na.rm = T) - min(x, na.rm = T) == 1){ # dichotomous items
+    if(sum(psych::describe(x)$range == 1) == ncol(x)){ # dichotomous items
       
       # forceRasch (dichotomous)
       if(forceRasch == T){
