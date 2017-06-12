@@ -2404,11 +2404,15 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
       ZeroList <- vector()
       ZeroRange <- vector()
       if(SE == T){
-        for(i in 2:NROW(coef(surveyFixMod))-1){
+        for(i in 1:NROW(coef(surveyFixMod))-1){
           vec <- data.frame(coef(surveyFixMod)[i])
+          
           
           ZeroList[length(ZeroList)+1] <- (vec[2,1] < 0 && vec[3,1] > 0)
           ZeroRange[length(ZeroRange)+1] <- psych::describe(c(vec[2,1], vec[3,1]))$range
+          
+          # print(ZeroList) -- for debug
+          # print(ZeroRange)
         }
       }
       
@@ -2538,7 +2542,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         }
         
         
-      } else if(sum(ZeroList) > 0 && (bifactorSolution | length(workTestlets) > 0) && SE == T){ # which item include 0
+      } else if(sum(ZeroList, na.rm = T) > 0 && (bifactorSolution | length(workTestlets) > 0) && SE == T){ # which item include 0
         message('\nItem discrimination include 0 / removing ', paste(surveyFixMod_itemFit$item[which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]))
         workKeys <- workKeys[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
         workTestlets <- workTestlets[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
