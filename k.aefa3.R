@@ -2403,7 +2403,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
       # precalculation of CI for a1
       ZeroList <- vector()
       ZeroRange <- vector()
-      if(SE == T && (length(testlets) != 0 | surveyFixMod@Model$model == 1)){
+      if(SE == T && (length(workTestlets) != 0 | surveyFixMod@Model$model == 1)){
         for(i in 1:NROW(coef(surveyFixMod))-1){
           vec <- data.frame(coef(surveyFixMod)[i])
           
