@@ -2544,7 +2544,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         }
         
         
-      } else if(sum(ZeroList) > 0 && (bifactorSolution | length(workTestlets) > 0) && SE == T){ # which item include 0
+      } else if(sum(ZeroList) > 0 && (surveyFixMod@Model$model == 1 | length(workTestlets) > 0) && SE == T){ # which item include 0
         message('\nItem discrimination include 0 / removing ', paste(surveyFixMod_itemFit$item[which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]))
         workKeys <- workKeys[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
         workTestlets <- workTestlets[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
