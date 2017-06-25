@@ -4167,3 +4167,57 @@ doBfactor2mod <- function(mirtDat, testlet){
   return(model)
 }
 
+# item factor analysis based LCA
+  getmode <- function(v) {
+    uniqv <- unique(v)
+    uniqv[which.max(tabulate(match(v, uniqv)))]
+  }
+  
+  findLatentClass <- function(data = ..., nruns = 1){
+    if(!require('mirt')){
+      install.packages('mirt')
+      library('mirt')
+    }
+    modelFit <- list()
+    for(i in 1:ncol(data)){
+      (try(testModel <- mirt::mdirt(data = data, model = i, SE = T, verbose = F, nruns = nruns), silent = T))
+      if(testModel@OptimInfo$converged && testModel@OptimInfo$secondordertest){
+        modelFit[[i]] <- testModel@Fit
+      }
+    }
+    # return(modelFit)
+    
+    modelFitMatrix <- (matrix(unlist(modelFit), ncol = 14, byrow = TRUE))
+    modelFitNumbers <- vector()
+
+    for(i in 1:NROW(modelFit)){
+      if(is.null(modelFit[[i]]) == FALSE){
+        modelFitNumbers[length(modelFitNumbers)+1] <- i
+      }
+
+    }
+    rownames(modelFitMatrix) <- modelFitNumbers
+    colnames(modelFitMatrix) <- names(modelFit[[1]])
+    return(modelFitMatrix)
+  }
+  
+  autoLCA <- function(data = ..., UIRT = T, nruns = 1){
+    # source('https://github.com/seonghobae/k.aefa/raw/master/aFIPC.R')
+    testMIRTmod <- surveyFA(data = data, forceMHRM = T, forceUIRT = UIRT)
+    testNumberOfClasses <- findLatentClass(data = testMIRTmod@Data$data, nruns = nruns)
+    
+    LCA_Judgement <- vector()
+    for(j in c(5,7:11)){
+      if(sum(is.na(testNumberOfClasses[,j])) > 0){
+        LCA_Judgement[j] <- NA
+      } else {
+        LCA_Judgement[j] <- (which(testNumberOfClasses[,j] == min(testNumberOfClasses[,j])))
+        
+      }
+    }
+    
+    try(FinalModel <- mirt::mdirt(testMIRTmod@Data$data, as.numeric(rownames(testNumberOfClasses)[getmode(na.omit(LCA_Judgement))]), nruns = nruns, verbose = F, SE = T), silent = T)
+    
+    
+    return(list(IRTmodel = testMIRTmod, LCAdecisionTable = testNumberOfClasses, FinalModel = FinalModel))
+  }
