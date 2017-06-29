@@ -4173,14 +4173,14 @@ getmode <- function(v) {
   uniqv[which.max(tabulate(match(v, uniqv)))]
 }
 
-findLatentClass <- function(data = ..., nruns = 1, covdata = NULL, formula = NULL){
+findLatentClass <- function(data = ..., nruns = 1, covdata = NULL, formula = NULL, SE.type = 'Oakes'){
   if(!require('mirt')){
     install.packages('mirt')
     library('mirt')
   }
   modelFit <- list()
   for(i in 1:ncol(data)){
-    (try(testModel <- mirt::mdirt(data = data, model = i, SE = T, verbose = F, nruns = nruns, covdata = covdata, formula = formula), silent = T))
+    (try(testModel <- mirt::mdirt(data = data, model = i, SE = T, verbose = F, nruns = nruns, covdata = covdata, formula = formula, SE.type = SE.type), silent = T))
     if(testModel@OptimInfo$converged && testModel@OptimInfo$secondordertest){
       modelFit[[i]] <- testModel@Fit
     }
@@ -4203,8 +4203,11 @@ findLatentClass <- function(data = ..., nruns = 1, covdata = NULL, formula = NUL
 
 autoLCA <- function(data = ..., UIRT = T, nruns = 1, covdata = NULL, formula = NULL){
   # source('https://github.com/seonghobae/k.aefa/raw/master/aFIPC.R')
-  testMIRTmod <- surveyFA(data = data, forceMHRM = T, forceUIRT = UIRT, covdata = covdata, formula = formula)
-  testNumberOfClasses <- findLatentClass(data = testMIRTmod@Data$data, nruns = nruns, covdata = covdata, formula = formula)
+  if(length(covdata) != 0){
+    SE.type <- 'central'
+  }
+  testMIRTmod <- surveyFA(data = data, forceMHRM = T, forceUIRT = UIRT, covdata = covdata, formula = formula, SE.type = SE.type)
+  testNumberOfClasses <- findLatentClass(data = testMIRTmod@Data$data, nruns = nruns, covdata = covdata, formula = formula, SE.type = SE.type)
   
   LCA_Judgement <- vector()
   for(j in c(5,7:11)){
@@ -4216,7 +4219,7 @@ autoLCA <- function(data = ..., UIRT = T, nruns = 1, covdata = NULL, formula = N
     }
   }
   
-  try(FinalModel <- mirt::mdirt(testMIRTmod@Data$data, as.numeric(rownames(testNumberOfClasses)[getmode(na.omit(LCA_Judgement))]), nruns = nruns, verbose = F, SE = T, covdata = covdata, formula = formula), silent = T)
+  try(FinalModel <- mirt::mdirt(testMIRTmod@Data$data, as.numeric(rownames(testNumberOfClasses)[getmode(na.omit(LCA_Judgement))]), nruns = nruns, verbose = F, SE = T, covdata = covdata, formula = formula, SE.type = SE.type), silent = T)
   
   
   return(list(IRTmodel = testMIRTmod, LCAdecisionTable = testNumberOfClasses, FinalModel = FinalModel))
