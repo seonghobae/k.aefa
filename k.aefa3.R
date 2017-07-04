@@ -2310,7 +2310,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
   if(sum(is.na(data)) != 0 && pilotTestMode == T){
     
     message('input data n size: ', nrow(data))
-    data <- data[which(rowSums(is.na(data)) < ncol(data)*(1-3/4)),] # 아무리 풀기 싫어도 75퍼센트 정도는 풀어줘라 쫌!!
+    data <- data[which(rowSums(is.na(data)) < ncol(data)*(1-3/4)),]
     message('current data n size: ', nrow(data))
   }
   
@@ -2524,7 +2524,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           rm(S_X2ErrorFlag)
           
           
-        } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems] < .05)) != 0 && skipS_X2 == F && (surveyFixMod@Model$nfact == 1 | length(workTestlets) > 0)){ # Kang, T., & Chen, T. T. (2008). Performance of the Generalized S‐X2 Item Fit Index for Polytomous IRT Models. Journal of Educational Measurement, 45(4), 391-406.; Reise, S. P. (1990). A comparison of item- and person-fit methods of assessing model-data fit in IRT. Applied Psychological Measurement, 14, 127-137.
+        } else if(sum(is.na(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems])) == 0 && length(which(surveyFixMod_itemFit$p.S_X2[1:surveyFixMod@Data$nitems] < .05)) != 0 && skipS_X2 == F && (surveyFixMod@Model$nfact == 1 | length(workTestlets) > 0)){ # Kang, T., & Chen, T. T. (2008). Performance of the Generalized S?륺2 Item Fit Index for Polytomous IRT Models. Journal of Educational Measurement, 45(4), 391-406.; Reise, S. P. (1990). A comparison of item- and person-fit methods of assessing model-data fit in IRT. Applied Psychological Measurement, 14, 127-137.
           message('\nKang, T., & Chen, T. T. (2008); Reise, S. P. (1990) / removing ', paste(surveyFixMod_itemFit$item[which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]))
           workKeys <- workKeys[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
           workTestlets <- workTestlets[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
@@ -4201,7 +4201,7 @@ findLatentClass <- function(data = ..., nruns = 1, covdata = NULL, formula = NUL
   return(modelFitMatrix)
 }
 
-autoLCA <- function(data = ..., UIRT = T, nruns = 1, covdata = NULL, formula = NULL){
+autoLCA <- function(data = ..., UIRT = T, nruns = 1, covdata = NULL, formula = NULL, SE.type = 'Oakes'){
   # source('https://github.com/seonghobae/k.aefa/raw/master/aFIPC.R')
   if(length(covdata) != 0){
     SE.type <- 'central'
