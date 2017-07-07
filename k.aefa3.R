@@ -1308,7 +1308,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       covdataINPUT <- covdata
       formulaINPUT <- formula
       
-      if(forceMHRM == T | forceGRSM == T | assumingFake == T | masterThesis == T){
+      if(forceMHRM == T | forceGRSM == T | assumingFake == T | masterThesis == T | sum(na.omit(ActualTestlets) > 2) != 0){
         message('MHRM currently not supported with latent regressors')
         estimationMETHOD <- 'QMCEM'
         if(forceDefaultOptimizer){
@@ -1402,6 +1402,12 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           SE.type <- "Oakes" # Oakes
         }
       }
+    }
+    
+    # switch SE estimation temporary 
+    if(length(covdata) != 0 && SE.type == 'sandwich' && SE == T){
+      message('sandwich estimation currently not supproted with latent regressors')
+      SE.type <- "complete"
     }
     
     # standard error estimation config
