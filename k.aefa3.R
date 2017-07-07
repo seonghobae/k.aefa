@@ -4065,7 +4065,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   return(z)
 }
 
-fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNRM = T, excludeUnscalableVar = T, lowerbound = .5){
+fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNRM = T, excludeUnscalableVar = F, lowerbound = .5){
   if(!require('mokken')){
     install.packages('mokken')
     library('mokken')
