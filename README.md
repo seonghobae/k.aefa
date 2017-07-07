@@ -5,8 +5,7 @@ Kwangwoon Automated Exploratory Factor Analysis (k.aefa): automatically find the
 Just find optimal factor numbers in the context of exploratory factor analysis. With some functions, they have some useful toys for psychologists like aberrant data point detection and deletion with fully automated by statistical criteria and FULLY AUTOMATION of Exploratory Factor Analysis what include checking the violence of item interdependence assumption in IRT and SEM, automatically variable deletion after automatically model estimations.
 
 ### Supported factor analytical strategies
-#### It supports traditional Classical True-score Theory based model approaches by depends correlation only; ML, minres, wls, gls (from fa() in psych and efaUnrotate() in semTools), ADF (from FAiR).
-#### The other one is Morden True-score Theory based model approaches; (Non-Compensatory) Full-information Exploratory IFA (from mirt() in mirt and tam.fa() in TAM), Limited-information exploratory IFA using WLSMV estimation in Mplus7 (from efaUnrotate() in semTools).
+Currently, Morden True-score Theory based model approaches; Compensatory Full-information Exploratory IFA (from mirt() in mirt). Exploratory Bifactor model, Exploratory n-dimensional model are available to use.
 
 ## Why did this project?
 This project built and updated for personal conveniences during survey data analysis since September 2013. However, some imported packages require the GPL 2 or GPL 3 licence. So decided opens this source code even skeleton code status; not a library. Will improve this just a source code to the library.
