@@ -1,5 +1,5 @@
 # k.aefa
-Kwangwoon Automated Exploratory Factor Analysis (k.aefa): automatically find the optimal number of factors with different exploratory factoring methods since September 2013. In 2016, it turns nearby 3!
+Kwangwoon Automated Exploratory Factor Analysis (k.aefa): automatically find the optimal number of factors with various exploratory item factor models since September 2013.
 
 ## What can do using this source code?
 Just find optimal factor numbers in the context of exploratory factor analysis. With some functions, they have some useful toys for psychologists like aberrant data point detection and deletion with fully automated by statistical criteria and FULLY AUTOMATION of Exploratory Factor Analysis what include checking the violence of item interdependence assumption in IRT and SEM, automatically variable deletion after automatically model estimations.
@@ -13,13 +13,7 @@ This project built and updated for personal conveniences during survey data anal
 ## How can use it?
 ```R
   # load source code
-  library(RCurl)
-  destfile = "k.aefa3.R"
-  x = getBinaryURL("https://raw.githubusercontent.com/seonghobae/k.aefa/master/k.aefa3.R",
-                    followlocation = TRUE, ssl.verifypeer = FALSE)
-  writeBin(x, destfile, useBytes = TRUE)
-  source(paste("k.aefa3.R", sep = ""))
-  rm(destfile, x)
+  source(https://raw.githubusercontent.com/seonghobae/k.aefa/master/k.aefa3.R)
   
   # find optimal factor numbers
   mod1 <- fastFIFA(your_data_frame)
