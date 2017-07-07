@@ -4065,7 +4065,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   return(z)
 }
 
-fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNRM = T, excludeUnscalableVar = F, lowerbound = .5){
+fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNRM = T, excludeUnscalableVar = F, lowerbound = .1, covdata = NULL, formula = NULL){
   if(!require('mokken')){
     install.packages('mokken')
     library('mokken')
@@ -4098,10 +4098,10 @@ fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNR
   if(sum(modMokken == 0) == ncol(x) | sum(modMokken == 1) == ncol(x)){
     # print(modMokken)
     if(!initSolution){
-      modBfactor <- surveyFA(data = data.frame(x), itemkeys = itemkeys, skipNominal = skipNRM)
+      modBfactor <- surveyFA(data = data.frame(x), itemkeys = itemkeys, skipNominal = skipNRM, covdata = covdata, formula = formula)
       
     } else {
-      modBfactor <- deepFA(fastFIFA(x = data.frame(x), itemkeys = itemkeys, skipNominal = skipNRM))
+      modBfactor <- deepFA(fastFIFA(x = data.frame(x), itemkeys = itemkeys, skipNominal = skipNRM, covdata = covdata, formula = formula))
       
     }
     
@@ -4125,10 +4125,10 @@ fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNR
     }
     message('number of testing variables: ', (ncol(testDat)), ' (', round(ncol(testDat)/ncol(data.frame(x))*100, digits = 2), '%)')
     if(!initSolution){
-      modBfactor <- surveyFA(data = testDat, testlets = modMokken, itemkeys = itemkeys, skipNominal = skipNRM)
+      modBfactor <- surveyFA(data = testDat, testlets = modMokken, itemkeys = itemkeys, skipNominal = skipNRM, covdata = covdata, formula = formula)
       
     } else {
-      modBfactor <- fastFIFA(x = testDat, testlets = modMokken, itemkeys = itemkeys, skipNominal = skipNRM)
+      modBfactor <- fastFIFA(x = testDat, testlets = modMokken, itemkeys = itemkeys, skipNominal = skipNRM, covdata = covdata, formula = formula)
       
     }
     
