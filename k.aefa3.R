@@ -2295,7 +2295,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
 
 
 surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
-                     SE.type = "Oakes", skipNominal = F, forceGRSM = F,
+                     SE.type = "sandwich", skipNominal = F, forceGRSM = F,
                      assumingFake = F, masterThesis = F, forceRasch = F,
                      unstable = F, forceNormalEM = T, forceMHRM = F,
                      printFactorStructureRealtime = F, itemkeys = NULL,
@@ -4201,12 +4201,12 @@ findLatentClass <- function(data = ..., nruns = 1, covdata = NULL, formula = NUL
   return(modelFitMatrix)
 }
 
-autoLCA <- function(data = ..., UIRT = T, nruns = 1, covdata = NULL, formula = NULL, SE.type = 'Oakes'){
+autoLCA <- function(data = ..., UIRT = T, nruns = 1, covdata = NULL, formula = NULL, SE.type = 'sandwich', forceMHRM = F){
   # source('https://github.com/seonghobae/k.aefa/raw/master/aFIPC.R')
-  if(length(covdata) != 0){
-    SE.type <- 'central'
+  if(length(covdata) != 0 && SE.type == 'sandwich'){
+    SE.type <- 'Richardson'
   }
-  testMIRTmod <- surveyFA(data = data, forceMHRM = T, forceUIRT = UIRT, covdata = covdata, formula = formula, SE.type = SE.type)
+  testMIRTmod <- surveyFA(data = data, forceMHRM = forceMHRM, forceUIRT = UIRT, covdata = covdata, formula = formula, SE.type = SE.type)
   testNumberOfClasses <- findLatentClass(data = testMIRTmod@Data$data, nruns = nruns, covdata = covdata, formula = formula, SE.type = SE.type)
   
   LCA_Judgement <- vector()
