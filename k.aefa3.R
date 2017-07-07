@@ -4065,7 +4065,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   return(z)
 }
 
-fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNRM = T, excludeUnscalableVar = T){
+fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNRM = T, excludeUnscalableVar = T, lowerbound = .5){
   if(!require('mokken')){
     install.packages('mokken')
     library('mokken')
@@ -4079,18 +4079,18 @@ fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNR
   if(ga){
     message('mutuation probability: ',1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))))
     if(length(itemkeys) != 0){
-      try(modMokken <- mokken::aisp(data.frame(mirt::key2binary(data.frame(x), key = itemkeys)), lowerbound = .5, verbose = T, search = 'ga', pxover = 1, pmutation = 1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))), popsize = log2(nrow(x))), silent = T) 
+      try(modMokken <- mokken::aisp(data.frame(mirt::key2binary(data.frame(x), key = itemkeys)), lowerbound = lowerbound, verbose = T, search = 'ga', pxover = 1, pmutation = 1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))), popsize = log2(nrow(x))), silent = T) 
       
     } else {
-      try(modMokken <- mokken::aisp(data.frame(x), lowerbound = .5, verbose = T, search = 'ga', pxover = 1, pmutation = 1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))), popsize = log2(nrow(x))), silent = T) 
+      try(modMokken <- mokken::aisp(data.frame(x), lowerbound = lowerbound, verbose = T, search = 'ga', pxover = 1, pmutation = 1/log(10^(log2(ncol(x)/5)) * 1000)*(log(log2(nrow(x)))+log(log(log2(nrow(x))))), popsize = log2(nrow(x))), silent = T) 
       
     }
   } else {
     if(length(itemkeys) != 0){
-      try(modMokken <- mokken::aisp(data.frame(mirt::key2binary(data.frame(x), key = itemkeys)), lowerbound = .5, verbose = T), silent = T)
+      try(modMokken <- mokken::aisp(data.frame(mirt::key2binary(data.frame(x), key = itemkeys)), lowerbound = lowerbound, verbose = T), silent = T)
       
     } else {
-      try(modMokken <- mokken::aisp(data.frame(x), verbose = T, lowerbound = .5), silent = T)
+      try(modMokken <- mokken::aisp(data.frame(x), verbose = T, lowerbound = lowerbound), silent = T)
       
     }
   }
