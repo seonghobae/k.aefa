@@ -4212,9 +4212,9 @@ autoLCA <- function(data = ..., UIRT = T, nruns = 1, covdata = NULL, formula = N
   LCA_Judgement <- vector()
   for(j in c(5,7:11)){
     if(sum(is.na(testNumberOfClasses[,j])) > 0){
-      LCA_Judgement[j] <- NA
+      try(LCA_Judgement[j] <- NA)
     } else {
-      LCA_Judgement[j] <- (which(testNumberOfClasses[,j] == min(testNumberOfClasses[,j])))
+      try(LCA_Judgement[j] <- (which(testNumberOfClasses[,j] == min(testNumberOfClasses[,j]))))
       
     }
   }
