@@ -4204,7 +4204,7 @@ findLatentClass <- function(data = ..., nruns = 1, covdata = NULL, formula = NUL
 autoLCA <- function(data = ..., UIRT = T, nruns = 1, covdata = NULL, formula = NULL, SE.type = 'sandwich', forceMHRM = F){
   # source('https://github.com/seonghobae/k.aefa/raw/master/aFIPC.R')
   if(length(covdata) != 0 && SE.type == 'sandwich'){
-    SE.type <- 'Richardson'
+    SE.type <- 'complete'
   }
   testMIRTmod <- surveyFA(data = data, forceMHRM = forceMHRM, forceUIRT = UIRT, covdata = covdata, formula = formula, SE.type = SE.type)
   testNumberOfClasses <- findLatentClass(data = testMIRTmod@Data$data, nruns = nruns, covdata = covdata, formula = formula, SE.type = SE.type)
