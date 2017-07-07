@@ -4203,14 +4203,14 @@ findLatentClass <- function(data = ..., nruns = 1, covdata = NULL, formula = NUL
 
 autoLCA <- function(data = ..., UIRT = T, nruns = 1, covdata = NULL, formula = NULL, SE.type = 'sandwich', forceMHRM = F){
   # source('https://github.com/seonghobae/k.aefa/raw/master/aFIPC.R')
-  if(length(covdata) != 0 && SE.type == 'sandwich'){
+  if(length(covdata) != 0 && SE.type != 'complete'){
     SE.type <- 'complete'
   }
   testMIRTmod <- surveyFA(data = data, forceMHRM = forceMHRM, forceUIRT = UIRT, covdata = covdata, formula = formula, SE.type = SE.type)
   testNumberOfClasses <- findLatentClass(data = testMIRTmod@Data$data, nruns = nruns, covdata = covdata, formula = formula, SE.type = SE.type)
   
   LCA_Judgement <- vector()
-  for(j in c(5,7:11)){
+  for(j in c(7:11)){
     if(sum(is.na(testNumberOfClasses[,j])) > 0){
       try(LCA_Judgement[j] <- NA)
     } else {
