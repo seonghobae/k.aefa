@@ -1194,7 +1194,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           optimINPUT <- NULL
           optimCTRL  <- NULL
           empiricalhist <- FALSE
-          NCYCLES <- 4000
+          NCYCLES <- 1000
         }
         
       } else if(forceMHRM == T | forceGRSM == T | assumingFake == T | masterThesis == T) {
@@ -1260,7 +1260,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           
           optimCTRL  <- NULL
           empiricalhist <- FALSE
-          NCYCLES <- 4000
+          NCYCLES <- 1000
         } else {
           estimationMETHOD <- 'EM'
           if(forceDefaultOptimizer){
@@ -1354,7 +1354,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
           
           optimCTRL  <- NULL
           empiricalhist <- FALSE
-          NCYCLES <- 4000
+          NCYCLES <- 1000
         } else {
           estimationMETHOD <- 'EM'
           if(forceDefaultOptimizer){
