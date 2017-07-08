@@ -3704,7 +3704,7 @@ autoLCA <- function(data = ..., UIRT = T, nruns = 1, covdata = NULL, formula = N
     SE.type <- 'complete'
   }
   testMIRTmod <- surveyFA(data = data, forceMHRM = forceMHRM, forceUIRT = UIRT, covdata = covdata, formula = formula, SE.type = SE.type)
-  testNumberOfClasses <- findLatentClass(data = testMIRTmod@Data$data, nruns = nruns, covdata = covdata, formula = formula, SE.type = SE.type)
+  testNumberOfClasses <- findLatentClass(data = testMIRTmod@Data$data, nruns = nruns, covdata = covdata, formula = formula, SE.type = 'complete') # sandwich not yet supported
   
   LCA_Judgement <- vector()
   for(j in c(7:11)){
