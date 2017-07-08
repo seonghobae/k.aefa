@@ -1122,7 +1122,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
   
   x <- x[,psych::describe(x)$range > 0] # delete no variance items
   
-  for(i in 1:100){
+  for(i in 1:ncol(x)){
     try(invisible(gc()), silent = T) # garbage cleaning
     
     # testlets
