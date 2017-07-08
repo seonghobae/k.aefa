@@ -1332,7 +1332,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         optimCTRL  <- NULL
         empiricalhist <- FALSE
         NCYCLES <- NULL
-      } else if(i < 2){
+      } else if(i < 4){ # use EM 1-3 factors
         if(unstable == T){
           estimationMETHOD <- 'QMCEM'
           if(forceDefaultOptimizer){
@@ -1387,20 +1387,20 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
       message('Empirical Histogram for find Prior distribution: ', empiricalhist)
     }
     # forcing SE estimation activate
-    if((sum(is.na(x)) != 0) && SE.type == 'Oakes'){
+    if((sum(is.na(x)) != 0) && (SE.type != 'MHRM')){
       SE <- T
       if(length(covdata) == 0){
         if(estimationMETHOD == 'MHRM'){ # Richadson (BL) isn't support MHRM estimation method
           SE.type <- 'MHRM'
-        } else {
-          SE.type <- "Oakes" # Oakes
-        }
+        } #else {
+          # SE.type <- "sandwich" # Oakes
+        # }
       } else {
         if(estimationMETHOD == 'MHRM'){ # Richadson (BL) isn't support MHRM estimation method
           SE.type <- 'MHRM'
-        } else {
-          SE.type <- "Oakes" # Oakes
-        }
+        } #else {
+          # SE.type <- "Oakes" # Oakes
+        # }
       }
     }
     
@@ -2274,7 +2274,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
     }
     
     
-    if(i > 1){
+    if(i > 3){
       if(ncol(modTEMP@Fit$F) == 1){
         rotMat <- modTEMP@Fit$F
       } else {
@@ -2969,29 +2969,38 @@ deepFAengine <- function(mirtModel, survey.weights){ # for search more factors w
   if(mirtModel@Options$method == 'EM' && length(attr(mirtModel@ParObjects$lrPars, 'formula')[[1]]) == 0 && length(survey.weights) == 0) {
     method <- 'MHRM'
     optimizer <- 'NR1'
-  } else if(length(survey.weights) != 0) {
+    SE.type <- 'MHRM'
+    
+  } else if(length(survey.weights) != 0) { # if survey weight included
     method <- 'QMCEM'
     optimizer <- mirtModel@Options$Moptim
-  } else if(mirtModel@Options$method == 'EM' && length(attr(mirtModel@ParObjects$lrPars, 'formula')[[1]]) != 0) {
+    SE.type <- mirtModel@Options$SE.type
+    
+  } else if(mirtModel@Options$method == 'EM' && length(attr(mirtModel@ParObjects$lrPars, 'formula')[[1]]) != 0) { # if latent regression included
     method <- 'QMCEM'
     optimizer <- mirtModel@Options$Moptim
+    SE.type <- mirtModel@Options$SE.type
     
   } else {
     method <- mirtModel@Options$method
     optimizer <- mirtModel@Options$Moptim
-    
+    SE.type <- mirtModel@Options$SE.type
   }
   
   message('searching global optimal... / estimation method: ', method, ' / optimizer: ', optimizer)
   start <- mirtModel@Model$nfact + 1
   end <- mirtModel@Model$nfact + 3 # see http://www.tandfonline.com/doi/abs/10.1080/00273171.2012.710386
   
+  if(end > ncol(mirtModel@Data$data)){
+    end <- ncol(mirtModel@Data$data)
+  }
+  
   nfact <- vector()
   nfact[1] <- mirtModel@Model$nfact
   for(i in start:end){
     try(invisible(gc()), silent = T)
     
-    try(invisible(tempModel <- mirt::mirt(data = mirtModel@Data$data, model = i, itemtype = mirtModel@Model$itemtype, SE = F, SE.type = mirtModel@Options$SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = optimizer, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = mirtModel@Options$NCYCLES, MAXQUAD = mirtModel@Options$MAXQUAD, SEtol = mirtModel@Options$SEtol, symmetric = mirtModel@Options$technical$symmetric, removeEmptyRows = mirtModel@Options$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$MHRM_SE_draws, BURNIN = mirtModel@Options$BURNIN, SEMCYCLES = mirtModel@Options$SEMCYCLES))), silent = T)
+    try(invisible(tempModel <- mirt::mirt(data = mirtModel@Data$data, model = i, itemtype = mirtModel@Model$itemtype, SE = F, SE.type = SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = optimizer, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = mirtModel@Options$NCYCLES, MAXQUAD = mirtModel@Options$MAXQUAD, SEtol = mirtModel@Options$SEtol, symmetric = mirtModel@Options$technical$symmetric, removeEmptyRows = mirtModel@Options$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$MHRM_SE_draws, BURNIN = mirtModel@Options$BURNIN, SEMCYCLES = mirtModel@Options$SEMCYCLES))), silent = T)
     if(exists('tempModel')){
       if(tempModel@OptimInfo$converged){ #       if(tempModel@OptimInfo$converged && tempModel@OptimInfo$secondordertest == T){
         message(i, ' factors were converged; DIC: ', tempModel@Fit$DIC)
@@ -3007,7 +3016,7 @@ deepFAengine <- function(mirtModel, survey.weights){ # for search more factors w
   if(bestModel == 1){
     return(mirtModel)
   } else {
-    return(mirt::mirt(data = mirtModel@Data$data, model = nfact[bestModel], itemtype = mirtModel@Model$itemtype, SE = T, SE.type = mirtModel@Options$SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = optimizer, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = mirtModel@Options$NCYCLES, MAXQUAD = mirtModel@Options$MAXQUAD, SEtol = mirtModel@Options$SEtol, symmetric = mirtModel@Options$technical$symmetric, removeEmptyRows = mirtModel@Options$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$MHRM_SE_draws, BURNIN = mirtModel@Options$BURNIN, SEMCYCLES = mirtModel@Options$SEMCYCLES)))
+    return(mirt::mirt(data = mirtModel@Data$data, model = nfact[bestModel], itemtype = mirtModel@Model$itemtype, SE = T, SE.type = SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = optimizer, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = mirtModel@Options$NCYCLES, MAXQUAD = mirtModel@Options$MAXQUAD, SEtol = mirtModel@Options$SEtol, symmetric = mirtModel@Options$technical$symmetric, removeEmptyRows = mirtModel@Options$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$MHRM_SE_draws, BURNIN = mirtModel@Options$BURNIN, SEMCYCLES = mirtModel@Options$SEMCYCLES)))
   }
 }
 
