@@ -3030,6 +3030,9 @@ deepFAengine <- function(mirtModel, survey.weights){ # for search more factors w
 
 deepFA <- function(mirtModel, survey.weights = NULL){
   init_nfact <- mirtModel@Model$nfact
+  if(init_nfact >= ncol(mirtModel@Data$data)){
+    return(mirtModel)
+  }
   
   deepModel <- deepFAengine(mirtModel, survey.weights = survey.weights)
   if(deepModel@Model$nfact == init_nfact+3){
