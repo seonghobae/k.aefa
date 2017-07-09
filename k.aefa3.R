@@ -2995,6 +2995,10 @@ deepFAengine <- function(mirtModel, survey.weights){ # for search more factors w
   start <- mirtModel@Model$nfact + 1
   end <- mirtModel@Model$nfact + 3 # see http://www.tandfonline.com/doi/abs/10.1080/00273171.2012.710386
   
+  if(start > ncol(mirtModel@Data$data)){
+    return(mirtModel)
+  }
+  
   if(end > ncol(mirtModel@Data$data)){
     end <- ncol(mirtModel@Data$data)
   }
