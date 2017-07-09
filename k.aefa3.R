@@ -2970,21 +2970,25 @@ deepFAengine <- function(mirtModel, survey.weights){ # for search more factors w
     method <- 'MHRM'
     optimizer <- 'NR1'
     SE.type <- 'MHRM'
+    NCYCLES <- 4000
     
   } else if(length(survey.weights) != 0) { # if survey weight included
     method <- 'QMCEM'
     optimizer <- mirtModel@Options$Moptim
     SE.type <- mirtModel@Options$SE.type
-    
+    NCYCLES <- mirtModel@Options$NCYCLES
   } else if(mirtModel@Options$method == 'EM' && length(attr(mirtModel@ParObjects$lrPars, 'formula')[[1]]) != 0) { # if latent regression included
     method <- 'QMCEM'
     optimizer <- mirtModel@Options$Moptim
     SE.type <- mirtModel@Options$SE.type
+    NCYCLES <- mirtModel@Options$NCYCLES
     
   } else {
     method <- mirtModel@Options$method
     optimizer <- mirtModel@Options$Moptim
     SE.type <- mirtModel@Options$SE.type
+    NCYCLES <- mirtModel@Options$NCYCLES
+    
   }
   
   message('searching global optimal... / estimation method: ', method, ' / optimizer: ', optimizer)
@@ -3000,7 +3004,7 @@ deepFAengine <- function(mirtModel, survey.weights){ # for search more factors w
   for(i in start:end){
     try(invisible(gc()), silent = T)
     
-    try(invisible(tempModel <- mirt::mirt(data = mirtModel@Data$data, model = i, itemtype = mirtModel@Model$itemtype, SE = F, SE.type = SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = optimizer, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = mirtModel@Options$NCYCLES, MAXQUAD = mirtModel@Options$MAXQUAD, SEtol = mirtModel@Options$SEtol, symmetric = mirtModel@Options$technical$symmetric, removeEmptyRows = mirtModel@Options$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$MHRM_SE_draws, BURNIN = mirtModel@Options$BURNIN, SEMCYCLES = mirtModel@Options$SEMCYCLES))), silent = T)
+    try(invisible(tempModel <- mirt::mirt(data = mirtModel@Data$data, model = i, itemtype = mirtModel@Model$itemtype, SE = F, SE.type = SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = optimizer, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = NCYCLES, MAXQUAD = mirtModel@Options$MAXQUAD, SEtol = mirtModel@Options$SEtol, symmetric = mirtModel@Options$technical$symmetric, removeEmptyRows = mirtModel@Options$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$MHRM_SE_draws, BURNIN = mirtModel@Options$BURNIN, SEMCYCLES = mirtModel@Options$SEMCYCLES))), silent = T)
     if(exists('tempModel')){
       if(tempModel@OptimInfo$converged){ #       if(tempModel@OptimInfo$converged && tempModel@OptimInfo$secondordertest == T){
         message(i, ' factors were converged; DIC: ', tempModel@Fit$DIC)
@@ -3016,7 +3020,7 @@ deepFAengine <- function(mirtModel, survey.weights){ # for search more factors w
   if(bestModel == 1){
     return(mirtModel)
   } else {
-    return(mirt::mirt(data = mirtModel@Data$data, model = nfact[bestModel], itemtype = mirtModel@Model$itemtype, SE = T, SE.type = SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = optimizer, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = mirtModel@Options$NCYCLES, MAXQUAD = mirtModel@Options$MAXQUAD, SEtol = mirtModel@Options$SEtol, symmetric = mirtModel@Options$technical$symmetric, removeEmptyRows = mirtModel@Options$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$MHRM_SE_draws, BURNIN = mirtModel@Options$BURNIN, SEMCYCLES = mirtModel@Options$SEMCYCLES)))
+    return(mirt::mirt(data = mirtModel@Data$data, model = nfact[bestModel], itemtype = mirtModel@Model$itemtype, SE = T, SE.type = SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = optimizer, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = NCYCLES, MAXQUAD = mirtModel@Options$MAXQUAD, SEtol = mirtModel@Options$SEtol, symmetric = mirtModel@Options$technical$symmetric, removeEmptyRows = mirtModel@Options$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$MHRM_SE_draws, BURNIN = mirtModel@Options$BURNIN, SEMCYCLES = mirtModel@Options$SEMCYCLES)))
   }
 }
 
