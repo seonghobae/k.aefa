@@ -3716,7 +3716,7 @@ autoLCA <- function(data = ..., UIRT = T, nruns = 1, covdata = NULL, formula = N
     }
   }
   
-  try(FinalModel <- mirt::mdirt(testMIRTmod@Data$data, as.numeric(rownames(testNumberOfClasses)[getmode(na.omit(LCA_Judgement))]), nruns = nruns, verbose = F, SE = T, covdata = covdata, formula = formula, SE.type = SE.type), silent = T)
+  try(FinalModel <- mirt::mdirt(testMIRTmod@Data$data, as.numeric(rownames(testNumberOfClasses)[getmode(na.omit(LCA_Judgement))]), nruns = nruns, verbose = F, SE = T, covdata = covdata, formula = formula, SE.type = 'complete'), silent = T)
   
   
   return(list(IRTmodel = testMIRTmod, LCAdecisionTable = testNumberOfClasses, FinalModel = FinalModel))
