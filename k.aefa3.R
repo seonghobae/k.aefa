@@ -3732,3 +3732,90 @@ autoLCA <- function(data = ..., UIRT = T, nruns = 1, covdata = NULL, formula = N
   
   return(list(IRTmodel = testMIRTmod, LCAdecisionTable = testNumberOfClasses, FinalModel = FinalModel))
 }
+
+                             MLIRT <- function(data = ..., covdata = ..., model = ..., itemtype = 'Rasch', fixed = ~-1, random = NULL, lr.fixed = ~1, lr.random = NULL, SEtol = 1e-4, SE = T, TOL = .001, ...){
+  if(!require('mirt')){
+    install.packages('mirt', repos = 'https://cran.biodisk.org')
+  }
+  
+  MLM_calibration <- mirt::mixedmirt(data = data, covdata = covdata, model = model, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, itemtype = itemtype, SE = SE, SE.type = 'MHRM', TOL = TOL, technical = list(SEtol = SEtol, removeEmptyRows = TRUE))
+  
+  
+  return(MLM_calibration)
+  # }
+}
+
+EEMEIRT <- function(data = ..., covdata = ..., itemtype = ..., SE = T, fixed = ~-1, random = NULL, lr.fixed = ~1, lr.random = NULL, TOL = .001, SEtol = 1e-3){
+  testDIC <- vector()
+  noConverge <- 0
+  for(i in 1:ncol(data)){
+    if(i > 10 && noConverge > 5){
+      message(which(testDIC == min(testDIC, na.rm = T)))
+      testMLM <- MLIRT(data = data, covdata = covdata, model = which(testDIC == min(testDIC, na.rm = T)),
+                       itemtype = itemtype, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
+                       TOL = TOL, SEtol = SEtol)
+      return(testMLM)
+      }
+    try(testMLM <- MLIRT(data = data, covdata = covdata, model = i, SE = F, itemtype = itemtype, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, TOL = TOL, SEtol = SEtol), silent = F)
+    if(exists('testMLM')){
+      if(testMLM@OptimInfo$converged){
+        testDIC[i] <- testMLM@Fit$DIC
+        noConverge <- 0
+        try(rm(testMLM))
+      } else {
+        testDIC[i] <- NA
+        noConverge <- noConverge+1
+        try(rm(testMLM))
+      }
+    } else {
+      testDIC[i] <- NA
+    }
+  }
+  if(sum(is.na(testDIC)) == length(testDIC)){
+    stop('no solution')
+  } else {
+    message(which(testDIC == min(testDIC, na.rm = T)))
+    testMLM <- MLIRT(data = data, covdata = covdata, model = which(testDIC == min(testDIC, na.rm = T)), itemtype = itemtype, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, TOL = TOL, SEtol = SEtol)
+    return(testMLM)
+  }
+  
+}
+
+
+rotateEMEIRT <- function(EMEIRTmodel, rotate = 'bifactorQ', suppress = 0){
+  if(!require('mirt')){
+    install.packages('mirt')
+    library('mirt')
+  }
+  # recursive formula
+  message(EMEIRTmodel@Model$model)
+  MLM_rotate_formula_mod <- mirt::mirt(data = EMEIRTmodel@Data$data, model = EMEIRTmodel@Model$model, itemtype = EMEIRTmodel@Model$itemtype, pars = 'values')
+  MLM_rotate_formula_mod_original <- mod2values(EMEIRTmodel)
+  if(sum(MLM_rotate_formula_mod_original$name == '(Intercept)') != 0){
+    MLM_rotate_formula_mod_original <- MLM_rotate_formula_mod_original[!MLM_rotate_formula_mod_original$name == '(Intercept)',]
+    
+  }
+  # MLM_rotate_formula_mod_original <- MLM_rotate_formula_mod_original
+  MLM_rotate_formula_mod$value[which(MLM_rotate_formula_mod$item %in% colnames(EMEIRTmodel@Data$data))] <- MLM_rotate_formula_mod_original$value[which(MLM_rotate_formula_mod_original$item %in% colnames(EMEIRTmodel@Data$data))]
+  MLM_rotate_formula_mod$est <- F
+  # print(MLM_rotate_formula_mod)
+  
+  MLM_rotate_formula_mod_final <- mirt::mirt(data = EMEIRTmodel@Data$data, model = EMEIRTmodel@Model$model, itemtype = EMEIRTmodel@Model$itemtype, pars = MLM_rotate_formula_mod, method = 'QMCEM')
+  if(ncol(MLM_rotate_formula_mod_final@Fit$F) > 1){
+    if(rotate == 'bifactorQ'){
+      return(GPArotation::bifactorQ(MLM_rotate_formula_mod_final@Fit$F, maxit = 1e+7))
+      
+    } else if(rotate == 'geominQ'){
+      return(GPArotation::geominQ(MLM_rotate_formula_mod_final@Fit$F, maxit = 1e+7))
+    } else if(rotate == 'bifactorT'){
+      return(GPArotation::bifactorT(MLM_rotate_formula_mod_final@Fit$F, maxit = 1e+7))
+    }else if(rotate == 'none'){
+      summary(MLM_rotate_formula_mod_final, rotate = 'none', suppress = suppress)
+    }
+    
+  }else{
+    summary(MLM_rotate_formula_mod_final, rotate = 'none', suppress = suppress)
+  }  # 
+}
+
+# rotateEMEIRT(silenceMLM, rotate = 'bifactorT', suppress = .05)
