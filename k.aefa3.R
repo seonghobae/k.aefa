@@ -2,16 +2,16 @@
 # Seongho Bae (seongho@kw.ac.kr)
 
 # for mac
-  if(Sys.getenv("LANG") == "ko-Kore_KR.UTF-8"){
-    Sys.setenv(LANG="ko_KR.UTF-8")
-    Sys.setlocale('LC_ALL', 'ko_KR.UTF-8')
-    Sys.setlocale('LC_MESSAGES', 'ko_KR.UTF-8')
-    Sys.setlocale('LC_CTYPE', 'ko_KR.UTF-8')
-    Sys.setlocale('LC_COLLATE', 'ko_KR.UTF-8')
-    Sys.setlocale('LC_TIME', 'ko_KR.UTF-8')
-    Sys.setlocale('LC_MONETARY', 'ko_KR.UTF-8')
-  }
-  
+if(Sys.getenv("LANG") == "ko-Kore_KR.UTF-8"){
+  Sys.setenv(LANG="ko_KR.UTF-8")
+  Sys.setlocale('LC_ALL', 'ko_KR.UTF-8')
+  Sys.setlocale('LC_MESSAGES', 'ko_KR.UTF-8')
+  Sys.setlocale('LC_CTYPE', 'ko_KR.UTF-8')
+  Sys.setlocale('LC_COLLATE', 'ko_KR.UTF-8')
+  Sys.setlocale('LC_TIME', 'ko_KR.UTF-8')
+  Sys.setlocale('LC_MONETARY', 'ko_KR.UTF-8')
+}
+
 
 ##############
 # aefa frontend #
@@ -1404,13 +1404,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
         if(estimationMETHOD == 'MHRM'){ # Richadson (BL) isn't support MHRM estimation method
           SE.type <- 'MHRM'
         } #else {
-          # SE.type <- "sandwich" # Oakes
+        # SE.type <- "sandwich" # Oakes
         # }
       } else {
         if(estimationMETHOD == 'MHRM'){ # Richadson (BL) isn't support MHRM estimation method
           SE.type <- 'MHRM'
         } #else {
-          # SE.type <- "Oakes" # Oakes
+        # SE.type <- "Oakes" # Oakes
         # }
       }
     }
@@ -2324,29 +2324,38 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
   message(' k.aefa: kwangwoon automated exploratory factor analysis ')
   message('---------------------------------------------------------\n')
   
-  if(sum(is.na(data)) != 0 && pilotTestMode == T){
-    
-    message('input data n size: ', nrow(data))
-    data <- data[which(rowSums(is.na(data)) < ncol(data)*(1-3/4)),]
-    message('current data n size: ', nrow(data))
-  }
+  
+  message('Calculating Initial Factor model')
+  iteration_num <- 1
+  message('Iteration: ', iteration_num, '\n')
+  
+  
   
   if(bifactorSolution) {
     rotateCriteria <- 'bifactorQ'
   } else {
     rotateCriteria <- 'geominQ'
   }
-  
-  message('Calculating Initial Factor model')
-  iteration_num <- 1
-  message('Iteration: ', iteration_num, '\n')
-  surveyFixMod <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata),
-                           formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal,
-                           forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis,
-                           forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM,
-                           itemkeys = itemkeys, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse,
-                           autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM,
-                           forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = testlets, ...)
+
+  if(!is.data.frame(data) | !is.matrix(data)){
+    surveyFixMod <- data
+  } else {
+    if(sum(is.na(data)) != 0 && pilotTestMode == T){
+      
+      message('input data n size: ', nrow(data))
+      data <- data[which(rowSums(is.na(data)) < ncol(data)*(1-3/4)),]
+      message('current data n size: ', nrow(data))
+    }
+    
+    surveyFixMod <- fastFIFA(x = as.data.frame(data), covdata = as.data.frame(covdata),
+                             formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal,
+                             forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis,
+                             forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM,
+                             itemkeys = itemkeys, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse,
+                             autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM,
+                             forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = testlets, ...)
+  }
+
   workKeys <- itemkeys
   workTestlets <- testlets
   if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
@@ -2420,7 +2429,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
       # precalculation of CI for a1
       ZeroList <- vector()
       ZeroRange <- vector()
-      if(SE == T && (length(workTestlets) != 0 | surveyFixMod@Model$model == 1)){
+      if(surveyFixMod@Options$SE == T && (length(workTestlets) != 0 | surveyFixMod@Model$model == 1)){
         for(i in 1:NROW(coef(surveyFixMod))-1){
           vec <- data.frame(coef(surveyFixMod)[i])
           
@@ -2555,24 +2564,24 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           rm(S_X2ErrorFlag)
           
           
+        } else if(sum(ZeroList) > 0){ # which item include 0
+          message('\nItem discrimination include 0 / removing ', paste(surveyFixMod_itemFit$item[which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]))
+          workKeys <- workKeys[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
+          workTestlets <- workTestlets[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
+          
+          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
+          if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
+            try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
+          }
+          rm(surveyFixMod_itemFit)
+          rm(S_X2ErrorFlag)
+          
+          
         } else {
           itemFitDone <- TRUE
           
         }
-        
-        
-      } else if(sum(ZeroList) > 0 && (surveyFixMod@Model$model == 1 | length(workTestlets) > 0) && SE == T){ # which item include 0
-        message('\nItem discrimination include 0 / removing ', paste(surveyFixMod_itemFit$item[which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]))
-        workKeys <- workKeys[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
-        workTestlets <- workTestlets[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
-        
-        surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                 forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
-        if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
-          try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
-        }
-        rm(surveyFixMod_itemFit)
-        rm(S_X2ErrorFlag)
         
         
       } else if (forceRasch == T && surveyFixMod@Model$nfact == 1) {
@@ -3744,7 +3753,7 @@ autoLCA <- function(data = ..., UIRT = T, nruns = 1, covdata = NULL, formula = N
   return(list(IRTmodel = testMIRTmod, LCAdecisionTable = testNumberOfClasses, FinalModel = FinalModel))
 }
 
-                             MLIRT <- function(data = ..., covdata = ..., model = ..., itemtype = 'Rasch', fixed = ~-1, random = NULL, lr.fixed = ~1, lr.random = NULL, SEtol = 1e-4, SE = T, TOL = .001, ...){
+MLIRT <- function(data = ..., covdata = ..., model = ..., itemtype = 'Rasch', fixed = ~-1, random = NULL, lr.fixed = ~1, lr.random = NULL, SEtol = 1e-4, SE = T, TOL = .001, ...){
   if(!require('mirt')){
     install.packages('mirt', repos = 'https://cran.biodisk.org')
   }
@@ -3766,7 +3775,7 @@ EEMEIRT <- function(data = ..., covdata = ..., itemtype = ..., SE = T, fixed = ~
                        itemtype = itemtype, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
                        TOL = TOL, SEtol = SEtol)
       return(testMLM)
-      }
+    }
     try(testMLM <- MLIRT(data = data, covdata = covdata, model = i, SE = F, itemtype = itemtype, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, TOL = TOL, SEtol = SEtol), silent = F)
     if(exists('testMLM')){
       if(testMLM@OptimInfo$converged){
