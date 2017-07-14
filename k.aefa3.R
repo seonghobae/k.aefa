@@ -1,6 +1,11 @@
 # Kwangwoon Automated Exploratory Factor Analysis (K.AEFA)
 # Seongho Bae (seongho@kw.ac.kr)
 
+# for mac
+  if(Sys.getenv("LANG") == "ko-Kore_KR.UTF-8"){
+    Sys.setenv(LANG="ko_KR.UTF-8")
+    Sys.setlocale('LC_ALL', 'ko_KR.UTF-8')
+  }
 
 ##############
 # aefa frontend #
