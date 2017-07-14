@@ -2336,8 +2336,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
   } else {
     rotateCriteria <- 'geominQ'
   }
-
-  if(!is.data.frame(data) | !is.matrix(data)){
+  
+  if(!is.data.frame(data) && !is.matrix(data)){
     surveyFixMod <- data
   } else {
     if(sum(is.na(data)) != 0 && pilotTestMode == T){
@@ -2355,7 +2355,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
                              autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM,
                              forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = testlets, ...)
   }
-
+  
   workKeys <- itemkeys
   workTestlets <- testlets
   if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
