@@ -5,7 +5,13 @@
   if(Sys.getenv("LANG") == "ko-Kore_KR.UTF-8"){
     Sys.setenv(LANG="ko_KR.UTF-8")
     Sys.setlocale('LC_ALL', 'ko_KR.UTF-8')
+    Sys.setlocale('LC_MESSAGES', 'ko_KR.UTF-8')
+    Sys.setlocale('LC_CTYPE', 'ko_KR.UTF-8')
+    Sys.setlocale('LC_COLLATE', 'ko_KR.UTF-8')
+    Sys.setlocale('LC_TIME', 'ko_KR.UTF-8')
+    Sys.setlocale('LC_MONETARY', 'ko_KR.UTF-8')
   }
+  
 
 ##############
 # aefa frontend #
