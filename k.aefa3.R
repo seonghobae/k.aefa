@@ -3265,8 +3265,13 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
   
   if(length(testlets) != 0){
     ActualTestlets <- testlets
-    
-    ActualTestlets <- plyr::mapvalues(ActualTestlets, names(which(table(ActualTestlets) == 1)), rep(NA, length(names(which(table(ActualTestlets) == 1)))))
+    if(!is.null(ActualTestlets)){
+      
+      if(sum(is.na(ActualTestlets)) != 0){
+        ActualTestlets <- plyr::mapvalues(ActualTestlets, (names(table(ActualTestlets)))[1], NA) # CTC(M-1)
+      }
+      
+    }
     # if(sum(ActualTestlets %in% 1) == 0){
     #   ActualTestlets <- ActualTestlets - min(ActualTestlets, na.rm = T) + 1
     # }
@@ -3636,6 +3641,8 @@ fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNR
       
     }
   }
+  
+  print(modMokken)
   
   if(sum(modMokken == 0) == ncol(x) | sum(modMokken == 1) == ncol(x)){
     # print(modMokken)
