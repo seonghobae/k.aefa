@@ -3265,18 +3265,21 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
   
   if(length(testlets) != 0){
     ActualTestlets <- testlets
-    if(!is.null(ActualTestlets)){
-      
-      if(sum(is.na(ActualTestlets)) != 0){
-        ActualTestlets <- plyr::mapvalues(ActualTestlets, (names(table(ActualTestlets)))[1], NA) # CTC(M-1)
-      }
-      
+    TestletStatus <- (table(ActualTestlets))
+    
+    if(sum(is.na(ActualTestlets)) == 0){
+      ActualTestlets <- plyr::mapvalues(ActualTestlets, as.numeric(names(TestletStatus)[which(TestletStatus == max(TestletStatus))]), NA) # CTC(M-1)
+    }
+    
+    TestletStatus <- (table(ActualTestlets)) # renew
+    if(length(which(TestletStatus == 1)) != 0){
+      ActualTestlets <- plyr::mapvalues(ActualTestlets, names(TestletStatus)[which(TestletStatus == 1)], rep(NA, length(which(TestletStatus == 1))))
     }
     # if(sum(ActualTestlets %in% 1) == 0){
     #   ActualTestlets <- ActualTestlets - min(ActualTestlets, na.rm = T) + 1
     # }
     if(sum(is.na(ActualTestlets)) == length(ActualTestlets)){
-      ActualTestlets <- NULL
+      ActualTestlets <- NULL # disable testlet when all testlet information were NA
       
     } else {
       ActualTestlets <- plyr::mapvalues(ActualTestlets, as.numeric(attributes(as.factor(ActualTestlets))$levels), seq(length(attributes(as.factor(c(ActualTestlets)))$levels)))
