@@ -3237,6 +3237,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
   
   initData <- x
   iterationTrials <- 1
+  StartTime <- Sys.time()
   
   if(length(group) != 0){
     initData <- initData[which(!is.na(group)),]
@@ -3403,8 +3404,9 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
       STOP <- TRUE
     }
   }
+  EndTime <- Sys.time()
   
-  ReturnList <- list(Solution = init, testlet = ActualTestlets, rawData = initData)
+  ReturnList <- list(Solution = init, testlet = ActualTestlets, rawData = initData, TotalTime = EndTime - StartTime)
   
   return(ReturnList)
 }
