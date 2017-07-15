@@ -3605,7 +3605,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   return(z)
 }
 
-fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNRM = T, excludeUnscalableVar = F, lowerbound = 1, covdata = NULL, formula = NULL){
+fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNRM = T, excludeUnscalableVar = F, lowerbound = .5, covdata = NULL, formula = NULL){
   if(!require('mokken')){
     install.packages('mokken')
     library('mokken')
@@ -3614,6 +3614,8 @@ fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNR
     install.packages('mirt')
     library('mirt')
   }
+  
+  x <- x[psych::describe(x)$range != 0]
   
   message('finding testlet structures using mokken scale analysis...')
   if(ga){
