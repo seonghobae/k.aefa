@@ -1125,7 +1125,7 @@ k.fixdata <- function(data, start, end, bioend){
 }
 
 # surveyFA addon
-fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes", skipNominal = F,
+fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandwich", skipNominal = F,
                      forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F,
                      forceMHRM = F, forceNormalEM = T, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T,
                      forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, forceNRM = F,
@@ -1184,8 +1184,8 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "Oakes
     if(sum(is.na(x)) == 0 | nrow(x) > 5000){ 
       NofCores <- parallel::detectCores()
       NofCores <- round(NofCores / 1.1)
-      if(NofCores > 8){
-        NofCores <- 8
+      if(NofCores > 12){
+        NofCores <- 12
       }
       try(invisible(mirt::mirtCluster(spec = NofCores)), silent = T)
     }
@@ -3078,47 +3078,59 @@ deepFA <- function(mirtModel, survey.weights = NULL){
   }
 }
 
-jmleRaschEst <- function(data, model = 'PCM'){
+jmleRaschEst <- function(data, model = 'PCM', fitCriteria = 2, as.LCA = F){
   if(!require('mixRasch')){
     install.packages('mixRasch', repos = 'http://cran.nexr.com', dependencies = T); library('mixRasch')
   }
+  if(!require('psych')){
+    install.packages('psych', repos = 'http://cran.nexr.com', dependencies = T); library('mixRasch')
+  }
   itemList <- colnames(data)
   RaschData <- data.frame(data)
-  jmleRasch <- mixRasch::mixRasch(data = RaschData, steps = max(psych::describe(RaschData)$range), max.iter = 500, model = model)
+  RaschData <- RaschData[psych::describe(RaschData)$range != 0]
+  try(invisible(jmleRasch <- mixRasch::mixRasch(data = RaschData, steps = max(psych::describe(RaschData)$range), max.iter = 500, conv.crit = 0.00001, model = model, maxrange = c(-6, 6), maxchange = .25, as.LCA = as.LCA)), silent = T)
   STOP <- FALSE
+  i <- 0
+  j <- Sys.time()
   while (!STOP) {
+    i <- i+1
     if(ncol(data) > 2){
       jmleFit <- data.frame(jmleRasch$item.par$in.out)
-      if(length(which(abs(jmleFit$out.Z) > 2)) != 0){
-        message('outfit: ', colnames(RaschData)[which(max(abs(jmleFit$out.Z)) == abs(jmleFit$out.Z))])
-        
-        itemList <- names(RaschData) %in% colnames(RaschData)[which(max(abs(jmleFit$out.Z)) == abs(jmleFit$out.Z))]
-        RaschData <- RaschData[!itemList]
-        
-        itemList <- itemList[-c(which(max(abs(jmleFit$out.Z)) == jmleFit$out.Z))]
-        jmleRasch <- mixRasch::mixRasch(data = RaschData, steps = max(psych::describe(RaschData)$range), max.iter = 500, model = model)
-        
-      } else if(length(which(abs(jmleFit$in.Z) > 2)) != 0){
-        message('infit: ', colnames(RaschData)[which(max(abs(jmleFit$in.Z)) == abs(jmleFit$in.Z))])
+      if(length(which(abs(jmleFit$in.Z) > fitCriteria)) != 0){
+        message('infit: ', paste(colnames(RaschData)[which(max(abs(jmleFit$in.Z)) == abs(jmleFit$in.Z))]), ' // iteration: ', i)
         
         itemList <- names(RaschData) %in% colnames(RaschData)[which(max(abs(jmleFit$in.Z)) == abs(jmleFit$in.Z))]
         RaschData <- RaschData[!itemList]
         
         itemList <- itemList[-c(which(max(abs(jmleFit$out.Z)) == jmleFit$out.Z))]
-        jmleRasch <- mixRasch::mixRasch(data = RaschData, steps = max(psych::describe(RaschData)$range), max.iter = 500, model = model)
+        try(invisible(jmleRasch <- mixRasch::mixRasch(data = RaschData, steps = max(psych::describe(RaschData)$range), max.iter = 500, conv.crit = 0.00001, model = model, maxrange = c(-6, 6), maxchange = .25, as.LCA = as.LCA)), silent = T)
+        
+      } else if(length(which(abs(jmleFit$out.Z) > fitCriteria)) != 0){
+        message('outfit: ', paste(colnames(RaschData)[which(max(abs(jmleFit$out.Z)) == abs(jmleFit$out.Z))]), ' // iteration: ', i)
+        
+        itemList <- names(RaschData) %in% colnames(RaschData)[which(max(abs(jmleFit$out.Z)) == abs(jmleFit$out.Z))]
+        RaschData <- RaschData[!itemList]
+        
+        itemList <- itemList[-c(which(max(abs(jmleFit$out.Z)) == jmleFit$out.Z))]
+        try(invisible(jmleRasch <- mixRasch::mixRasch(data = RaschData, steps = max(psych::describe(RaschData)$range), max.iter = 500, conv.crit = 0.00001, model = model, maxrange = c(-6, 6), maxchange = .25, as.LCA = as.LCA)), silent = T)
         
       } else {
+        k <- Sys.time()
         STOP <- TRUE
       }
     } else {
+      k <- Sys.time()
       STOP <- TRUE
     }
   }
   RaschJMLEresult <- new.env()
   RaschJMLEresult$itemList <- colnames(RaschData)
+  RaschJMLEresult$rawData <- RaschData
   RaschJMLEresult$model <- jmleRasch
+  RaschJMLEresult$TotalTime <- k-j
   return(RaschJMLEresult)
 }
+
 
 cmleRaschEst <- function(data, model = 'PCM'){
   if(!require('eRm')){
@@ -3593,7 +3605,7 @@ testAssembly <- function(MIRTmodel, measurementArea, NumberOfForms = 1, meanOfdi
   return(z)
 }
 
-fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNRM = T, excludeUnscalableVar = F, lowerbound = .1, covdata = NULL, formula = NULL){
+fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNRM = T, excludeUnscalableVar = F, lowerbound = 1, covdata = NULL, formula = NULL){
   if(!require('mokken')){
     install.packages('mokken')
     library('mokken')
@@ -3626,10 +3638,10 @@ fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNR
   if(sum(modMokken == 0) == ncol(x) | sum(modMokken == 1) == ncol(x)){
     # print(modMokken)
     if(!initSolution){
-      modBfactor <- surveyFA(data = data.frame(x), itemkeys = itemkeys, skipNominal = skipNRM, covdata = covdata, formula = formula)
+      modBfactor <- surveyFA(data = data.frame(x), itemkeys = itemkeys, skipNominal = skipNRM, covdata = covdata, formula = formula, SE.type = 'sandwich')
       
     } else {
-      modBfactor <- deepFA(fastFIFA(x = data.frame(x), itemkeys = itemkeys, skipNominal = skipNRM, covdata = covdata, formula = formula))
+      modBfactor <- deepFA(fastFIFA(x = data.frame(x), itemkeys = itemkeys, skipNominal = skipNRM, covdata = covdata, formula = formula, SE.type = 'sandwich'))
       
     }
     
@@ -3653,10 +3665,10 @@ fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNR
     }
     message('number of testing variables: ', (ncol(testDat)), ' (', round(ncol(testDat)/ncol(data.frame(x))*100, digits = 2), '%)')
     if(!initSolution){
-      modBfactor <- surveyFA(data = testDat, testlets = modMokken, itemkeys = itemkeys, skipNominal = skipNRM, covdata = covdata, formula = formula)
+      modBfactor <- surveyFA(data = testDat, testlets = modMokken, itemkeys = itemkeys, skipNominal = skipNRM, covdata = covdata, formula = formula, SE.type = 'sandwich')
       
     } else {
-      modBfactor <- fastFIFA(x = testDat, testlets = modMokken, itemkeys = itemkeys, skipNominal = skipNRM, covdata = covdata, formula = formula)
+      modBfactor <- fastFIFA(x = testDat, testlets = modMokken, itemkeys = itemkeys, skipNominal = skipNRM, covdata = covdata, formula = formula, SE.type = 'sandwich')
       
     }
     
@@ -3701,16 +3713,24 @@ getmode <- function(v) {
   uniqv[which.max(tabulate(match(v, uniqv)))]
 }
 
-findLatentClass <- function(data = ..., nruns = 1, covdata = NULL, formula = NULL, SE.type = 'Oakes'){
+findLatentClass <- function(data = ..., nruns = 1, covdata = NULL, formula = NULL, SE.type = 'sandwich'){
   if(!require('mirt')){
     install.packages('mirt')
     library('mirt')
   }
+  try(mirtCluster(remove = T))
+  try(mirtCluster(spec = round(parallel::detectCores()/2)))
   modelFit <- list()
   for(i in 1:ncol(data)){
-    (try(testModel <- mirt::mdirt(data = data, model = i, SE = T, verbose = F, nruns = nruns, covdata = covdata, formula = formula, SE.type = SE.type), silent = T))
-    if(testModel@OptimInfo$converged && testModel@OptimInfo$secondordertest){
-      modelFit[[i]] <- testModel@Fit
+    invisible(try(testModel <- mirt::mdirt(data = data, model = i, SE = T, verbose = F, nruns = nruns, covdata = covdata, formula = formula, SE.type = SE.type), silent = T))
+    
+    message(round(i/ncol(data)*100, 1), "% complete", '(', i,' / ', ncol(data), ')')
+    
+    if(exists('testModel')){
+      if(testModel@OptimInfo$converged && testModel@OptimInfo$secondordertest){
+        modelFit[[i]] <- testModel@Fit
+      }
+      rm(testModel)
     }
   }
   # return(modelFit)
@@ -3728,6 +3748,7 @@ findLatentClass <- function(data = ..., nruns = 1, covdata = NULL, formula = NUL
   colnames(modelFitMatrix) <- names(modelFit[[1]])
   return(modelFitMatrix)
 }
+
 
 autoLCA <- function(data = ..., UIRT = T, nruns = 1, covdata = NULL, formula = NULL, SE.type = 'sandwich', forceMHRM = F){
   # source('https://github.com/seonghobae/k.aefa/raw/master/aFIPC.R')
