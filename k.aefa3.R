@@ -2429,15 +2429,19 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
       # precalculation of CI for a1
       ZeroList <- vector()
       ZeroRange <- vector()
-      if(surveyFixMod@Options$SE == T && (length(workTestlets) != 0 | surveyFixMod@Model$model == 1)){
-        for(i in 1:NROW(coef(surveyFixMod))-1){
-          vec <- data.frame(coef(surveyFixMod)[i])
+      
+      if(surveyFixMod@Options$SE == T && (length(workTestlets) != 0 | surveyFixMod@Model$nfact == 1)){
+        for(III in 1:NROW(coef(surveyFixMod))-1){
+          try(vec <- data.frame(coef(surveyFixMod)[III]), silent = T)
           
-          if(is.na((vec[2,1] < 0 && vec[3,1] > 0))){
+          if(exists('vec')){
             
-          } else {
-            ZeroList[length(ZeroList)+1] <- (vec[2,1] < 0 && vec[3,1] > 0)
-            ZeroRange[length(ZeroRange)+1] <- psych::describe(c(vec[2,1], vec[3,1]))$range
+            if(is.na((vec[2,1] < 0 && vec[3,1] > 0))){
+              
+            } else {
+              try(ZeroList[length(ZeroList)+1] <- (vec[2,1] < 0 && vec[3,1] > 0), silent = T)
+              try(ZeroRange[length(ZeroRange)+1] <- psych::describe(c(vec[2,1], vec[3,1]))$range, silent = T)
+            }
           }
           # print(ZeroList) -- for debug
           # print(ZeroRange)
