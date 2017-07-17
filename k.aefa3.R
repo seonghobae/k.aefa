@@ -3671,13 +3671,13 @@ fastBifactorCFA <- function(x, ga = F, itemkeys = NULL, initSolution = F, skipNR
       message('excluding unscalable varaiables...')
       testDat <- data.frame(x)[-which(modMokken == 0)]
       modMokken <- modMokken[-which(modMokken == 0)]
-      modMokken[which(modMokken %in% as.numeric(names(which(table(modMokken) < 3))))] <- NA
+      modMokken[which(modMokken %in% as.numeric(names(which(table(modMokken) < 2))))] <- NA
       
       # print(modMokken)
     } else {
       testDat <- data.frame(x)
       modMokken[which(modMokken == 0)] <- NA
-      modMokken[which(modMokken %in% as.numeric(names(which(table(modMokken) < 3))))] <- NA
+      modMokken[which(modMokken %in% as.numeric(names(which(table(modMokken) < 2))))] <- NA
       # print(modMokken)
       
     }
