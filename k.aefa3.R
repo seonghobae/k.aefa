@@ -3745,7 +3745,7 @@ findLatentClass <- function(data = ..., nruns = 1, maxClasses = NULL, covdata = 
   for(i in 1:maxClasses){
     invisible(try(testModel <- mirt::mdirt(data = data, model = i, SE = T, verbose = F, nruns = nruns, covdata = covdata, formula = formula, SE.type = SE.type), silent = T))
     
-    message(round(i/maxClasses*100, 1), "% complete", '(', i,' / ', ncol(data), ')')
+    message(round(i/maxClasses*100, 1), "% complete", '(', i,' / ', maxClasses, ')')
     
     if(exists('testModel')){
       if(testModel@OptimInfo$converged && testModel@OptimInfo$secondordertest){
