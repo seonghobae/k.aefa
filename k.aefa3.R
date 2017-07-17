@@ -3731,7 +3731,7 @@ getmode <- function(v) {
   uniqv[which.max(tabulate(match(v, uniqv)))]
 }
 
-findLatentClass <- function(data = ..., nruns = 1, covdata = NULL, formula = NULL, SE.type = 'sandwich'){
+findLatentClass <- function(data = ..., nruns = 1, maxClasses = NULL, covdata = NULL, formula = NULL, SE.type = 'sandwich'){
   if(!require('mirt')){
     install.packages('mirt')
     library('mirt')
@@ -3739,10 +3739,13 @@ findLatentClass <- function(data = ..., nruns = 1, covdata = NULL, formula = NUL
   try(mirtCluster(remove = T))
   try(mirtCluster(spec = round(parallel::detectCores()/2)))
   modelFit <- list()
-  for(i in 1:ncol(data)){
+  if(is.null(maxClasses)){
+    maxClasses <- ncol(data)
+  }
+  for(i in 1:maxClasses){
     invisible(try(testModel <- mirt::mdirt(data = data, model = i, SE = T, verbose = F, nruns = nruns, covdata = covdata, formula = formula, SE.type = SE.type), silent = T))
     
-    message(round(i/ncol(data)*100, 1), "% complete", '(', i,' / ', ncol(data), ')')
+    message(round(i/maxClasses*100, 1), "% complete", '(', i,' / ', ncol(data), ')')
     
     if(exists('testModel')){
       if(testModel@OptimInfo$converged && testModel@OptimInfo$secondordertest){
