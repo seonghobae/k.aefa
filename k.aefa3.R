@@ -3740,7 +3740,7 @@ findLatentClass <- function(data = ..., nruns = 1, maxClasses = NULL, covdata = 
   try(mirtCluster(spec = round(parallel::detectCores()/2)))
   modelFit <- list()
   if(is.null(maxClasses)){
-    maxClasses <- ncol(data)
+    maxClasses <- ncol(data)/2
   }
   for(i in 1:maxClasses){
     invisible(try(testModel <- mirt::mdirt(data = data, model = i, SE = T, verbose = F, nruns = nruns, covdata = covdata, formula = formula, SE.type = SE.type), silent = T))
@@ -3750,7 +3750,7 @@ findLatentClass <- function(data = ..., nruns = 1, maxClasses = NULL, covdata = 
       if(checkSecondOrderTest){
         
         if(testModel@OptimInfo$converged && testModel@OptimInfo$secondordertest){
-          message(round(i/maxClasses*100, 1), "% complete", '(', i,' / ', maxClasses, ')')
+          message(round(i/maxClasses*100, 1), "% complete", ' (', i,' / ', maxClasses, ')')
           modelFit[[i]] <- testModel@Fit
         }
         rm(testModel)
