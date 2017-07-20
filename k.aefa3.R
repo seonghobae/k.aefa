@@ -3731,7 +3731,7 @@ getmode <- function(v) {
   uniqv[which.max(tabulate(match(v, uniqv)))]
 }
 
-findLatentClass <- function(data = ..., nruns = 1, maxClasses = NULL, covdata = NULL, formula = NULL, SE.type = 'sandwich'){
+findLatentClass <- function(data = ..., nruns = 1, maxClasses = NULL, covdata = NULL, formula = NULL, SE.type = 'sandwich', checkSecondOrderTest = T){
   if(!require('mirt')){
     install.packages('mirt')
     library('mirt')
@@ -3747,12 +3747,24 @@ findLatentClass <- function(data = ..., nruns = 1, maxClasses = NULL, covdata = 
     
     
     if(exists('testModel')){
-      if(testModel@OptimInfo$converged && testModel@OptimInfo$secondordertest){
-        message(round(i/maxClasses*100, 1), "% complete", '(', i,' / ', maxClasses, ')')
-        modelFit[[i]] <- testModel@Fit
+      if(checkSecondOrderTest){
+        
+        if(testModel@OptimInfo$converged && testModel@OptimInfo$secondordertest){
+          message(round(i/maxClasses*100, 1), "% complete", '(', i,' / ', maxClasses, ')')
+          modelFit[[i]] <- testModel@Fit
+        }
+        rm(testModel)
+      } else {
+        
+        if(testModel@OptimInfo$converged){
+          message(round(i/maxClasses*100, 1), "% complete", '(', i,' / ', maxClasses, ')')
+          modelFit[[i]] <- testModel@Fit
+        }
+        rm(testModel)
       }
-      rm(testModel)
+      
     }
+    
   }
   # return(modelFit)
   
