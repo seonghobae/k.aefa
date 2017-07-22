@@ -3807,19 +3807,19 @@ autoLCA <- function(data = ..., UIRT = T, nruns = 1, covdata = NULL, formula = N
   return(list(IRTmodel = testMIRTmod, LCAdecisionTable = testNumberOfClasses, FinalModel = FinalModel))
 }
 
-MLIRT <- function(data = ..., covdata = ..., model = ..., itemtype = 'Rasch', fixed = ~-1, random = NULL, lr.fixed = ~1, lr.random = NULL, SEtol = 1e-4, SE = T, TOL = .001, ...){
+MLIRT <- function(data = ..., covdata = ..., model = ..., itemtype = 'Rasch', fixed = ~-1, random = NULL, lr.fixed = ~1, lr.random = NULL, SEtol = 1e-4, SE = T, TOL = .001, NCYCLES = 2000, ...){
   if(!require('mirt')){
     install.packages('mirt', repos = 'https://cran.biodisk.org')
   }
   
-  MLM_calibration <- mirt::mixedmirt(data = data, covdata = covdata, model = model, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, itemtype = itemtype, SE = SE, SE.type = 'MHRM', TOL = TOL, technical = list(SEtol = SEtol, removeEmptyRows = TRUE))
+  MLM_calibration <- mirt::mixedmirt(data = data, covdata = covdata, model = model, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, itemtype = itemtype, SE = SE, SE.type = 'MHRM', TOL = TOL, technical = list(SEtol = SEtol, removeEmptyRows = TRUE, NCYCLES = NCYCLES))
   
   
   return(MLM_calibration)
   # }
 }
 
-EEMEIRT <- function(data = ..., covdata = ..., itemtype = ..., SE = T, fixed = ~-1, random = NULL, lr.fixed = ~1, lr.random = NULL, TOL = .001, SEtol = 1e-3){
+EEMEIRT <- function(data = ..., covdata = ..., itemtype = ..., SE = T, fixed = ~-1, random = NULL, lr.fixed = ~1, lr.random = NULL, TOL = .001, SEtol = 1e-03, NCYCLES = 2000){
   testDIC <- vector()
   noConverge <- 0
   for(i in 1:ncol(data)){
@@ -3827,10 +3827,10 @@ EEMEIRT <- function(data = ..., covdata = ..., itemtype = ..., SE = T, fixed = ~
       message(which(testDIC == min(testDIC, na.rm = T)))
       testMLM <- MLIRT(data = data, covdata = covdata, model = which(testDIC == min(testDIC, na.rm = T)),
                        itemtype = itemtype, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                       TOL = TOL, SEtol = SEtol)
+                       TOL = TOL, SEtol = SEtol, NCYCLES = NCYCLES)
       return(testMLM)
     }
-    try(testMLM <- MLIRT(data = data, covdata = covdata, model = i, SE = F, itemtype = itemtype, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, TOL = TOL, SEtol = SEtol), silent = F)
+    try(testMLM <- MLIRT(data = data, covdata = covdata, model = i, SE = F, itemtype = itemtype, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, TOL = TOL, SEtol = SEtol, NCYCLES = NCYCLES), silent = F)
     if(exists('testMLM')){
       if(testMLM@OptimInfo$converged){
         testDIC[i] <- testMLM@Fit$DIC
@@ -3849,7 +3849,7 @@ EEMEIRT <- function(data = ..., covdata = ..., itemtype = ..., SE = T, fixed = ~
     stop('no solution')
   } else {
     message(which(testDIC == min(testDIC, na.rm = T)))
-    testMLM <- MLIRT(data = data, covdata = covdata, model = which(testDIC == min(testDIC, na.rm = T)), itemtype = itemtype, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, TOL = TOL, SEtol = SEtol)
+    testMLM <- MLIRT(data = data, covdata = covdata, model = which(testDIC == min(testDIC, na.rm = T)), itemtype = itemtype, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, TOL = TOL, SEtol = SEtol, NCYCLES = NCYCLES)
     return(testMLM)
   }
   
