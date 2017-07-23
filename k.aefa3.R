@@ -1003,7 +1003,7 @@ likertFA <- function(data = ..., ...) {
     } else {
       # getting factor loadings
       message('Rotating Factor Solution now')
-      rotF_geomin <- geominQ(result@Fit$F, maxit = 100000)
+      rotF_geomin <- GPArotation::geominQ(result@Fit$F, maxit = 100000)
       rotF_geomin <- data.frame(rotF_geomin$loadings)
       h2 <- data.frame(result@Fit$h2)
     }
@@ -2289,7 +2289,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
       if(ncol(modTEMP@Fit$F) == 1){
         rotMat <- modTEMP@Fit$F
       } else {
-        rotMat <- geominQ(modTEMP@Fit$F, maxit = 1e+5)$loadings
+        rotMat <- GPArotation::geominQ(modTEMP@Fit$F, maxit = 1e+5)$loadings
       }
       
       if(modTEMP@Fit$DIC > modOLD@Fit$DIC | modTEMP@OptimInfo$converged == F | sum(round(modTEMP@Fit$h2, 3) >= .999) != 0){ # modTEMP@Fit$AICc > modOLD@Fit$AICc | 
@@ -2435,7 +2435,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           try(vec <- data.frame(coef(surveyFixMod)[III]), silent = T)
           
           if(exists('vec')){
-            
+            # print(vec) # -- for debug
             if(is.na((vec[2,1] < 0 && vec[3,1] > 0))){
               
             } else {
@@ -2443,7 +2443,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
               try(ZeroRange[length(ZeroRange)+1] <- psych::describe(c(vec[2,1], vec[3,1]))$range, silent = T)
             }
           }
-          # print(ZeroList) -- for debug
+          # print(ZeroList)# -- for debug
           # print(ZeroRange)
         }
       }
@@ -2494,9 +2494,28 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         }
       } else if(S_X2ErrorFlag == F && (surveyFixMod@Model$nfact == 1 | length(workTestlets) > 0)) { # if Chi-squared can be calculate
         
+        # chi-square exception processing
         if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) == 0 && sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) == 0){ # avoid unexpected situation
-          message('all items df are 0. skipping evaluation...')
-          itemFitDone <- TRUE
+          
+          if(sum(ZeroList) > 0){ # which item include 0 in a1
+            message('\nItem discrimination include 0 / removing ', paste(surveyFixMod_itemFit$item[which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]))
+            workKeys <- workKeys[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
+            workTestlets <- workTestlets[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
+            
+            surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
+                                     forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
+            if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
+              try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
+            }
+            rm(surveyFixMod_itemFit)
+            rm(S_X2ErrorFlag)
+            
+            
+          } else {
+            message('all items df are 0. skipping evaluation...')
+            itemFitDone <- TRUE
+            }
+          
           
         } else if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems && (sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) < length(1:surveyFixMod@Data$nitems)/2)){
           message('\nremoving items df is NA / ', paste(surveyFixMod_itemFit$item[which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)]))
@@ -2568,7 +2587,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           rm(S_X2ErrorFlag)
           
           
-        } else if(sum(ZeroList) > 0){ # which item include 0
+        } else if(sum(ZeroList) > 0){ # which item include 0 in 
           message('\nItem discrimination include 0 / removing ', paste(surveyFixMod_itemFit$item[which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]))
           workKeys <- workKeys[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
           workTestlets <- workTestlets[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
