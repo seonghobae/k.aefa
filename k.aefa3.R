@@ -3893,3 +3893,48 @@ rotateEMEIRT <- function(EMEIRTmodel, rotate = 'bifactorQ', suppress = 0){
 }
 
 # rotateEMEIRT(silenceMLM, rotate = 'bifactorT', suppress = .05)
+doLCA <- function(data = ..., SE.type = 'Oakes', checkSecondOrderTest = F, nruns = 1, maxClasses = NULL){
+  
+  if(!require('psych')){
+    install.packages('psych')
+    library('psych')
+  }
+  if(is.data.frame(data)){
+    datd <- data
+  } else {
+    datd <- data.frame(datd)
+  }
+  datd <- datd[psych::describe(datd)$range != 0] # prevent range = 0
+  STOP_LCA <- FALSE
+  while(!STOP_LCA){
+    preLCAoptimal <- findLatentClass(datd, SE.type = SE.type, checkSecondOrderTest = checkSecondOrderTest, nruns = nruns, maxClasses = maxClasses)
+    preLCAoptimal <- data.frame(preLCAoptimal)
+    
+    optimalDecisionAIC <- as.numeric(rownames(preLCAoptimal))[which(preLCAoptimal$AIC == min(preLCAoptimal$AIC))]
+    optimalDecisionAICc <- as.numeric(rownames(preLCAoptimal))[which(preLCAoptimal$AICc == min(preLCAoptimal$AICc))]
+    optimalDecisionSABIC <- as.numeric(rownames(preLCAoptimal))[which(preLCAoptimal$SABIC == min(preLCAoptimal$SABIC))]
+    optimalDecisionDIC <- as.numeric(rownames(preLCAoptimal))[which(preLCAoptimal$DIC == min(preLCAoptimal$DIC))]
+    optimalDecisionTable <- cbind(optimalDecisionAIC, optimalDecisionAICc, optimalDecisionSABIC, optimalDecisionDIC)
+    optimalDecisionTable <- table(optimalDecisionTable)
+    
+    optimalDecision <- as.numeric(names(optimalDecisionTable)[which(optimalDecisionTable == max(optimalDecisionTable))])
+    
+    preLCAmod <- mirt::mdirt(datd, optimalDecision, SE = T, SE.type = SE.type, nruns = nruns)
+    preLCAmoditemFit <- data.frame(mirt::itemfit(preLCAmod))
+    
+    message('global optimal: ', optimalDecision, '')
+    print(preLCAmoditemFit)
+    if(sum(is.na(preLCAmoditemFit$df.S_X2)) != 0){
+      datd <- datd[,!is.na(preLCAmoditemFit$df.S_X2)]
+    } else if (length(which(preLCAmoditemFit$df.S_X2 == 0)) != 0 && length(which(preLCAmoditemFit$df.S_X2 == 0)) != nrow(preLCAmoditemFit)){
+      datd <- datd[,-which(preLCAmoditemFit$df.S_X2 == 0)]
+    } else if (length(which(preLCAmoditemFit$p.S_X2 < .05)) != 0){
+      datd <- datd[,-which(preLCAmoditemFit$S_X2/preLCAmoditemFit$df.S_X2 == max(preLCAmoditemFit$S_X2/preLCAmoditemFit$df.S_X2, na.rm = T))]
+    } else {
+      return(list(modelFit = preLCAoptimal, LCAmodel = preLCAmod))
+    }
+    rm(preLCAmod)
+    rm(preLCAoptimal)
+    rm(preLCAmoditemFit)
+  }
+}
