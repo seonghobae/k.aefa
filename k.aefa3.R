@@ -1129,7 +1129,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                      forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F,
                      forceMHRM = F, forceNormalEM = T, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T,
                      forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, forceNRM = F,
-                     diagnosis = F, forceDefalutAccelerater = F, forceDefaultOptimizer = F, EnableFMHRM = F, testlets = NULL, ...){
+                     diagnosis = F, forceDefalutAccelerater = F, forceDefaultOptimizer = F, EnableFMHRM = F, testlets = NULL, plotOn = T, ...){
   
   x <- x[,psych::describe(x)$range > 0] # delete no variance items
   
@@ -2270,7 +2270,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
     try(invisible(mirt::mirtCluster(remove = T)), silent = T)
     
     
-    if(i == 1 && length(ActualTestlets) == 0){ # ICC printing
+    if(i == 1 && length(ActualTestlets) == 0 && plotOn == T){ # ICC printing
       try(print(plot(modTEMP, type = 'infoSE')))
       try(print(plot(modTEMP, type = 'infotrace', facet_items = TRUE)))
       try(print(plot(modTEMP, type = 'trace')))
@@ -2319,7 +2319,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
                      survey.weights = NULL, allowMixedResponse = T, autofix = F,
                      forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4,
                      bifactorSolution = T, skipS_X2 = F, forceNRM = F, needGlobalOptimal = T,
-                     pilotTestMode = F, forceConsiderPositiveZh = F, forceDefalutAccelerater = F, forceDefaultOptimizer = F, EnableFMHRM = F, testlets = NULL, minimumLeftItems = 3, ...) {
+                     pilotTestMode = F, forceConsiderPositiveZh = F, forceDefalutAccelerater = F, forceDefaultOptimizer = F, EnableFMHRM = F, testlets = NULL,
+                     minimumLeftItems = 3, plotOn = T, forceCTTmode = F, ...) {
   message('---------------------------------------------------------')
   message(' k.aefa: kwangwoon automated exploratory factor analysis ')
   message('---------------------------------------------------------\n')
@@ -2390,40 +2391,43 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         try(invisible(mirt::mirtCluster(spec = NofCores)), silent = T)
       }
       
-      if(sum(is.na(surveyFixMod@Data$data)) == 0){
-        try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
-                                                  method = fscoreMethod,
-                                                  QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
-      } else {
-        try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
-                                                  impute = 100,
-                                                  method = fscoreMethod,
-                                                  QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
-      }
-      
-      if(!exists('surveyFixMod_itemFit')){
+      if(!forceCTTmode){
         if(sum(is.na(surveyFixMod@Data$data)) == 0){
-          try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('Zh', 'infit'),
+          try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
                                                     method = fscoreMethod,
                                                     QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
         } else {
-          try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('Zh', 'infit'),
+          try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
                                                     impute = 100,
                                                     method = fscoreMethod,
                                                     QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
         }
-        S_X2ErrorFlag <- T
-      } else {
-        S_X2ErrorFlag <- F
-      }
-      try(invisible(mirt::mirtCluster(remove = T)), silent = T)
-      
-      print(surveyFixMod_itemFit)
-      
-      # item evaluation
-      
-      if(S_X2ErrorFlag){
-        message('S_X2 can not be calcuate normally...')
+        
+        if(!exists('surveyFixMod_itemFit')){
+          if(sum(is.na(surveyFixMod@Data$data)) == 0){
+            try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('Zh', 'infit'),
+                                                      method = fscoreMethod,
+                                                      QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
+          } else {
+            try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('Zh', 'infit'),
+                                                      impute = 100,
+                                                      method = fscoreMethod,
+                                                      QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
+          }
+          S_X2ErrorFlag <- T
+        } else {
+          S_X2ErrorFlag <- F
+        }
+        try(invisible(mirt::mirtCluster(remove = T)), silent = T)
+        
+        print(surveyFixMod_itemFit)
+        
+        # item evaluation
+        
+        if(S_X2ErrorFlag){
+          message('S_X2 can not be calcuate normally...')
+        }
+        
       }
       
       # precalculation of CI for a1
@@ -2450,7 +2454,25 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
       
       
       # Standardized Log-Likelihood
-      if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -1.96)) != 0 && sum(is.na(surveyFixModRAW)) == 0){ # Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
+      if(forceCTTmode){
+        if(sum(ZeroList) > 0){ # which item include 0 in a1
+          message('\nItem discrimination include 0 / removing ', paste(colnames(surveyFixModRAW)[which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]))
+          workKeys <- workKeys[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
+          workTestlets <- workTestlets[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
+          
+          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, ...)
+          if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
+            try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
+          }
+          rm(surveyFixMod_itemFit)
+          rm(S_X2ErrorFlag)
+          
+          
+        } else {
+          itemFitDone <- TRUE
+        }
+      } else if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] < -1.96)) != 0 && sum(is.na(surveyFixModRAW)) == 0){ # Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
         message('\nDrasgow, F., Levine, M. V., & Williams, E. A. (1985) / removing ', paste(surveyFixMod_itemFit$item[which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]))
         workKeys <- workKeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
         workTestlets <- workTestlets[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
