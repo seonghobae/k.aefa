@@ -2319,7 +2319,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
                      survey.weights = NULL, allowMixedResponse = T, autofix = F,
                      forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4,
                      bifactorSolution = T, skipS_X2 = F, forceNRM = F, needGlobalOptimal = T,
-                     pilotTestMode = F, forceConsiderPositiveZh = F, forceDefalutAccelerater = F, forceDefaultOptimizer = F, EnableFMHRM = F, testlets = NULL, ...) {
+                     pilotTestMode = F, forceConsiderPositiveZh = F, forceDefalutAccelerater = F, forceDefaultOptimizer = F, EnableFMHRM = F, testlets = NULL, minimumLeftItems = 3, ...) {
   message('---------------------------------------------------------')
   message(' k.aefa: kwangwoon automated exploratory factor analysis ')
   message('---------------------------------------------------------\n')
@@ -2368,7 +2368,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
     surveyFixModRAW <- data.frame(surveyFixMod@Data$data)
     surveyFixModCOV <- data.frame(attr(surveyFixMod@ParObjects$lrPars, "df"))
     
-    if(ncol(surveyFixModRAW) > 3){
+    if(ncol(surveyFixModRAW) > minimumLeftItems){
       
       
       message('\nChecking item local independence assumption')
@@ -2514,7 +2514,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           } else {
             message('all items df are 0. skipping evaluation...')
             itemFitDone <- TRUE
-            }
+          }
           
           
         } else if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems && (sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) < length(1:surveyFixMod@Data$nitems)/2)){
