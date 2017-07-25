@@ -1131,6 +1131,10 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                      forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, forceNRM = F,
                      diagnosis = F, forceDefalutAccelerater = F, forceDefaultOptimizer = F, EnableFMHRM = F, testlets = NULL, plotOn = T, ...){
   
+  if(!require('mirt')){
+    install.packages('mirt')
+    library('mirt')
+  }
   x <- x[,psych::describe(x)$range > 0] # delete no variance items
   
   for(i in 1:ncol(x)){
@@ -1620,6 +1624,139 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        
+      
+        
+        
+        if(exists('modTEMP') == F && diagnosis == F){
+          message('\nMIRT model: Compensatory 4PL')
+          try(modTEMP <- mirt::bfactor(data = x, ActualTestlets, itemtype = '4PL',
+                                       lerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        
+        
+        if(exists('modTEMP') == F && diagnosis == F){
+          
+          message('\nMIRT model: Compensatory 3PL with upper asymptote (slip) estimated')
+          try(modTEMP <- mirt::bfactor(data = x, ActualTestlets, itemtype = '3PLu',
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        
+        if(exists('modTEMP') == F && diagnosis == F){
+          
+          message('\nMIRT model: Partially compensatory 3PL')
+          try(modTEMP <- mirt::bfactor(data = x, ActualTestlets, itemtype = 'PC3PL',
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        
+        if(exists('modTEMP') == F && diagnosis == F){
+          
+          message('\nMIRT model: Compensatory 3PL')
+          try(modTEMP <- mirt::bfactor(data = x, ActualTestlets, itemtype = '3PL',
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        
+        # }
+        
+        
+        if(exists('modTEMP') == F && diagnosis == F){
+          
+          message('\nMIRT model: Compensatory 2PL')
+          try(modTEMP <- mirt::bfactor(data = x, ActualTestlets, itemtype = '2PL',
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        
+        if(exists('modTEMP') == F && diagnosis == F){
+          
+          message('\nMIRT model: Partially compensatory 2PL')
+          try(modTEMP <- mirt::bfactor(data = x, ActualTestlets, itemtype = 'PC2PL',
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        if(exists('modTEMP') == F && skipIdealPoint == F){
+          
+          message('\nMIRT model: ideal point')
+          try(modTEMP <- mirt::bfactor(data = x, ActualTestlets, itemtype = 'ideal',
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+        }
+        
+        if(exists('modTEMP') == F){
+          
+          message('\nMIRT model: Rasch')
+          try(modTEMP <- mirt::bfactor(data = x, ActualTestlets, itemtype = 'Rasch',
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
               rm(modTEMP)
@@ -2206,6 +2343,49 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                     TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
                                     optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          }
+        }
+        
+        
+        
+        if(exists('modTEMP') == F && skipNominal == F){
+          message('\nMIRT model: nominal response')
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'nominal',
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          }
+        }
+        
+        # generalized partial credit model (non-sequential)
+        if(exists('modTEMP') == F && forceNRM == F){
+          message('\nMIRT model: Generalized partial credit')
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'gpcm',
+                                       accelerate = accelerateINPUT, calcNull = T,
+                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                        removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
+                                       formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          }
+        }
+        
+        # graded response model (sequential)
+        if(exists('modTEMP') == F && forceNRM == F){
+          message('\nMIRT model: Graded response')
+          try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, accelerate = accelerateINPUT,
+                                       calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
+                                                                      SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
+                                       TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
+                                       optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
           }
