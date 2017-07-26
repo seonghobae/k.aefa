@@ -3963,7 +3963,7 @@ getmode <- function(v) {
   uniqv[which.max(tabulate(match(v, uniqv)))]
 }
 
-findLatentClass <- function(data = ..., nruns = 1, maxClasses = NULL, covdata = NULL, formula = NULL, SE.type = 'sandwich', checkSecondOrderTest = T){
+findLatentClass <- function(data = ..., nruns = 1, maxClasses = NULL, covdata = NULL, formula = NULL, SE.type = 'sandwich', checkSecondOrderTest = T, empiricalhist = T){
   if(!require('mirt')){
     install.packages('mirt')
     library('mirt')
@@ -3975,7 +3975,7 @@ findLatentClass <- function(data = ..., nruns = 1, maxClasses = NULL, covdata = 
     maxClasses <- ncol(data)/2
   }
   for(i in 1:maxClasses){
-    invisible(try(testModel <- mirt::mdirt(data = data, model = i, SE = T, verbose = F, nruns = nruns, covdata = covdata, formula = formula, SE.type = SE.type), silent = T))
+    invisible(try(testModel <- mirt::mdirt(data = data, model = i, SE = T, verbose = F, nruns = nruns, covdata = covdata, formula = formula, SE.type = SE.type, empiricalhist = empiricalhist), silent = T))
     
     
     if(exists('testModel')){
@@ -4125,7 +4125,7 @@ rotateEMEIRT <- function(EMEIRTmodel, rotate = 'bifactorQ', suppress = 0){
 }
 
 # rotateEMEIRT(silenceMLM, rotate = 'bifactorT', suppress = .05)
-doLCA <- function(data = ..., SE.type = 'Oakes', checkSecondOrderTest = F, nruns = 1, maxClasses = NULL){
+doLCA <- function(data = ..., SE.type = 'Oakes', checkSecondOrderTest = F, nruns = 1, maxClasses = NULL, empiricalhist = T){
   
   if(!require('psych')){
     install.packages('psych')
@@ -4139,7 +4139,7 @@ doLCA <- function(data = ..., SE.type = 'Oakes', checkSecondOrderTest = F, nruns
   datd <- datd[psych::describe(datd)$range != 0] # prevent range = 0
   STOP_LCA <- FALSE
   while(!STOP_LCA){
-    preLCAoptimal <- findLatentClass(datd, SE.type = SE.type, checkSecondOrderTest = checkSecondOrderTest, nruns = nruns, maxClasses = maxClasses)
+    preLCAoptimal <- findLatentClass(datd, SE.type = SE.type, checkSecondOrderTest = checkSecondOrderTest, nruns = nruns, maxClasses = maxClasses, empiricalhist = empiricalhist)
     preLCAoptimal <- data.frame(preLCAoptimal)
     
     optimalDecisionAIC <- as.numeric(rownames(preLCAoptimal))[which(preLCAoptimal$AIC == min(preLCAoptimal$AIC))]
@@ -4151,7 +4151,7 @@ doLCA <- function(data = ..., SE.type = 'Oakes', checkSecondOrderTest = F, nruns
     
     optimalDecision <- as.numeric(names(optimalDecisionTable)[which(optimalDecisionTable == max(optimalDecisionTable))])
     
-    preLCAmod <- mirt::mdirt(datd, optimalDecision, SE = T, SE.type = SE.type, nruns = nruns)
+    preLCAmod <- mirt::mdirt(datd, optimalDecision, SE = T, SE.type = SE.type, nruns = nruns, empiricalhist = empiricalhist)
     preLCAmoditemFit <- data.frame(mirt::itemfit(preLCAmod))
     
     message('global optimal: ', optimalDecision, '')
