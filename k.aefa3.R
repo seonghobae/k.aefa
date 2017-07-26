@@ -4125,7 +4125,7 @@ rotateEMEIRT <- function(EMEIRTmodel, rotate = 'bifactorQ', suppress = 0){
 }
 
 # rotateEMEIRT(silenceMLM, rotate = 'bifactorT', suppress = .05)
-doLCA <- function(data = ..., SE.type = 'Oakes', checkSecondOrderTest = F, nruns = 1, maxClasses = NULL, empiricalhist = T){
+doLCA <- function(data = ..., SE.type = 'Oakes', checkSecondOrderTest = T, nruns = 1, maxClasses = NULL, empiricalhist = T){
   
   if(!require('psych')){
     install.packages('psych')
