@@ -1631,7 +1631,12 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           }
         }
         
-      
+        if(SE.type == 'MHRM'){
+          message('MHRM trials were not efficient. try to calibrate the model with EM')
+          SE.type <- 'sandwich'
+        } else {
+          message('try to recalibrate the model with mirt::bfactor() function')
+        }
         
         
         if(exists('modTEMP') == F && diagnosis == F){
@@ -2349,6 +2354,12 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         }
         
         
+        if(SE.type == 'MHRM'){
+          message('MHRM trials were not efficient. try to calibrate the model with EM')
+          SE.type <- 'sandwich'
+        } else {
+          message('try to recalibrate the model with mirt::bfactor() function')
+        }
         
         if(exists('modTEMP') == F && skipNominal == F){
           message('\nMIRT model: nominal response')
