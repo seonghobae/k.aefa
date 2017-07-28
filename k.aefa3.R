@@ -3559,10 +3559,14 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
   STOP <- FALSE
 
   while(!STOP){
-    pb$update(1-((sum(init$summary.mcmcobj$Rhat > Rhat) +
-                    sum(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)] < 0) + 
-                   sum(cbind( init$summary.mcmcobj$Q2.5[grep("^a",init$summary.mcmcobj$parameter)] < 0 && init$summary.mcmcobj$Q97.5[grep("^a",init$summary.mcmcobj$parameter)] > 0 ))
-                 ) / length(init$summary.mcmcobj$Rhat)))
+    ticktockUpdate <- 1-((sum(init$summary.mcmcobj$Rhat > Rhat) +
+          sum(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)] < 0) + 
+          sum(cbind( init$summary.mcmcobj$Q2.5[grep("^a",init$summary.mcmcobj$parameter)] < 0 && init$summary.mcmcobj$Q97.5[grep("^a",init$summary.mcmcobj$parameter)] > 0 ))
+    ) / length(init$summary.mcmcobj$Rhat))
+    if(!is.na(ticktockUpdate)){
+      pb$update(ticktockUpdate)
+    }
+    
     pb$tick()
     invisible(try(gc(), silent = T))
     if(sum(init$summary.mcmcobj$Rhat > Rhat) != 0){
