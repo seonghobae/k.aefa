@@ -4318,24 +4318,38 @@ KoreanNounExtraction <- function(dat){
     library('progress')
   }
   library('RHINO')
-  if(!exists('.connRHINO')){
+  # if(!exists('.connRHINO')){
     .connRHINO <<- RHINO::initRhino()
-  }
+    .connRHINO <- RHINO::initRhino()
+  # }
   
   for(i in 1:ncol(dat)){
     dat[,i] <- as.character(dat[,i])
   }
   a <- vector()
   
+  pb <- progress::progress_bar$new(
+    format = "  extracting words [:bar] :percent in :elapsed (:current of :total cells, ETA: :eta)",
+    total = ncol(dat)*nrow(dat), clear = F, width= 120)
+  
   for(i in 1:ncol(dat)){
+    
     for(j in 1:length(dat[,i])){
-      a <- c(a, RHINO::getMorph(dat[j,i], type = 'noun'))
+      if(!is.na(dat[j,i])){
+        
+        pb$update((i*j)/(ncol(dat)*nrow(dat)))
+        pb$tick()
+        a <- c(a, RHINO::getMorph(dat[j,i], type = 'noun'))
+      } else {
+        pb$update((i*j)/(ncol(dat)*nrow(dat)))
+        pb$tick()
+      }
+      
+      
     }
-    # aprime[length(aprime)+1:length(a)] <- a
+    
   }
   a <- a[!duplicated(a)]
-  
-  
   a <- a[order(a)]
   
   b <- vector()
@@ -4358,15 +4372,19 @@ KoreanNounExtraction <- function(dat){
     datTextMatrix[,i] <- plyr::mapvalues(datTextMatrix[,i], NA, 0)
   }
   
+  rm(pb)
   pb <- progress::progress_bar$new(
-    format = "  extracting [:bar] :percent in :elapsed (:current of :total, ETA: :eta)",
-    total = ncol(datTextMatrix), clear = FALSE, width= 60)
+    format = "  arranging words [:bar] :percent in :elapsed (:current of :total words, ETA: :eta)",
+    total = ncol(datTextMatrix), clear = F, width= 120)
+
   for(i in 1:ncol(datTextMatrix)){
     pb$tick()
     datTextMatrix[is.na(datTextMatrix[i]), i] <- 0
-    for(j in 12:22){
+    for(j in 1:ncol(dat)){
       datTextMatrix[grep(b[i], dat[,j]),i] <- datTextMatrix[grep(b[i], dat[,j]),i]+1
     }
+    
+    
   }
   return (datTextMatrix)
 }
