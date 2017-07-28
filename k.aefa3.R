@@ -4318,7 +4318,9 @@ KoreanNounExtraction <- function(dat){
     library('progress')
   }
   library('RHINO')
-  .connRHINO <<- RHINO::initRHINO()
+  if(!exists('.connRHINO')){
+    .connRHINO <<- RHINO::initRHINO()
+  }
   
   for(i in 1:ncol(dat)){
     dat[,i] <- as.character(dat[,i])
