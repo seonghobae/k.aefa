@@ -4304,7 +4304,7 @@ doLCA <- function(data = ..., SE.type = 'Oakes', checkSecondOrderTest = T, nruns
 }
 
 
-KoreanNounExtraction <- function(dat){
+KoreanNounExtraction <- function(dat, polyReturn = F){
   
   if(!require('RHINO')){
     install.packages('rJava')
@@ -4381,8 +4381,15 @@ KoreanNounExtraction <- function(dat){
     pb$tick()
     datTextMatrix[is.na(datTextMatrix[i]), i] <- 0
     for(j in 1:ncol(dat)){
-      datTextMatrix[grep(b[i], dat[,j]),i] <- datTextMatrix[grep(b[i], dat[,j]),i]+1
+      if(polyReturn){
+        datTextMatrix[grep(b[i], dat[,j]),i] <- datTextMatrix[grep(b[i], dat[,j]),i]+1
+        
+      } else {
+        datTextMatrix[grep(b[i], dat[,j]),i] <- 1
+        
+      }
     }
+
     
     
   }
