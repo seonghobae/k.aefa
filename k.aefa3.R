@@ -4330,7 +4330,7 @@ KoreanNounExtraction <- function(dat, polyReturn = F){
   k <- 0
   pb <- progress::progress_bar$new(
     format = "  extracting words [:bar] :percent in :elapsed (:current of :total cells, ETA: :eta)",
-    total = TotCells, clear = F, width= 120)
+    total = TotCells, clear = T, width= 120)
   
   for(i in 1:ncol(dat)){
     
@@ -4375,7 +4375,7 @@ KoreanNounExtraction <- function(dat, polyReturn = F){
   k <- 0
   pb <- progress::progress_bar$new(
     format = "  arranging words [:bar] :percent in :elapsed (:current of :total cells, ETA: :eta)",
-    total = TotCells, clear = F, width= 120)
+    total = TotCells, clear = T, width= 120)
 
   for(i in 1:ncol(datTextMatrix)){ # i th word
     
