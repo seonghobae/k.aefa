@@ -3543,20 +3543,20 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
     if(exists('init')){
       try(rm(init))
     }
-    try(init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+    try(init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
     if(!exists('init')){
       while(!exists('init')){
-        try(init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+        try(init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
       }
     }
   } else if(length(group) == 0 && length(ActualTestlets) != 0 && link == 'logit'){
     if(exists('init')){
       try(rm(init))
     }
-    try(init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+    try(init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
     if(!exists('init')){
       while(!exists('init')){
-        try(init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+        try(init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
       }
     }
   } else if(length(group) == 0 && length(ActualTestlets) != 0 && link == 'normal'){
@@ -3566,10 +3566,10 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
     if(exists('init')){
       try(rm(init))
     }
-    try(init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+    try(init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
     if(!exists('init')){
       while(!exists('init')){
-        try(init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+        try(init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
       }
     }
   }
@@ -3625,30 +3625,30 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
           if(exists('init')){
             try(rm(init))
           }
-          try(init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+          try(init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
           if(!exists('init')){
             while(!exists('init')){
-              try(init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+              try(init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
             }
           }
         } else if(length(group) == 0 && length(ActualTestlets) != 0 && link == 'logit'){
           if(exists('init')){
             try(rm(init))
           }
-          try(init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+          try(init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
           if(!exists('init')){
             while(!exists('init')){
-              try(init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+              try(init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
             }
           }
         } else {
           if(exists('init')){
             try(rm(init))
           }
-          try(init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+          try(init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
           if(!exists('init')){
             while(!exists('init')){
-              try(init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+              try(init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
             }
           }
         }
@@ -3678,30 +3678,30 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
           if(exists('init')){
             try(rm(init))
           }
-          try(init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+          try(init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
           if(!exists('init')){
             while(!exists('init')){
-              try(init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+              try(init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
             }
           }
         } else if(length(group) == 0 && length(ActualTestlets) != 0 && link == 'logit'){
           if(exists('init')){
             try(rm(init))
           }
-          try(init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+          try(init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
           if(!exists('init')){
             while(!exists('init')){
-              try(init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+              try(init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
             }
           }
         } else {
           if(exists('init')){
             try(rm(init))
           }
-          try(init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+          try(init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
           if(!exists('init')){
             while(!exists('init')){
-              try(init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+              try(init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
             }
           }
         }
@@ -3733,30 +3733,30 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
           if(exists('init')){
             try(rm(init))
           }
-          try(init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+          try(init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
           if(!exists('init')){
             while(!exists('init')){
-              try(init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+              try(init <- sirt::mcmc.3pno.testlet(dat = initData, est.slope = est.slope, weights = survey.weights, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
             }
           }
         } else if(length(group) == 0 && length(ActualTestlets) != 0 && link == 'logit'){
           if(exists('init')){
             try(rm(init))
           }
-          try(init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+          try(init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
           if(!exists('init')){
             while(!exists('init')){
-              try(init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+              try(init <- sirt::mcmc.3pno.testlet(dat = initData, testlets = ActualTestlets, weights = survey.weights, est.slope = est.slope, est.guess = est.guess, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
             }
           }
         } else {
           if(exists('init')){
             try(rm(init))
           }
-          try(init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+          try(init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
           if(!exists('init')){
             while(!exists('init')){
-              try(init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter))
+              try(init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter), silent = T)
             }
           }
         }
