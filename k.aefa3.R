@@ -3451,7 +3451,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
                            est.a.M="h" , est.a.Var="i", burnin = 10000,
                            iter = 20000, Rhat = 1.05, autofix = T, TargetTestLength = 3, considerSigma = T, # for 2PNO Multilevel
                            testlets = NULL, survey.weights = NULL, est.slope = T, est.guess = T, verbose = F # for 1-3PNO testlet
-                           ){
+){
   if(!require('sirt')){
     install.packages('sirt')
     library('sirt')
@@ -3508,7 +3508,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
   message('Current number of groups: ', numberOfGroups)
   message('Rhat cutoff: ', Rhat)
   
-
+  
   group <- as.integer(group)
   
   if(length(testlets) != 0){
@@ -3557,11 +3557,11 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
   
   
   STOP <- FALSE
-
+  
   while(!STOP){
     ticktockUpdate <- 1-((sum(init$summary.mcmcobj$Rhat > Rhat) +
-          sum(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)] < 0) + 
-          sum(cbind( init$summary.mcmcobj$Q2.5[grep("^a",init$summary.mcmcobj$parameter)] < 0 && init$summary.mcmcobj$Q97.5[grep("^a",init$summary.mcmcobj$parameter)] > 0 ))
+                            sum(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)] < 0) + 
+                            sum(cbind( init$summary.mcmcobj$Q2.5[grep("^a",init$summary.mcmcobj$parameter)] < 0 && init$summary.mcmcobj$Q97.5[grep("^a",init$summary.mcmcobj$parameter)] > 0 ))
     ) / length(init$summary.mcmcobj$Rhat))
     if(!is.na(ticktockUpdate)){
       pb$update(ticktockUpdate)
@@ -3605,7 +3605,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
           init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter)
         }
       } else {
-        
+        pb$update(1)
         pb$tick()
         STOP <- TRUE
       }
@@ -3634,7 +3634,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
           init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter)
         }
       } else {
-        
+        pb$update(1)
         pb$tick()
         STOP <- TRUE
       }
@@ -3665,13 +3665,13 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
           init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter)
         }
       } else {
-        
+        pb$update(1)
         pb$tick()
         STOP <- TRUE
       }
       
     } else { # overall stop rule when all items normally terminated
-      
+      pb$update(1)
       pb$tick()
       STOP <- TRUE
     }
