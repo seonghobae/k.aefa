@@ -4319,7 +4319,7 @@ KoreanNounExtraction <- function(dat){
   }
   library('RHINO')
   if(!exists('.connRHINO')){
-    .connRHINO <<- RHINO::initRHINO()
+    .connRHINO <<- RHINO::initRhino()
   }
   
   for(i in 1:ncol(dat)){
