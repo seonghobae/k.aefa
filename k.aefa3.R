@@ -4365,5 +4365,5 @@ KoreanNounExtraction <- function(dat){
       datTextMatrix[grep(b[i], dat[,j]),i] <- datTextMatrix[grep(b[i], dat[,j]),i]+1
     }
   }
-  
+  return (datTextMatrix)
 }
