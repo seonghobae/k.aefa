@@ -4318,31 +4318,32 @@ KoreanNounExtraction <- function(dat, polyReturn = F){
     library('progress')
   }
   library('RHINO')
-  # if(!exists('.connRHINO')){
-    .connRHINO <<- RHINO::initRhino()
-    .connRHINO <- RHINO::initRhino()
-  # }
+    invisible(.connRHINO <<- RHINO::initRhino())
+    invisible(.connRHINO <- RHINO::initRhino())
   
   for(i in 1:ncol(dat)){
     dat[,i] <- as.character(dat[,i])
   }
   a <- vector()
   
+  TotCells <-ncol(dat)*nrow(dat)
+  k <- 0
   pb <- progress::progress_bar$new(
     format = "  extracting words [:bar] :percent in :elapsed (:current of :total cells, ETA: :eta)",
-    total = ncol(dat)*nrow(dat), clear = F, width= 120)
+    total = TotCells, clear = F, width= 120)
   
   for(i in 1:ncol(dat)){
     
     for(j in 1:length(dat[,i])){
+      k <- k+1
       if(!is.na(dat[j,i])){
         
-        pb$update((i*j)/(ncol(dat)*nrow(dat)))
-        pb$tick()
+        try(pb$update(k/TotCells))
+        try(pb$tick())
         a <- c(a, RHINO::getMorph(dat[j,i], type = 'noun'))
       } else {
-        pb$update((i*j)/(ncol(dat)*nrow(dat)))
-        pb$tick()
+        try(pb$update(k/TotCells))
+        try(pb$tick())
       }
       
       
@@ -4365,28 +4366,31 @@ KoreanNounExtraction <- function(dat, polyReturn = F){
   }
   
   b <- na.omit(b)
-  datTextMatrix <- data.frame(matrix(nrow = nrow(dat), ncol = length(b)))
+  datTextMatrix <- data.frame(matrix(data = 0, nrow = nrow(dat), ncol = length(b)))
   
   colnames(datTextMatrix) <- b
-  for(i in 1:ncol(datTextMatrix)){
-    datTextMatrix[,i] <- plyr::mapvalues(datTextMatrix[,i], NA, 0)
-  }
   
   rm(pb)
+  TotCells <- ncol(datTextMatrix)*ncol(dat)
+  k <- 0
   pb <- progress::progress_bar$new(
-    format = "  arranging words [:bar] :percent in :elapsed (:current of :total words, ETA: :eta)",
-    total = ncol(datTextMatrix), clear = F, width= 120)
+    format = "  arranging words [:bar] :percent in :elapsed (:current of :total cells, ETA: :eta)",
+    total = TotCells, clear = F, width= 120)
 
-  for(i in 1:ncol(datTextMatrix)){
-    pb$tick()
-    datTextMatrix[is.na(datTextMatrix[i]), i] <- 0
+  for(i in 1:ncol(datTextMatrix)){ # i th word
+    
     for(j in 1:ncol(dat)){
+      k <- k+1
+      try(pb$update(k/TotCells))
+      try(pb$tick())
+      searchEngine <- grep(b[i], dat[,j]) # find a extracted word i in a raw sentense j
+      
       if(polyReturn){
-        datTextMatrix[grep(b[i], dat[,j]),i] <- datTextMatrix[grep(b[i], dat[,j]),i]+1
-        
+        datTextMatrix[searchEngine,i] <- datTextMatrix[searchEngine,i]+1
       } else {
-        datTextMatrix[grep(b[i], dat[,j]),i] <- 1
-        
+        if(sum(datTextMatrix[searchEngine,i]) == 0){
+          datTextMatrix[searchEngine,i] <- 1
+        }
       }
     }
 
