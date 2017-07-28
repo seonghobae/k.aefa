@@ -4104,7 +4104,7 @@ findLatentClass <- function(data = ..., nruns = 1, maxClasses = NULL, covdata = 
   try(mirtCluster(spec = round(parallel::detectCores()/2)))
   modelFit <- list()
   if(is.null(maxClasses)){
-    maxClasses <- ncol(data)/2
+    maxClasses <- round(ncol(data)/2)
   }
   for(i in 1:maxClasses){
     invisible(try(testModel <- mirt::mdirt(data = data, model = i, SE = T, verbose = F, nruns = nruns, covdata = covdata, formula = formula, SE.type = SE.type, empiricalhist = empiricalhist), silent = T))
@@ -4318,8 +4318,8 @@ KoreanNounExtraction <- function(dat, polyReturn = F){
     library('progress')
   }
   library('RHINO')
-    invisible(.connRHINO <<- RHINO::initRhino())
-    invisible(.connRHINO <- RHINO::initRhino())
+  invisible(.connRHINO <<- RHINO::initRhino())
+  invisible(.connRHINO <- RHINO::initRhino())
   
   for(i in 1:ncol(dat)){
     dat[,i] <- as.character(dat[,i])
@@ -4376,7 +4376,7 @@ KoreanNounExtraction <- function(dat, polyReturn = F){
   pb <- progress::progress_bar$new(
     format = "  arranging words [:bar] :percent in :elapsed (:current of :total cells, ETA: :eta)",
     total = TotCells, clear = T, width= 120)
-
+  
   for(i in 1:ncol(datTextMatrix)){ # i th word
     
     for(j in 1:ncol(dat)){
@@ -4393,7 +4393,7 @@ KoreanNounExtraction <- function(dat, polyReturn = F){
         }
       }
     }
-
+    
     
     
   }
