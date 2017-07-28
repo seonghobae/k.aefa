@@ -3552,7 +3552,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
   
   message('starting calibration...')
   pb <- progress_bar$new(
-    format = "  processing MCMC chains [:bar] :percent in :elapsed, eta: :eta",
+    format = "  processing MCMC chains [:bar] :percent (:current of :total) in :elapsed, eta: :eta",
     total = ncol(initData) - TargetTestLength, clear = FALSE, width= 60, force = T)
   
   
