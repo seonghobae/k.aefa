@@ -4302,3 +4302,68 @@ doLCA <- function(data = ..., SE.type = 'Oakes', checkSecondOrderTest = T, nruns
     rm(preLCAmoditemFit)
   }
 }
+
+  
+KoreanNounExtraction <- function(dat){
+  
+  if(!require('RHINO')){
+    install.packages('rJava')
+    install.packages('devtools')
+    devtools::install_github('seonghobae/RHINO')
+    library('RHINO')
+  }
+  
+  if(!require('progress')){
+    install.packages('progress')
+    library('progress')
+  }
+  
+  
+  for(i in 1:ncol(dat)){
+    dat[,i] <- as.character(dat[,i])
+  }
+  a <- vector()
+  
+  for(i in 1:ncol(dat)){
+    for(j in 1:length(dat[,i])){
+      a <- c(a, RHINO::getMorph(dat[j,i], type = 'noun'))
+    }
+    # aprime[length(aprime)+1:length(a)] <- a
+  }
+  a <- a[!duplicated(a)]
+  
+  
+  a <- a[order(a)]
+  
+  b <- vector()
+  for(i in 1:length(a)){
+    if(is.na(a[i])){
+      b[i] <- NA
+    }
+    else if(nchar(a[i]) > 1){
+      b[i] <- a[i]
+    } else {
+      b[i] <- NA
+    }
+  }
+  
+  b <- na.omit(b)
+  datTextMatrix <- data.frame(matrix(nrow = nrow(dat), ncol = length(b)))
+  
+  colnames(datTextMatrix) <- b
+  for(i in 1:ncol(datTextMatrix)){
+    datTextMatrix[,i] <- plyr::mapvalues(datTextMatrix[,i], NA, 0)
+  }
+  
+  pb <- progress::progress_bar$new(
+    format = "  extracting [:bar] :percent in :elapsed (:current of :total, ETA: :eta)",
+    total = ncol(datTextMatrix), clear = FALSE, width= 60)
+  for(i in 1:ncol(datTextMatrix)){
+    pb$tick()
+    datTextMatrix[is.na(datTextMatrix[i]), i] <- 0
+    for(j in 12:22){
+      datTextMatrix[grep(b[i], dat[,j]),i] <- datTextMatrix[grep(b[i], dat[,j]),i]+1
+    }
+  }
+  
+}
