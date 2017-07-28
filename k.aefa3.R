@@ -3659,7 +3659,8 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
       } else {
         STOP <- TRUE
       }
-    } else {
+      
+    } else { # overall stop rule when all items normally terminated
       STOP <- TRUE
     }
   }
