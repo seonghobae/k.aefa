@@ -3553,7 +3553,7 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
   message('starting calibration...')
   pb <- progress_bar$new(
     format = "  processing MCMC chains [:bar] :percent (:current of :total) in :elapsed, eta: :eta",
-    total = ncol(initData) - TargetTestLength, clear = FALSE, width= 60, force = T)
+    total = ncol(initData) - TargetTestLength, clear = FALSE, width= 120, force = T)
   
   
   STOP <- FALSE
@@ -3605,6 +3605,8 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
           init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter)
         }
       } else {
+        
+        pb$tick()
         STOP <- TRUE
       }
     } else if(sum(init$summary.mcmcobj$MAP[grep("^a",init$summary.mcmcobj$parameter)] < 0) != 0 && autofix){
@@ -3632,6 +3634,8 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
           init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter)
         }
       } else {
+        
+        pb$tick()
         STOP <- TRUE
       }
     } else if(
@@ -3661,10 +3665,14 @@ autoMCMC2PL.ml <- function(x = NULL, group = NULL, est.b.M="h", est.b.Var="i",
           init <- sirt::mcmc.2pno.ml(dat = initData, group = group, link = link, est.b.M=est.b.M, est.b.Var=est.b.Var , est.a.M=est.a.M, est.a.Var=est.a.Var, burnin = burnin, iter = iter, N.sampvalues = iter, progress.iter = num.progress.iter)
         }
       } else {
+        
+        pb$tick()
         STOP <- TRUE
       }
       
     } else { # overall stop rule when all items normally terminated
+      
+      pb$tick()
       STOP <- TRUE
     }
   }
