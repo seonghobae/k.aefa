@@ -4303,7 +4303,7 @@ doLCA <- function(data = ..., SE.type = 'Oakes', checkSecondOrderTest = T, nruns
   }
 }
 
-  
+
 KoreanNounExtraction <- function(dat){
   
   if(!require('RHINO')){
@@ -4317,7 +4317,7 @@ KoreanNounExtraction <- function(dat){
     install.packages('progress')
     library('progress')
   }
-  
+  library('RHINO')
   
   for(i in 1:ncol(dat)){
     dat[,i] <- as.character(dat[,i])
