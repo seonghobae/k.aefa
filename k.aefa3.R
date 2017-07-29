@@ -2653,6 +2653,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         }
       }
       
+      vec2 <- coef(surveyFixMod, simplify = T)$items
       
       # Standardized Log-Likelihood
       if(forceCTTmode){ # force CTT-Like model
@@ -2712,6 +2713,18 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         rm(S_X2ErrorFlag)
         
         
+      } else if(coefAlwaysBePositive && sum(vec2[,1] < 0) != 0){
+        message('\nItem discrimination include negative / removing ', paste(surveyFixMod_itemFit$item[which(min(vec2[,1]) == vec2[,1])]))
+        workKeys <- workKeys[-which(min(vec2[,1]) == vec2[,1])]
+        workTestlets <- workTestlets[-which(min(vec2[,1]) == vec2[,1])]
+        
+        surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(vec2[,1]) == vec2[,1])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
+                                 forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars, ...)
+        if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
+          try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
+        }
+        rm(surveyFixMod_itemFit)
+        rm(S_X2ErrorFlag)
       } else if(S_X2ErrorFlag) { # if Chi-squared can not be calculate with extremely big Zh
         if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] > 1.96)) != 0 && sum(is.na(surveyFixModRAW)) == 0 && forceConsiderPositiveZh){ # Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
           message('\nDrasgow, F., Levine, M. V., & Williams, E. A. (1985) / removing ', paste(surveyFixMod_itemFit$item[which(max(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]))
