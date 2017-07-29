@@ -2513,7 +2513,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
                      forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4,
                      bifactorSolution = T, skipS_X2 = F, forceNRM = F, needGlobalOptimal = T,
                      pilotTestMode = F, forceConsiderPositiveZh = F, forceDefalutAccelerater = F, forceDefaultOptimizer = F, EnableFMHRM = F, testlets = NULL,
-                     minimumLeftItems = 3, plotOn = T, forceCTTmode = F, GenRandomPars = T, ...) {
+                     minimumLeftItems = 3, plotOn = T, forceCTTmode = F, GenRandomPars = T, coefAlwaysBePositive = T, ...) {
   message('---------------------------------------------------------')
   message(' k.aefa: kwangwoon automated exploratory factor analysis ')
   message('---------------------------------------------------------\n')
@@ -2584,7 +2584,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         try(invisible(mirt::mirtCluster(spec = NofCores)), silent = T)
       }
       
-      if(!forceCTTmode){
+      # if(!forceCTTmode){
         if(sum(is.na(surveyFixMod@Data$data)) == 0){
           try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
                                                     method = fscoreMethod,
@@ -2612,6 +2612,14 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           S_X2ErrorFlag <- F
         }
         try(invisible(mirt::mirtCluster(remove = T)), silent = T)
+      
+      if(!S_X2ErrorFlag){
+        if(sum(surveyFixMod_itemFit$df.S_X2 == 0, na.rm = T) > length(surveyFixMod_itemFit$df.S_X2)/5){
+          S_X2ErrorFlag <- T
+        } else if(sum(is.an(surveyFixMod_itemFit$p.S_X2)) > length(surveyFixMod_itemFit$p.S_X2)/5) {
+          S_X2ErrorFlag <- T
+        }
+      }
         
         print(surveyFixMod_itemFit)
         
@@ -2621,7 +2629,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           message('S_X2 can not be calcuate normally...')
         }
         
-      }
+      # }
       
       # precalculation of CI for a1
       ZeroList <- vector()
@@ -2647,7 +2655,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
       
       
       # Standardized Log-Likelihood
-      if(forceCTTmode){
+      if(forceCTTmode){ # force CTT-Like model
         if(sum(ZeroList) > 0){ # which item include 0 in a1
           message('\nItem discrimination include 0 / removing ', paste(colnames(surveyFixModRAW)[which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]))
           workKeys <- workKeys[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
@@ -2690,6 +2698,20 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         rm(S_X2ErrorFlag)
         
         
+      } else if(sum(ZeroList) > 0){ # which item include 0 in a (currently, only a1)
+        message('\nItem discrimination include 0 / removing ', paste(surveyFixMod_itemFit$item[which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]))
+        workKeys <- workKeys[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
+        workTestlets <- workTestlets[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
+        
+        surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
+                                 forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars, ...)
+        if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
+          try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
+        }
+        rm(surveyFixMod_itemFit)
+        rm(S_X2ErrorFlag)
+        
+        
       } else if(S_X2ErrorFlag) { # if Chi-squared can not be calculate with extremely big Zh
         if(length(which(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems] > 1.96)) != 0 && sum(is.na(surveyFixModRAW)) == 0 && forceConsiderPositiveZh){ # Drasgow, F., Levine, M. V., & Williams, E. A. (1985). Appropriateness measurement with polychotomous item response models and standardized indices. British Journal of Mathematical and Statistical Psychology, 38(1), 67-86.
           message('\nDrasgow, F., Levine, M. V., & Williams, E. A. (1985) / removing ', paste(surveyFixMod_itemFit$item[which(max(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]))
@@ -2712,25 +2734,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         # chi-square exception processing
         if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) == 0 && sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) == 0){ # avoid unexpected situation
           
-          if(sum(ZeroList) > 0){ # which item include 0 in a1
-            message('\nItem discrimination include 0 / removing ', paste(surveyFixMod_itemFit$item[which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]))
-            workKeys <- workKeys[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
-            workTestlets <- workTestlets[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
-            
-            surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                     forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars, ...)
-            if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
-              try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
-            }
-            rm(surveyFixMod_itemFit)
-            rm(S_X2ErrorFlag)
-            
-            
-          } else {
             message('all items df are 0. skipping evaluation...')
             itemFitDone <- TRUE
-          }
-          
           
         } else if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems && (sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) < length(1:surveyFixMod@Data$nitems)/2)){
           message('\nremoving items df is NA / ', paste(surveyFixMod_itemFit$item[which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)]))
@@ -2794,20 +2799,6 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           workTestlets <- workTestlets[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars, ...)
-          if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
-            try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
-          }
-          rm(surveyFixMod_itemFit)
-          rm(S_X2ErrorFlag)
-          
-          
-        } else if(sum(ZeroList) > 0){ # which item include 0 in 
-          message('\nItem discrimination include 0 / removing ', paste(surveyFixMod_itemFit$item[which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]))
-          workKeys <- workKeys[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
-          workTestlets <- workTestlets[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
-          
-          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                    forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars, ...)
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
@@ -4340,6 +4331,10 @@ KoreanNounExtraction <- function(dat, polyReturn = F){
         
         try(pb$update(k/TotCells))
         try(pb$tick())
+        dat[j,i] <- gsub("\r\n", " ", dat[j,i])
+        dat[j,i] <- gsub("\r", " ", dat[j,i])
+        dat[j,i] <- gsub("\n", " ", dat[j,i])
+        dat[j,i] <- gsub("^\\s+|\\s+$", "", dat[j,i])
         a <- c(a, RHINO::getMorph(dat[j,i], type = 'noun'))
       } else {
         try(pb$update(k/TotCells))
