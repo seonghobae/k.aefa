@@ -2356,6 +2356,8 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         }
         
         
+        
+        
         if(SE.type == 'MHRM'){
           message('MHRM trials were not efficient. try to calibrate the model with EM')
           SE.type <- 'sandwich'
@@ -2441,6 +2443,63 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                     TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
                                     optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          }
+        }
+        
+        # graded response model (sequential)
+        if(exists('modTEMP') == F && forceNRM == F){
+          message('\nMIRT model: Graded rating scale')
+          
+          if(i == 1){
+            try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsmIRT', method = estimationMETHOD, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
+                                      calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
+                                                                     SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
+                                      TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
+                                      optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                      SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
+          } else {
+            try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsm', method = estimationMETHOD, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
+                                      calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
+                                                                     SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
+                                      TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
+                                      optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                      SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
+          }
+
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          }
+        }
+        
+        # graded response model (sequential)
+        if(exists('modTEMP') == F && forceNRM == F && i == 1){
+          message('\nMIRT model: Partial Credit')
+
+            try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
+                                      calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
+                                                                     SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
+                                      TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
+                                      optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                      SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
+          
+          if(exists('modTEMP')){
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+          }
+        }
+        
+        # graded response model (sequential)
+        if(exists('modTEMP') == F && forceNRM == F && i == 1){
+          message('\nMIRT model: Rating Scale')
+          
+          try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'rsm', method = estimationMETHOD, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
+                                    calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
+                                                                   SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
+                                    TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
+                                    optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
+          
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
           }
@@ -2585,50 +2644,50 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
       }
       
       # if(!forceCTTmode){
+      if(sum(is.na(surveyFixMod@Data$data)) == 0){
+        try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
+                                                  method = fscoreMethod,
+                                                  QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
+      } else {
+        try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
+                                                  impute = 100,
+                                                  method = fscoreMethod,
+                                                  QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
+      }
+      
+      if(!exists('surveyFixMod_itemFit')){
         if(sum(is.na(surveyFixMod@Data$data)) == 0){
-          try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
+          try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('Zh', 'infit'),
                                                     method = fscoreMethod,
                                                     QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
         } else {
-          try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
+          try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('Zh', 'infit'),
                                                     impute = 100,
                                                     method = fscoreMethod,
                                                     QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
         }
-        
-        if(!exists('surveyFixMod_itemFit')){
-          if(sum(is.na(surveyFixMod@Data$data)) == 0){
-            try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('Zh', 'infit'),
-                                                      method = fscoreMethod,
-                                                      QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
-          } else {
-            try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('Zh', 'infit'),
-                                                      impute = 100,
-                                                      method = fscoreMethod,
-                                                      QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
-          }
-          S_X2ErrorFlag <- T
-        } else {
-          S_X2ErrorFlag <- F
-        }
-        try(invisible(mirt::mirtCluster(remove = T)), silent = T)
+        S_X2ErrorFlag <- T
+      } else {
+        S_X2ErrorFlag <- F
+      }
+      try(invisible(mirt::mirtCluster(remove = T)), silent = T)
       
       if(!S_X2ErrorFlag){
         if(sum(surveyFixMod_itemFit$df.S_X2 == 0, na.rm = T) > length(surveyFixMod_itemFit$df.S_X2)/5){
           S_X2ErrorFlag <- T
-        } else if(sum(is.an(surveyFixMod_itemFit$p.S_X2)) > length(surveyFixMod_itemFit$p.S_X2)/5) {
+        } else if(sum(is.nan(surveyFixMod_itemFit$p.S_X2)) > length(surveyFixMod_itemFit$p.S_X2)/5) {
           S_X2ErrorFlag <- T
         }
       }
-        
-        print(surveyFixMod_itemFit)
-        
-        # item evaluation
-        
-        if(S_X2ErrorFlag){
-          message('S_X2 can not be calcuate normally...')
-        }
-        
+      
+      print(surveyFixMod_itemFit)
+      
+      # item evaluation
+      
+      if(S_X2ErrorFlag){
+        message('S_X2 can not be calcuate normally...')
+      }
+      
       # }
       
       # precalculation of CI for a1
@@ -2747,8 +2806,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         # chi-square exception processing
         if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) == 0 && sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) == 0){ # avoid unexpected situation
           
-            message('all items df are 0. skipping evaluation...')
-            itemFitDone <- TRUE
+          message('all items df are 0. skipping evaluation...')
+          itemFitDone <- TRUE
           
         } else if(sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != 0 && sum(is.na(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])) != surveyFixMod@Data$nitems && (sum(na.omit(surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == 0) < length(1:surveyFixMod@Data$nitems)/2)){
           message('\nremoving items df is NA / ', paste(surveyFixMod_itemFit$item[which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)]))
