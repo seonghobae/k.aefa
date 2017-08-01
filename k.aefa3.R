@@ -2643,7 +2643,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         try(invisible(mirt::mirtCluster(spec = NofCores)), silent = T)
       }
       
-      # if(!forceCTTmode){
+    if(!forceCTTmode){
       if(sum(is.na(surveyFixMod@Data$data)) == 0){
         try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
                                                   method = fscoreMethod,
@@ -2688,7 +2688,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         message('S_X2 can not be calcuate normally...')
       }
       
-      # }
+    }
       
       # precalculation of CI for a1
       ZeroList <- vector()
@@ -2726,8 +2726,6 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
           }
-          rm(surveyFixMod_itemFit)
-          rm(S_X2ErrorFlag)
           
           
         } else if(coefAlwaysBePositive && sum(vec2[,1] < 0) != 0){
@@ -2740,8 +2738,6 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
           }
-          rm(surveyFixMod_itemFit)
-          rm(S_X2ErrorFlag)
         } else {
           itemFitDone <- TRUE
         }
