@@ -2467,7 +2467,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                       optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
           }
-
+          
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
           }
@@ -2476,13 +2476,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         # graded response model (sequential)
         if(exists('modTEMP') == F && forceNRM == F && i == 1){
           message('\nMIRT model: Partial Credit')
-
-            try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
-                                      calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
-                                                                     SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
-                                      TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
-                                      optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                                      SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
+          
+          try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
+                                    calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
+                                                                   SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
+                                    TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
+                                    optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                    SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
           
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
@@ -2730,6 +2730,18 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           rm(S_X2ErrorFlag)
           
           
+        } else if(coefAlwaysBePositive && sum(vec2[,1] < 0) != 0){
+          message('\nItem discrimination include negative / removing ', paste(surveyFixMod_itemFit$item[which(min(vec2[,1]) == vec2[,1])]))
+          workKeys <- workKeys[-which(min(vec2[,1]) == vec2[,1])]
+          workTestlets <- workTestlets[-which(min(vec2[,1]) == vec2[,1])]
+          
+          surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(vec2[,1]) == vec2[,1])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars, ...)
+          if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
+            try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
+          }
+          rm(surveyFixMod_itemFit)
+          rm(S_X2ErrorFlag)
         } else {
           itemFitDone <- TRUE
         }
