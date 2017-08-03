@@ -2643,52 +2643,52 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         try(invisible(mirt::mirtCluster(spec = NofCores)), silent = T)
       }
       
-    if(!forceCTTmode){
-      if(sum(is.na(surveyFixMod@Data$data)) == 0){
-        try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
-                                                  method = fscoreMethod,
-                                                  QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
-      } else {
-        try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
-                                                  impute = 100,
-                                                  method = fscoreMethod,
-                                                  QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
-      }
-      
-      if(!exists('surveyFixMod_itemFit')){
+      if(!forceCTTmode){
         if(sum(is.na(surveyFixMod@Data$data)) == 0){
-          try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('Zh', 'infit'),
+          try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
                                                     method = fscoreMethod,
                                                     QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
         } else {
-          try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('Zh', 'infit'),
+          try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('S_X2', 'Zh', 'infit'),
                                                     impute = 100,
                                                     method = fscoreMethod,
                                                     QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
         }
-        S_X2ErrorFlag <- T
-      } else {
-        S_X2ErrorFlag <- F
-      }
-      try(invisible(mirt::mirtCluster(remove = T)), silent = T)
-      
-      if(!S_X2ErrorFlag){
-        if(sum(surveyFixMod_itemFit$df.S_X2 == 0, na.rm = T) > length(surveyFixMod_itemFit$df.S_X2)/5){
+        
+        if(!exists('surveyFixMod_itemFit')){
+          if(sum(is.na(surveyFixMod@Data$data)) == 0){
+            try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('Zh', 'infit'),
+                                                      method = fscoreMethod,
+                                                      QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
+          } else {
+            try(surveyFixMod_itemFit <- mirt::itemfit(x = surveyFixMod, fit_stats = c('Zh', 'infit'),
+                                                      impute = 100,
+                                                      method = fscoreMethod,
+                                                      QMC = T, rotate = rotateCriteria, maxit = 1e+5), silent = T)
+          }
           S_X2ErrorFlag <- T
-        } else if(sum(is.nan(surveyFixMod_itemFit$p.S_X2)) > length(surveyFixMod_itemFit$p.S_X2)/5) {
-          S_X2ErrorFlag <- T
+        } else {
+          S_X2ErrorFlag <- F
         }
+        try(invisible(mirt::mirtCluster(remove = T)), silent = T)
+        
+        if(!S_X2ErrorFlag){
+          if(sum(surveyFixMod_itemFit$df.S_X2 == 0, na.rm = T) > length(surveyFixMod_itemFit$df.S_X2)/5){
+            S_X2ErrorFlag <- T
+          } else if(sum(is.nan(surveyFixMod_itemFit$p.S_X2)) > length(surveyFixMod_itemFit$p.S_X2)/5) {
+            S_X2ErrorFlag <- T
+          }
+        }
+        
+        print(surveyFixMod_itemFit)
+        
+        # item evaluation
+        
+        if(S_X2ErrorFlag){
+          message('S_X2 can not be calcuate normally...')
+        }
+        
       }
-      
-      print(surveyFixMod_itemFit)
-      
-      # item evaluation
-      
-      if(S_X2ErrorFlag){
-        message('S_X2 can not be calcuate normally...')
-      }
-      
-    }
       
       # precalculation of CI for a1
       ZeroList <- vector()
@@ -4375,7 +4375,7 @@ doLCA <- function(data = ..., SE.type = 'Oakes', checkSecondOrderTest = T, nruns
 }
 
 
-KoreanNounExtraction <- function(dat, polyReturn = F){
+KoreanNounExtraction <- function(dat, polyReturn = F, ExtractType = 'noun'){
   
   if(!require('RHINO')){
     install.packages('rJava')
@@ -4415,7 +4415,7 @@ KoreanNounExtraction <- function(dat, polyReturn = F){
         dat[j,i] <- gsub("\r", " ", dat[j,i])
         dat[j,i] <- gsub("\n", " ", dat[j,i])
         dat[j,i] <- gsub("^\\s+|\\s+$", "", dat[j,i])
-        a <- c(a, RHINO::getMorph(dat[j,i], type = 'noun'))
+        a <- c(a, RHINO::getMorph(dat[j,i], type = ExtractType))
       } else {
         try(pb$update(k/TotCells))
         try(pb$tick())
