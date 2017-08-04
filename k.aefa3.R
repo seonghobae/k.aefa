@@ -4341,7 +4341,7 @@ rotateEMEIRT <- function(EMEIRTmodel, rotate = 'bifactorQ', suppress = 0){
 }
 
 # rotateEMEIRT(silenceMLM, rotate = 'bifactorT', suppress = .05)
-doLCA <- function(data = ..., SE.type = 'Oakes', checkSecondOrderTest = T, nruns = 1, maxClasses = NULL, empiricalhist = T){
+doLCA <- function(data = ..., SE.type = 'Oakes', checkSecondOrderTest = T, nruns = 1, maxClasses = NULL, empiricalhist = T, covdata = NULL, formula = NULL){
   
   if(!require('psych')){
     install.packages('psych')
@@ -4355,7 +4355,7 @@ doLCA <- function(data = ..., SE.type = 'Oakes', checkSecondOrderTest = T, nruns
   datd <- datd[psych::describe(datd)$range != 0] # prevent range = 0
   STOP_LCA <- FALSE
   while(!STOP_LCA){
-    preLCAoptimal <- findLatentClass(datd, SE.type = SE.type, checkSecondOrderTest = checkSecondOrderTest, nruns = nruns, maxClasses = maxClasses, empiricalhist = empiricalhist)
+    preLCAoptimal <- findLatentClass(datd, SE.type = SE.type, checkSecondOrderTest = checkSecondOrderTest, nruns = nruns, maxClasses = maxClasses, empiricalhist = empiricalhist, covdata = covdata, formula = formula)
     preLCAoptimal <- data.frame(preLCAoptimal)
     
     optimalDecisionAIC <- as.numeric(rownames(preLCAoptimal))[which(preLCAoptimal$AIC == min(preLCAoptimal$AIC))]
@@ -4367,7 +4367,7 @@ doLCA <- function(data = ..., SE.type = 'Oakes', checkSecondOrderTest = T, nruns
     
     optimalDecision <- as.numeric(names(optimalDecisionTable)[which(optimalDecisionTable == max(optimalDecisionTable))])
     
-    preLCAmod <- mirt::mdirt(datd, optimalDecision, SE = T, SE.type = SE.type, nruns = nruns, empiricalhist = empiricalhist)
+    preLCAmod <- mirt::mdirt(datd, optimalDecision, SE = T, SE.type = SE.type, nruns = nruns, empiricalhist = empiricalhist, covdata = covdata, formula = formula)
     preLCAmoditemFit <- data.frame(mirt::itemfit(preLCAmod))
     
     message('global optimal: ', optimalDecision, '')
