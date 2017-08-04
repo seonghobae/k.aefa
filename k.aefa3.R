@@ -4171,28 +4171,40 @@ findLatentClass <- function(data = ..., nruns = 1, maxClasses = NULL, covdata = 
     install.packages('mirt')
     library('mirt')
   }
+  
+  if(!require('progress')){
+    install.packages('progress')
+    library('progress')
+  }
+  
   try(mirtCluster(remove = T))
   try(mirtCluster(spec = round(parallel::detectCores()/2)))
   modelFit <- list()
   if(is.null(maxClasses)){
-    maxClasses <- round(ncol(data)/2)
+    maxClasses <- round(ncol(data)/5)
   }
+  
+  pb <- progress_bar$new(
+    format = "(:spin) [:bar] :percent in :elapsed, eta: :eta",
+    total = maxClasses, clear = FALSE, width = 60)
+  
+  
   for(i in 1:maxClasses){
-    invisible(try(testModel <- mirt::mdirt(data = data, model = i, SE = T, verbose = F, nruns = nruns, covdata = covdata, formula = formula, SE.type = SE.type, empiricalhist = empiricalhist), silent = T))
+    invisible(try(testModel <- mirt::mdirt(data = data, model = i, SE = checkSecondOrderTest, verbose = F, nruns = nruns, covdata = covdata, formula = formula, SE.type = SE.type, empiricalhist = empiricalhist), silent = T))
     
-    
+    pb$tick()
     if(exists('testModel')){
       if(checkSecondOrderTest){
         
         if(testModel@OptimInfo$converged && testModel@OptimInfo$secondordertest){
-          message(round(i/maxClasses*100, 1), "% complete", ' (', i,' / ', maxClasses, ')')
+          # message(round(i/maxClasses*100, 1), "% complete", ' (', i,' / ', maxClasses, ')')
           modelFit[[i]] <- testModel@Fit
         }
         rm(testModel)
       } else {
         
         if(testModel@OptimInfo$converged){
-          message(round(i/maxClasses*100, 1), "% complete", '(', i,' / ', maxClasses, ')')
+          # message(round(i/maxClasses*100, 1), "% complete", '(', i,' / ', maxClasses, ')')
           modelFit[[i]] <- testModel@Fit
         }
         rm(testModel)
@@ -4216,6 +4228,7 @@ findLatentClass <- function(data = ..., nruns = 1, maxClasses = NULL, covdata = 
   colnames(modelFitMatrix) <- names(modelFit[[1]])
   return(modelFitMatrix)
 }
+
 
 
 autoLCA <- function(data = ..., UIRT = T, nruns = 1, covdata = NULL, formula = NULL, SE.type = 'sandwich', forceMHRM = F){
@@ -4416,6 +4429,108 @@ KoreanNounExtraction <- function(dat, polyReturn = F, ExtractType = 'noun'){
         dat[j,i] <- gsub("\n", " ", dat[j,i])
         dat[j,i] <- gsub("^\\s+|\\s+$", "", dat[j,i])
         a <- c(a, RHINO::getMorph(dat[j,i], type = ExtractType))
+      } else {
+        try(pb$update(k/TotCells))
+        try(pb$tick())
+      }
+      
+      
+    }
+    
+  }
+  a <- a[!duplicated(a)]
+  a <- a[order(a)]
+  
+  b <- vector()
+  for(i in 1:length(a)){
+    if(is.na(a[i])){
+      b[i] <- NA
+    }
+    else if(nchar(a[i]) > 1){
+      b[i] <- a[i]
+    } else {
+      b[i] <- NA
+    }
+  }
+  
+  b <- na.omit(b)
+  datTextMatrix <- data.frame(matrix(data = 0, nrow = nrow(dat), ncol = length(b)))
+  
+  colnames(datTextMatrix) <- b
+  
+  rm(pb)
+  TotCells <- ncol(datTextMatrix)*ncol(dat)
+  k <- 0
+  pb <- progress::progress_bar$new(
+    format = "  arranging words [:bar] :percent in :elapsed (:current of :total cells, ETA: :eta)",
+    total = TotCells, clear = T, width= 120)
+  
+  for(i in 1:ncol(datTextMatrix)){ # i th word
+    
+    for(j in 1:ncol(dat)){
+      k <- k+1
+      try(pb$update(k/TotCells))
+      try(pb$tick())
+      searchEngine <- grep(b[i], dat[,j]) # find a extracted word i in a raw sentense j
+      
+      if(polyReturn){
+        datTextMatrix[searchEngine,i] <- datTextMatrix[searchEngine,i]+1
+      } else {
+        if(sum(datTextMatrix[searchEngine,i]) == 0){
+          datTextMatrix[searchEngine,i] <- 1
+        }
+      }
+    }
+    
+    
+    
+  }
+  return (datTextMatrix)
+}
+
+
+KoreanExtraction <- function(dat, polyReturn = F){
+  
+  if(!require('RHINO')){
+    install.packages('rJava')
+    install.packages('devtools')
+    devtools::install_github('seonghobae/RHINO')
+    library('RHINO')
+  }
+  
+  if(!require('progress')){
+    install.packages('progress')
+    library('progress')
+  }
+  library('RHINO')
+  invisible(.connRHINO <<- RHINO::initRhino())
+  invisible(.connRHINO <- RHINO::initRhino())
+  
+  for(i in 1:ncol(dat)){
+    dat[,i] <- as.character(dat[,i])
+  }
+  a <- vector()
+  
+  TotCells <-ncol(dat)*nrow(dat)
+  k <- 0
+  pb <- progress::progress_bar$new(
+    format = "  extracting words [:bar] :percent in :elapsed (:current of :total cells, ETA: :eta)",
+    total = TotCells, clear = T, width= 120)
+  
+  for(i in 1:ncol(dat)){
+    
+    for(j in 1:length(dat[,i])){
+      k <- k+1
+      if(!is.na(dat[j,i])){
+        
+        try(pb$update(k/TotCells))
+        try(pb$tick())
+        dat[j,i] <- gsub("\r\n", " ", dat[j,i])
+        dat[j,i] <- gsub("\r", " ", dat[j,i])
+        dat[j,i] <- gsub("\n", " ", dat[j,i])
+        dat[j,i] <- gsub("^\\s+|\\s+$", "", dat[j,i])
+        a <- c(a, RHINO::getMorph(dat[j,i], type = 'noun'))
+        a <- c(a, RHINO::getMorph(dat[j,i], type = 'verb'))
       } else {
         try(pb$update(k/TotCells))
         try(pb$tick())
