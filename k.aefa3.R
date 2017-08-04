@@ -4185,7 +4185,7 @@ findLatentClass <- function(data = ..., nruns = 1, maxClasses = NULL, covdata = 
   }
   
   pb <- progress_bar$new(
-    format = "(:spin) [:bar] :percent in :elapsed, eta: :eta",
+    format = "(:spin) [:bar] :percent (:current of :total) in :elapsed, eta: :eta",
     total = maxClasses, clear = FALSE, width = 60)
   
   
@@ -4588,4 +4588,20 @@ KoreanExtraction <- function(dat, polyReturn = F){
     
   }
   return (datTextMatrix)
+}
+
+doLSA <- function(data, polyReturn = F, personID = NULL, SE.type = 'Oakes', checkSecondOrderTest = T, nruns = 1, maxClasses = NULL, empiricalhist = T){
+  occuranceMatrix <- KoreanExtraction(data, polyReturn = polyReturn)
+  
+  if(!is.null(personID)){
+    occuranceMatrix <- aggregate(occuranceMatrix, by = list(as.factor(personID)), FUN = sum)
+    if(!polyReturn){
+      occuranceMatrix[-1][occuranceMatrix[-1] > 0] <- 1
+    }
+  } else {
+    occuranceMatrix <- data.frame(matrix(nrow = nrow(occuranceMatrix)), occuranceMatrix)
+  }
+  
+  modLSA <- doLCA(data = occuranceMatrix[-1], SE.type = SE.type, checkSecondOrderTest = checkSecondOrderTest, nruns = nruns, maxClasses = maxClasses, empiricalhist = empiricalhist, covdata = occuranceMatrix[1])
+  return(modLSA)
 }
