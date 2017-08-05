@@ -4605,3 +4605,32 @@ doLSA <- function(data, polyReturn = F, personID = NULL, SE.type = 'Oakes', chec
   modLSA <- doLCA(data = occuranceMatrix[-1], SE.type = SE.type, checkSecondOrderTest = checkSecondOrderTest, nruns = nruns, maxClasses = maxClasses, empiricalhist = empiricalhist, covdata = occuranceMatrix[1])
   return(modLSA)
 }
+
+  sequentialFA <- function(data, minTestLength = 3, SE.type = 'Oakes', forceUIRT = F){
+    data <- data.frame(data)
+    dataNames <- colnames(data)
+    
+    STOP <- FALSE
+    j <- 0
+    seqModels <- list()
+    while(!STOP){
+      
+      if(length(dataNames) > minTestLength){
+        
+        estMod <- surveyFA(data[dataNames], SE.type = SE.type, forceUIRT = forceUIRT, minimumLeftItems = minTestLength)
+        if(exists('estMod')){
+          j <- j+1
+          seqModels[[j]] <- estMod
+          dataNames <- dataNames[!dataNames %in% colnames(estMod@Data$data)]
+          rm(estMod)
+        } else {
+          STOP <- TRUE
+        }
+      } else {
+        STOP <- TRUE
+      }
+      
+      
+    }
+    return(seqModels)
+  }
