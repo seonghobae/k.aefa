@@ -4606,31 +4606,31 @@ doLSA <- function(data, polyReturn = F, personID = NULL, SE.type = 'Oakes', chec
   return(modLSA)
 }
 
-  sequentialFA <- function(data, minTestLength = 3, SE.type = 'Oakes', forceUIRT = F){
-    data <- data.frame(data)
-    dataNames <- colnames(data)
+sequentialFA <- function(data, minTestLength = 3, SE.type = 'Oakes', forceUIRT = F, forceCTTmode = F, forceNormalEM = T){
+  data <- data.frame(data)
+  dataNames <- colnames(data)
+  
+  STOP <- FALSE
+  j <- 0
+  seqModels <- list()
+  while(!STOP){
     
-    STOP <- FALSE
-    j <- 0
-    seqModels <- list()
-    while(!STOP){
+    if(length(dataNames) > minTestLength){
       
-      if(length(dataNames) > minTestLength){
-        
-        estMod <- surveyFA(data[dataNames], SE.type = SE.type, forceUIRT = forceUIRT, minimumLeftItems = minTestLength)
-        if(exists('estMod')){
-          j <- j+1
-          seqModels[[j]] <- estMod
-          dataNames <- dataNames[!dataNames %in% colnames(estMod@Data$data)]
-          rm(estMod)
-        } else {
-          STOP <- TRUE
-        }
+      estMod <- surveyFA(data[dataNames], SE.type = SE.type, forceUIRT = forceUIRT, forceCTTmode = forceCTTmode, minimumLeftItems = minTestLength, forceNormalEM = forceNormalEM)
+      if(exists('estMod')){
+        j <- j+1
+        seqModels[[j]] <- estMod
+        dataNames <- dataNames[!dataNames %in% colnames(estMod@Data$data)]
+        rm(estMod)
       } else {
         STOP <- TRUE
       }
-      
-      
+    } else {
+      STOP <- TRUE
     }
-    return(seqModels)
+    
+    
   }
+  return(seqModels)
+}
