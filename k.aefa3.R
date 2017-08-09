@@ -1131,7 +1131,8 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                      forceGRSM = F, assumingFake = F, masterThesis = F, forceRasch = F, unstable = F,
                      forceMHRM = F, forceNormalEM = T, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T,
                      forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, forceNRM = F,
-                     diagnosis = F, forceDefalutAccelerater = F, forceDefaultOptimizer = F, EnableFMHRM = F, testlets = NULL, plotOn = T, GenRandomPars = T, ...){
+                     diagnosis = F, forceDefalutAccelerater = F, forceDefaultOptimizer = F, EnableFMHRM = F, testlets = NULL, plotOn = T, GenRandomPars = T,
+                     fixed = ~1, random = NULL, lr.fixed = ~1, lr.random = NULL, ...){
   
   if(!require('mirt')){
     install.packages('mirt')
@@ -1187,14 +1188,14 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
     
     
     
-    if(sum(is.na(x)) == 0 | nrow(x) > 5000){ 
-      NofCores <- parallel::detectCores()
-      NofCores <- round(NofCores / 1.1)
-      if(NofCores > 12){
-        NofCores <- 12
-      }
-      try(invisible(mirt::mirtCluster(spec = NofCores)), silent = T)
+    # if(sum(is.na(x)) == 0 | nrow(x) > 5000){ 
+    NofCores <- parallel::detectCores()
+    NofCores <- round(NofCores / 1.1)
+    if(NofCores > 12){
+      NofCores <- 12
     }
+    try(invisible(mirt::mirtCluster(spec = NofCores)), silent = T)
+    # }
     
     # optimizer config
     if(length(covdata) == 0){ # if no covariate variables
@@ -1398,13 +1399,21 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
       }
       
       message('estimation method: ', paste0(estimationMETHOD))
-      message('latent regression formula: ', paste0(formulaINPUT))
+      if(length(fixed) != 0){
+        message('fixed effect formula: ', paste0(fixed))
+      }
+      if(length(random) != 0){
+        message('random effect formula: ', paste0(random))
+      } else {
+        message('latent regression formula: ', paste0(formulaINPUT))
+        
+      }
     }
     if(estimationMETHOD == 'EM'){
       message('Empirical Histogram for find Prior distribution: ', empiricalhist)
     }
     # forcing SE estimation activate
-    if((sum(is.na(x)) != 0) && (SE.type != 'MHRM')){
+    if((sum(is.na(data.frame(x))) != 0) && (SE.type != 'MHRM')){
       SE <- T
       if(length(covdata) == 0){
         if(estimationMETHOD == 'MHRM'){ # Richadson (BL) isn't support MHRM estimation method
@@ -1422,7 +1431,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
     }
     
     # switch SE estimation temporary 
-    if(length(covdata) != 0 && SE.type == 'sandwich' && SE == T){
+    if(length(covdata) != 0 && length(random) == 0 && SE.type == 'sandwich' && SE == T){
       message('sandwich estimation currently not supproted with latent regressors')
       SE.type <- "complete"
     }
@@ -1505,15 +1514,39 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         
         if(diagnosis == F){
           message('\nMIRT model: Compensatory 4PL')
+          
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = doBfactor2mod(x, ActualTestlets), GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = '4PL', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
+          
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = '4PL',
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+          
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
               rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | modTEMP_MIXED@OptimInfo$secondordertest == F){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
             }
           }
         }
@@ -1522,6 +1555,18 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Compensatory 3PL with upper asymptote (slip) estimated')
+          
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = doBfactor2mod(x, ActualTestlets), GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = '3PLu', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
+          
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = '3PLu',
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
@@ -1533,11 +1578,23 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
               rm(modTEMP)
             }
           }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | modTEMP_MIXED@OptimInfo$secondordertest == F){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
+            }
+          }
         }
         
         if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Partially compensatory 3PL')
+          
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = 'PC3PL',
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
@@ -1549,11 +1606,32 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
               rm(modTEMP)
             }
           }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | modTEMP_MIXED@OptimInfo$secondordertest == F){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
+            }
+          }
         }
         
         if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Compensatory 3PL')
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = doBfactor2mod(x, ActualTestlets), GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = '3PL', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = '3PL',
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
@@ -1565,6 +1643,17 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
               rm(modTEMP)
             }
           }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | modTEMP_MIXED@OptimInfo$secondordertest == F){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
+            }
+          }
         }
         
         # }
@@ -1573,6 +1662,16 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Compensatory 2PL')
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = doBfactor2mod(x, ActualTestlets), GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = '2PL', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = '2PL',
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
@@ -1582,6 +1681,17 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
               rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | modTEMP_MIXED@OptimInfo$secondordertest == F){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
             }
           }
         }
@@ -1600,10 +1710,32 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
               rm(modTEMP)
             }
           }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | modTEMP_MIXED@OptimInfo$secondordertest == F){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
+            }
+          }
         }
+        
         if(exists('modTEMP') == F && skipIdealPoint == F){
           
           message('\nMIRT model: ideal point')
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = doBfactor2mod(x, ActualTestlets), GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = 'ideal', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = 'ideal',
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
@@ -1615,11 +1747,32 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
               rm(modTEMP)
             }
           }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | modTEMP_MIXED@OptimInfo$secondordertest == F){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
+            }
+          }
         }
         
         if(exists('modTEMP') == F){
           
           message('\nMIRT model: Rasch')
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = doBfactor2mod(x, ActualTestlets), GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = 'Rasch', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = 'Rasch',
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
@@ -1629,6 +1782,17 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(exists('modTEMP')){
             if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
               rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | modTEMP_MIXED@OptimInfo$secondordertest == F){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
             }
           }
         }
@@ -1643,6 +1807,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         
         if(exists('modTEMP') == F && diagnosis == F){
           message('\nMIRT model: Compensatory 4PL')
+          
           try(modTEMP <- mirt::bfactor(data = x, ActualTestlets, itemtype = '4PL',
                                        lerate = accelerateINPUT, calcNull = T,
                                        technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
@@ -1775,6 +1940,16 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         
         if(diagnosis == F){
           message('\nMIRT model: Compensatory 4PL')
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = '4PL', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
@@ -1782,8 +1957,19 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+            if(modTEMP@OptimInfo$converged == F | (modTEMP@OptimInfo$secondordertest == F && i == 1)){
               rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | (modTEMP_MIXED@OptimInfo$secondordertest == F && i == 1)){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
             }
           }
         }
@@ -1792,6 +1978,16 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Compensatory 3PL with upper asymptote (slip) estimated')
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = '3PLu', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PLu', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
@@ -1799,8 +1995,19 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+            if(modTEMP@OptimInfo$converged == F | (modTEMP@OptimInfo$secondordertest == F && i == 1)){
               rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | (modTEMP_MIXED@OptimInfo$secondordertest == F && i == 1)){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
             }
           }
         }
@@ -1815,8 +2022,19 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+            if(modTEMP@OptimInfo$converged == F | (modTEMP@OptimInfo$secondordertest == F && i == 1)){
               rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | (modTEMP_MIXED@OptimInfo$secondordertest == F && i == 1)){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
             }
           }
         }
@@ -1824,6 +2042,16 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Compensatory 3PL')
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = '3PL', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
@@ -1831,8 +2059,19 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+            if(modTEMP@OptimInfo$converged == F | (modTEMP@OptimInfo$secondordertest == F && i == 1)){
               rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | (modTEMP_MIXED@OptimInfo$secondordertest == F && i == 1)){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
             }
           }
         }
@@ -1842,6 +2081,16 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Compensatory 2PL')
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = '2PL', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '2PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
@@ -1849,8 +2098,19 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+            if(modTEMP@OptimInfo$converged == F | (modTEMP@OptimInfo$secondordertest == F && i == 1)){
               rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | (modTEMP_MIXED@OptimInfo$secondordertest == F && i == 1)){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
             }
           }
         }
@@ -1865,8 +2125,19 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+            if(modTEMP@OptimInfo$converged == F | (modTEMP@OptimInfo$secondordertest == F && i == 1)){
               rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | (modTEMP_MIXED@OptimInfo$secondordertest == F && i == 1)){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
             }
           }
         }
@@ -1874,6 +2145,16 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(exists('modTEMP') == F && skipIdealPoint == F){
           
           message('\nMIRT model: ideal point')
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = 'ideal', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'ideal', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
@@ -1881,8 +2162,19 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+            if(modTEMP@OptimInfo$converged == F | (modTEMP@OptimInfo$secondordertest == F && i == 1)){
               rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | (modTEMP_MIXED@OptimInfo$secondordertest == F && i == 1)){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
             }
           }
         }
@@ -1890,6 +2182,16 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(exists('modTEMP') == F && i == 1 && diagnosis == F){
           
           message('\nMIRT model: Rasch')
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = 'Rasch', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
@@ -1897,8 +2199,19 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
           if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+            if(modTEMP@OptimInfo$converged == F | (modTEMP@OptimInfo$secondordertest == F && i == 1)){
               rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | (modTEMP_MIXED@OptimInfo$secondordertest == F && i == 1)){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
             }
           }
         }
@@ -2316,6 +2629,16 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         
         if(skipNominal == F){
           message('\nMIRT model: nominal response')
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = doBfactor2mod(x, ActualTestlets), GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = 'nominal', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = 'nominal',
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
@@ -2323,13 +2646,36 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
           if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | modTEMP_MIXED@OptimInfo$secondordertest == F){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
+            }
           }
         }
         
         # generalized partial credit model (non-sequential)
         if(exists('modTEMP') == F && forceNRM == F){
           message('\nMIRT model: Generalized partial credit')
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = doBfactor2mod(x, ActualTestlets), GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = 'gpcm', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = 'gpcm',
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
@@ -2337,13 +2683,36 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
           if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | modTEMP_MIXED@OptimInfo$secondordertest == F){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
+            }
           }
         }
         
         # graded response model (sequential)
         if(exists('modTEMP') == F && forceNRM == F){
           message('\nMIRT model: Graded response')
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = doBfactor2mod(x, ActualTestlets), GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = 'graded', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
                                     calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
                                                                    SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
@@ -2351,7 +2720,20 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                     optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
           if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | modTEMP_MIXED@OptimInfo$secondordertest == F){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
+            }
           }
         }
         
@@ -2409,6 +2791,16 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
       } else {
         if(skipNominal == F){
           message('\nMIRT model: nominal response')
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = 'nominal', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'nominal', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
@@ -2416,13 +2808,36 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
           if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | modTEMP_MIXED@OptimInfo$secondordertest == F){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
+            }
           }
         }
         
         # generalized partial credit model (non-sequential)
         if(exists('modTEMP') == F && forceNRM == F){
           message('\nMIRT model: Generalized partial credit')
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = 'gpcm', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'gpcm', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
                                     technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
@@ -2430,13 +2845,36 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
           if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | modTEMP_MIXED@OptimInfo$secondordertest == F){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
+            }
           }
         }
         
         # graded response model (sequential)
         if(exists('modTEMP') == F && forceNRM == F){
           message('\nMIRT model: Graded response')
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = 'graded', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
           try(modTEMP <- mirt::mirt(data = x, model = i, method = estimationMETHOD, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
                                     calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
                                                                    SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
@@ -2444,7 +2882,20 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                     optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
           if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | modTEMP_MIXED@OptimInfo$secondordertest == F){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
+            }
           }
         }
         
@@ -2453,6 +2904,16 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Graded rating scale')
           
           if(i == 1){
+            if(length(covdataINPUT) != 0){
+              try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                   fixed = fixed, random = random, itemtype = 'grsmIRT', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                   calcNull = T,
+                                                   technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                   TOL = TOLINPUT, covdata = covdataINPUT,
+                                                   solnp_args = optimCTRL, SE = SE,
+                                                   survey.weights = survey.weights, empiricalhist = empiricalhist))
+            }
             try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsmIRT', method = estimationMETHOD, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
                                       calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
                                                                      SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
@@ -2460,6 +2921,16 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                       optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
           } else {
+            if(length(covdataINPUT) != 0){
+              try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                   fixed = fixed, random = random, itemtype = 'grsm', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                   calcNull = T,
+                                                   technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                   TOL = TOLINPUT, covdata = covdataINPUT,
+                                                   solnp_args = optimCTRL, SE = SE,
+                                                   survey.weights = survey.weights, empiricalhist = empiricalhist))
+            }
             try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsm', method = estimationMETHOD, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
                                       calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
                                                                      SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
@@ -2469,14 +2940,36 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           }
           
           if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | modTEMP_MIXED@OptimInfo$secondordertest == F){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
+            }
           }
         }
         
         # graded response model (sequential)
         if(exists('modTEMP') == F && forceNRM == F && i == 1){
           message('\nMIRT model: Partial Credit')
-          
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = 'Rasch', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
                                     calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
                                                                    SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
@@ -2485,14 +2978,36 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
           
           if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+              rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | modTEMP_MIXED@OptimInfo$secondordertest == F){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
+            }
           }
         }
         
         # graded response model (sequential)
         if(exists('modTEMP') == F && forceNRM == F && i == 1){
           message('\nMIRT model: Rating Scale')
-          
+          if(length(covdataINPUT) != 0){
+            try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
+                                                 fixed = fixed, random = random, itemtype = 'rsm', lr.fixed = lr.fixed, lr.random = lr.random,
+                                                 calcNull = T,
+                                                 technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                                                  removeEmptyRows = removeEmptyRowsConf, NCYCLES = 4000),
+                                                 TOL = TOLINPUT, covdata = covdataINPUT,
+                                                 solnp_args = optimCTRL, SE = SE,
+                                                 survey.weights = survey.weights, empiricalhist = empiricalhist))
+          }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'rsm', method = estimationMETHOD, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
                                     calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
                                                                    SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
@@ -2501,7 +3016,20 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
           
           if(exists('modTEMP')){
-            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){rm(modTEMP)}
+            if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F && i == 1){
+              rm(modTEMP)
+            }
+          }
+          if(exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@OptimInfo$converged == F | (modTEMP_MIXED@OptimInfo$secondordertest == F && i == 1)){
+              rm(modTEMP_MIXED)
+            }
+          }
+          if(exists('modTEMP') && exists('modTEMP_MIXED')){
+            if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+              modTEMP <- modTEMP_MIXED
+              rm(modTEMP_MIXED)
+            }
           }
         }
       }
@@ -2521,6 +3049,35 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
     
     try(invisible(mirt::mirtCluster(remove = T)), silent = T)
     
+    if(class(modTEMP)[1] == 'MixedClass'){
+      MLM_rotate_formula_mod <- mirt::mirt(data = modTEMP@Data$data, model = modTEMP@Model$model, itemtype = modTEMP@Model$itemtype, pars = 'values')
+      MLM_rotate_formula_mod_original <- mod2values(modTEMP)
+      if(sum(MLM_rotate_formula_mod_original$name == '(Intercept)') != 0){
+        MLM_rotate_formula_mod_original <- MLM_rotate_formula_mod_original[!MLM_rotate_formula_mod_original$name == '(Intercept)',]
+        
+      }
+      # MLM_rotate_formula_mod_original <- MLM_rotate_formula_mod_original
+      MLM_rotate_formula_mod$value[which(MLM_rotate_formula_mod$item %in% colnames(modTEMP@Data$data))] <- MLM_rotate_formula_mod_original$value[which(MLM_rotate_formula_mod_original$item %in% colnames(modTEMP@Data$data))]
+      MLM_rotate_formula_mod$est <- F
+      # print(MLM_rotate_formula_mod)
+      
+      MixedModelFlag <- T
+      
+      modTEMP_MIXED <- modTEMP
+      
+      modTEMP <- mirt::mirt(data = modTEMP@Data$data, model = modTEMP@Model$model,
+                            itemtype = modTEMP@Model$itemtype, pars = MLM_rotate_formula_mod, method = estimationMETHOD,
+                            GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
+                            calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
+                                                           SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
+                            TOL = TOLINPUT,
+                            optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                            SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist)
+      
+    } else {
+      MixedModelFlag <- F
+    }
+    
     
     if(i == 1 && length(ActualTestlets) == 0 && plotOn == T){ # ICC printing
       try(print(plot(modTEMP, type = 'infoSE')))
@@ -2529,7 +3086,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
     }
     
     if(forceUIRT == T | TestletActivated == T){
-      return(modTEMP)
+      if(MixedModelFlag){
+        return(modTEMP_MIXED)
+      } else {
+        return(modTEMP)
+      }
     }
     
     if(i == 1 && modTEMP@OptimInfo$converged == F && sum(modTEMP@Model$itemtype %in% c('spline', 'nominal')) == 0){
@@ -2553,9 +3114,17 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
       #}
       
     }
+    
     if(exists('modTEMP') == T){
-      modOLD <- modTEMP
-      try(rm(modTEMP))
+      if(MixedModelFlag){
+        modOLD <- (modTEMP_MIXED)
+        try(rm(modTEMP_MIXED))
+        
+      } else {
+        modOLD <- modTEMP
+        try(rm(modTEMP))
+      }
+      
     } else {
       stop('Fail to convergence')
     }
