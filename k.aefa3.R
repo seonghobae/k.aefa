@@ -5366,3 +5366,57 @@ sequentialFA <- function(data, minTestLength = 3, SE.type = 'Oakes', forceUIRT =
   }
   return(seqModels)
 }
+
+  
+fitMLIRT <- function(dat = NULL, model = 1, itemtype = 'nominal', covdata, fixed = ~1, random = NULL, lr.fixed = ~1, lr.random = NULL, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, GenRandomPars = T){
+  combine <- function (x, y) {
+    combn (y, x, paste, collapse = ", ")
+  }
+  if(!require('progress')){
+    install.packages('progress')
+    library('progress')
+  }
+  
+  res1 <- paste0('list(',unlist (lapply (0:NROW(random), combine, random)), ')')
+  res2 <- paste0('list(',unlist (lapply (0:NROW(lr.random), combine, lr.random)), ')')
+  res <- vector()
+  res[1] <- length(res1)
+  res[2] <- length(res2)
+  
+  if(length(res1) > length(res2)){
+    res2 <- rep(res2, length(res1))
+  } else {
+    res1 <- rep(res1, length(res2))
+  }
+  
+  DIC <- vector()
+  
+  pb <- progress_bar$new(
+    format = "  estimating optimal multilevel model [:bar] :percent in :elapsed (:current of :total) eta: :eta",
+    total = max(res)+1, clear = FALSE, width= 120)
+  
+  
+  
+  for(i in 1:max(res)){
+    pb$tick()
+    try(invisible(gc()))
+    try(invisible(modMIXED <- mirt::mixedmirt(data = dat, model = model, itemtype = itemtype, covdata = covdata, fixed = fixed, random = eval(parse(text=res1[i])), lr.fixed = lr.fixed, lr.random = eval(parse(text=res2[i])), verbose = F, GenRandomPars = GenRandomPars, technical = list(NCYCLES = NCYCLES, BURNIN = BURNIN, SEMCYCLES = SEMCYCLES))), silent = T)
+    if(exists('modMIXED')){
+      
+      if(modMIXED@OptimInfo$converged){
+        DIC[i] <- modMIXED@Fit$DIC
+      } else {
+        DIC[i] <- NA
+      }  
+      
+    } else {
+      DIC[i] <- NA
+    }
+    try(invisible(rm(modMIXED)), silent = T)
+  }
+  
+  pb$tick()
+  
+  try(invisible(modMIXED <- mirt::mixedmirt(data = dat, model = model, itemtype = itemtype, covdata = covdata, fixed = fixed, random = eval(parse(text=res1[which(DIC == min(DIC, na.rm = T))])), lr.fixed = lr.fixed, lr.random = eval(parse(text=res2[which(DIC == min(DIC, na.rm = T))])), verbose = F, GenRandomPars = GenRandomPars, technical = list(NCYCLES = NCYCLES, BURNIN = BURNIN, SEMCYCLES = SEMCYCLES))), silent = T)
+  return(modMIXED)
+}
