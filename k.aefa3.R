@@ -5025,6 +5025,8 @@ doLCA <- function(data = ..., SE.type = 'Oakes', checkSecondOrderTest = T, nruns
   datd <- datd[psych::describe(datd)$range != 0] # prevent range = 0
   STOP_LCA <- FALSE
   while(!STOP_LCA){
+    try(invisible(gc()), silent = T) # garbage cleaning
+    
     preLCAoptimal <- findLatentClass(datd, SE.type = SE.type, checkSecondOrderTest = checkSecondOrderTest, nruns = nruns, maxClasses = maxClasses, empiricalhist = empiricalhist, covdata = covdata, formula = formula)
     preLCAoptimal <- data.frame(preLCAoptimal)
     
