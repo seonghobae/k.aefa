@@ -1325,8 +1325,15 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
       
       covdataINPUT <- covdata
       formulaINPUT <- formula
-      
-      if(forceMHRM == T | forceGRSM == T | assumingFake == T | masterThesis == T | sum(na.omit(ActualTestlets) > 2) != 0){
+      if(NROW(random) != 0 | NROW(lr.random) != 0){
+        
+        estimationMETHOD <- 'MHRM'
+        optimINPUT <- NULL
+        optimCTRL <- NULL
+        empiricalhist <- FALSE
+        NCYCLES <- 4000
+        
+      } else if(forceMHRM == T| forceGRSM == T | assumingFake == T | masterThesis == T | sum(na.omit(ActualTestlets) > 2) != 0){
         message('MHRM currently not supported with latent regressors')
         estimationMETHOD <- 'QMCEM'
         if(forceDefaultOptimizer){
@@ -1399,10 +1406,10 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
       }
       
       message('estimation method: ', paste0(estimationMETHOD))
-      if(length(fixed) != 0){
+      if(NROW(fixed) != 0){
         message('fixed effect formula: ', paste0(fixed))
       }
-      if(length(random) != 0){
+      if(NROW(random) != 0){
         message('random effect formula: ', paste0(random))
       } else {
         message('latent regression formula: ', paste0(formulaINPUT))
@@ -1431,7 +1438,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
     }
     
     # switch SE estimation temporary 
-    if(length(covdata) != 0 && length(random) == 0 && SE.type == 'sandwich' && SE == T){
+    if(length(covdata) != 0 && NROW(random) == 0 && SE.type == 'sandwich' && SE == T){
       message('sandwich estimation currently not supproted with latent regressors')
       SE.type <- "complete"
     }
@@ -1515,7 +1522,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(diagnosis == F){
           message('\nMIRT model: Compensatory 4PL')
           
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = doBfactor2mod(x, ActualTestlets), GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = '4PL', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -1560,7 +1567,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           
           message('\nMIRT model: Compensatory 3PL with upper asymptote (slip) estimated')
           
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = doBfactor2mod(x, ActualTestlets), GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = '3PLu', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -1634,7 +1641,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Compensatory 3PL')
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = doBfactor2mod(x, ActualTestlets), GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = '3PL', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -1678,7 +1685,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Compensatory 2PL')
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = doBfactor2mod(x, ActualTestlets), GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = '2PL', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -1750,7 +1757,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(exists('modTEMP') == F && skipIdealPoint == F){
           
           message('\nMIRT model: ideal point')
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = doBfactor2mod(x, ActualTestlets), GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = 'ideal', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -1791,7 +1798,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(exists('modTEMP') == F){
           
           message('\nMIRT model: Rasch')
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = doBfactor2mod(x, ActualTestlets), GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = 'Rasch', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -1972,7 +1979,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         
         if(diagnosis == F){
           message('\nMIRT model: Compensatory 4PL')
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = '4PL', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -2014,7 +2021,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Compensatory 3PL with upper asymptote (slip) estimated')
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = '3PLu', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -2086,7 +2093,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Compensatory 3PL')
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = '3PL', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -2129,7 +2136,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(exists('modTEMP') == F && diagnosis == F){
           
           message('\nMIRT model: Compensatory 2PL')
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = '2PL', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -2201,7 +2208,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(exists('modTEMP') == F && skipIdealPoint == F){
           
           message('\nMIRT model: ideal point')
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = 'ideal', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -2243,7 +2250,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(exists('modTEMP') == F && i == 1 && diagnosis == F){
           
           message('\nMIRT model: Rasch')
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = 'Rasch', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -2694,7 +2701,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         
         if(skipNominal == F){
           message('\nMIRT model: nominal response')
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = doBfactor2mod(x, ActualTestlets), GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = 'nominal', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -2735,7 +2742,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         # generalized partial credit model (non-sequential)
         if(exists('modTEMP') == F && forceNRM == F){
           message('\nMIRT model: Generalized partial credit')
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = doBfactor2mod(x, ActualTestlets), GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = 'gpcm', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -2776,7 +2783,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         # graded response model (sequential)
         if(exists('modTEMP') == F && forceNRM == F){
           message('\nMIRT model: Graded response')
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = doBfactor2mod(x, ActualTestlets), GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = 'graded', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -2868,7 +2875,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
       } else {
         if(skipNominal == F){
           message('\nMIRT model: nominal response')
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = 'nominal', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -2909,7 +2916,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         # generalized partial credit model (non-sequential)
         if(exists('modTEMP') == F && forceNRM == F){
           message('\nMIRT model: Generalized partial credit')
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = 'gpcm', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -2950,7 +2957,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         # graded response model (sequential)
         if(exists('modTEMP') == F && forceNRM == F){
           message('\nMIRT model: Graded response')
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = 'graded', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -2993,7 +3000,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Graded rating scale')
           
           if(i == 1){
-            if(length(random) != 0 | length(lr.random) != 0){
+            if(NROW(random) != 0 | NROW(lr.random) != 0){
               try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                    fixed = fixed, random = random, itemtype = 'grsmIRT', lr.fixed = lr.fixed, lr.random = lr.random,
                                                    calcNull = T,
@@ -3010,7 +3017,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                                       optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                       SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = T)
           } else {
-            if(length(random) != 0 | length(lr.random) != 0){
+            if(NROW(random) != 0 | NROW(lr.random) != 0){
               try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                    fixed = fixed, random = random, itemtype = 'grsm', lr.fixed = lr.fixed, lr.random = lr.random,
                                                    calcNull = T,
@@ -3053,7 +3060,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         # graded response model (sequential)
         if(exists('modTEMP') == F && forceNRM == F && i == 1){
           message('\nMIRT model: Partial Credit')
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = 'Rasch', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -3095,7 +3102,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         # graded response model (sequential)
         if(exists('modTEMP') == F && forceNRM == F && i == 1){
           message('\nMIRT model: Rating Scale')
-          if(length(random) != 0 | length(lr.random) != 0){
+          if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- mirt::mixedmirt(data = x, model = i, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT, 
                                                  fixed = fixed, random = random, itemtype = 'rsm', lr.fixed = lr.fixed, lr.random = lr.random,
                                                  calcNull = T,
@@ -3152,7 +3159,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
     
     if(class(modTEMP)[1] == 'MixedClass'){
       MLM_rotate_formula_mod <- mirt::mirt(data = modTEMP@Data$data, model = modTEMP@Model$model, itemtype = modTEMP@Model$itemtype, pars = 'values')
-      MLM_rotate_formula_mod_original <- mod2values(modTEMP)
+      MLM_rotate_formula_mod_original <- mirt::mod2values(modTEMP)
       if(sum(MLM_rotate_formula_mod_original$name == '(Intercept)') != 0){
         MLM_rotate_formula_mod_original <- MLM_rotate_formula_mod_original[!MLM_rotate_formula_mod_original$name == '(Intercept)',]
         
@@ -3166,14 +3173,11 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
       
       modTEMP_MIXED <- modTEMP
       
-      modTEMP <- mirt::mirt(data = modTEMP@Data$data, model = modTEMP@Model$model,
-                            itemtype = modTEMP@Model$itemtype, pars = MLM_rotate_formula_mod, method = estimationMETHOD,
-                            GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
-                            calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
-                                                           SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
-                            TOL = TOLINPUT,
-                            optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
-                            SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist)
+      modTEMP <- mirt::mirt(data = surveyFixMod@Data$data, model = surveyFixMod@Model$model,
+                            itemtype = surveyFixMod@Model$itemtype, pars = MLM_rotate_formula_mod, method = 'QMCEM',
+                            GenRandomPars = GenRandomPars,
+                            calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws),
+                            survey.weights = survey.weights)
       
     } else {
       MixedModelFlag <- F
@@ -3242,7 +3246,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
                      forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4,
                      bifactorSolution = T, skipS_X2 = F, forceNRM = F, needGlobalOptimal = T,
                      pilotTestMode = F, forceConsiderPositiveZh = F, forceDefalutAccelerater = F, forceDefaultOptimizer = F, EnableFMHRM = F, testlets = NULL,
-                     minimumLeftItems = 3, plotOn = T, forceCTTmode = F, GenRandomPars = T, coefAlwaysBePositive = T, ...) {
+                     minimumLeftItems = 3, plotOn = T, forceCTTmode = F, GenRandomPars = T, coefAlwaysBePositive = T,
+                     fixed = ~1, random = NULL, lr.fixed = ~1, lr.random = NULL, ...) {
   message('---------------------------------------------------------')
   message(' k.aefa: kwangwoon automated exploratory factor analysis ')
   message('---------------------------------------------------------\n')
@@ -3276,7 +3281,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
                              forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM,
                              itemkeys = itemkeys, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse,
                              autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM,
-                             forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = testlets, GenRandomPars = GenRandomPars, ...)
+                             forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = testlets, GenRandomPars = GenRandomPars,
+                             fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
   }
   
   workKeys <- itemkeys
@@ -3293,6 +3299,29 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
     
     if(ncol(surveyFixModRAW) > minimumLeftItems){
       
+      if(class(surveyFixMod)[1] == 'MixedClass'){
+        MLM_rotate_formula_mod <- mirt::mirt(data = surveyFixMod@Data$data, model = surveyFixMod@Model$model, itemtype = surveyFixMod@Model$itemtype, pars = 'values')
+        MLM_rotate_formula_mod_original <- mirt::mod2values(surveyFixMod)
+        if(sum(MLM_rotate_formula_mod_original$name == '(Intercept)') != 0){
+          MLM_rotate_formula_mod_original <- MLM_rotate_formula_mod_original[!MLM_rotate_formula_mod_original$name == '(Intercept)',]
+          
+        }
+        # MLM_rotate_formula_mod_original <- MLM_rotate_formula_mod_original
+        MLM_rotate_formula_mod$value[which(MLM_rotate_formula_mod$item %in% colnames(surveyFixMod@Data$data))] <- MLM_rotate_formula_mod_original$value[which(MLM_rotate_formula_mod_original$item %in% colnames(surveyFixMod@Data$data))]
+        MLM_rotate_formula_mod$est <- F
+        # print(MLM_rotate_formula_mod)
+        
+        MixedModelFlag <- T
+        
+        surveyFixMod <- mirt::mirt(data = surveyFixMod@Data$data, model = surveyFixMod@Model$model,
+                              itemtype = surveyFixMod@Model$itemtype, pars = MLM_rotate_formula_mod, method = 'QMCEM',
+                              GenRandomPars = GenRandomPars,
+                              calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws),
+                              survey.weights = survey.weights)
+        
+      } else {
+        MixedModelFlag <- F
+      }
       
       message('\nChecking item local independence assumption')
       iteration_num <- iteration_num + 1
@@ -3392,7 +3421,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           workTestlets <- workTestlets[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars, ...)
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
           }
@@ -3404,7 +3434,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           workTestlets <- workTestlets[-which(min(vec2[,1]) == vec2[,1])]
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(vec2[,1]) == vec2[,1])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars, ...)
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
           }
@@ -3416,7 +3447,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         workKeys <- workKeys[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
         workTestlets <- workTestlets[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                 forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars, ...)
+                                 forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
+                                 fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
         if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
           try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
         }
@@ -3428,7 +3460,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         workTestlets <- workTestlets[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
         
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                 forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars, ...)
+                                 forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
+                                 fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
         if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
           try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
         }
@@ -3442,7 +3475,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         workTestlets <- workTestlets[-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))]
         
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                 forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars, ...)
+                                 forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
+                                 fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
         if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
           try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
         }
@@ -3456,7 +3490,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         workTestlets <- workTestlets[-which(min(vec2[,1]) == vec2[,1])]
         
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(vec2[,1]) == vec2[,1])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                 forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars, ...)
+                                 forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
+                                 fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
         if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
           try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
         }
@@ -3468,7 +3503,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           workKeys <- workKeys[-which(max(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
           workTestlets <- workTestlets[-which(max(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars, ...)
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
           }
@@ -3493,7 +3529,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           workTestlets <- workTestlets[-which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)]
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars, ...)
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
           }
@@ -3507,7 +3544,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           workTestlets <- workTestlets[-which(surveyFixMod_itemFit$df.S_X2 == 0)]
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(surveyFixMod_itemFit$df.S_X2 == 0)], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars, ...)
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
           }
@@ -3521,7 +3559,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           workTestlets <- workTestlets[-which(is.na(surveyFixMod_itemFit$p.S_X2) == TRUE)]
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(is.na(surveyFixMod_itemFit$p.S_X2) == TRUE)], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars, ...)
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
           }
@@ -3535,7 +3574,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           workTestlets <- workTestlets[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars, ...)
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
           }
@@ -3549,7 +3589,8 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           workTestlets <- workTestlets[-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])]
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars, ...)
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
           }
@@ -3569,14 +3610,16 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           message('\nRasch outfit (|z|>2)')
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(which(max(abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])) == abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])))],
                                    itemkeys = itemkeys[,-c(which(max(abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])) == abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, ...)
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM,
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
           
         } else if(length(which(abs(surveyFixMod_itemFit$z.infit[1:surveyFixMod@Data$nitems]) > 2)) != 0){
           
           message('\nRasch infit (|z|>2)')
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(which(max(abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])) == abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])))],
                                    itemkeys = itemkeys[,-c(which(max(abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])) == abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
-                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, ...)
+                                   forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM,
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
           
         } else {
           itemFitDone <- TRUE
@@ -3965,6 +4008,7 @@ deepFAengine <- function(mirtModel, survey.weights){ # for search more factors w
   
   j <- 1
   
+  
   if(mirtModel@Options$method == 'EM' && length(attr(mirtModel@ParObjects$lrPars, 'formula')[[1]]) == 0 && length(survey.weights) == 0) {
     method <- 'MHRM'
     optimizer <- 'NR1'
@@ -4007,7 +4051,16 @@ deepFAengine <- function(mirtModel, survey.weights){ # for search more factors w
   for(i in start:end){
     try(invisible(gc()), silent = T)
     
-    try(invisible(tempModel <- mirt::mirt(data = mirtModel@Data$data, model = i, itemtype = mirtModel@Model$itemtype, SE = F, SE.type = SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = optimizer, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = NCYCLES, MAXQUAD = mirtModel@Options$MAXQUAD, SEtol = mirtModel@Options$SEtol, symmetric = mirtModel@Options$technical$symmetric, removeEmptyRows = mirtModel@Options$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$MHRM_SE_draws, BURNIN = mirtModel@Options$BURNIN, SEMCYCLES = mirtModel@Options$SEMCYCLES))), silent = T)
+    
+    
+    if(class(mirtModel)[1] == 'MixedClass'){
+      try(invisible(tempModel <- mirt::mixedmirt(data = mirtModel@Data$data, model = i, itemtype = mirtModel@Model$itemtype, SE = F, SE.type = SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), fixed = mirtModel@Model$formulas$fixed, random = mirtModel@Model$formulas$random, lr.fixed = mirtModel@Model$formulas$lr.fixed, lr.random = mirtModel@Model$formulas$lr.random, optimizer = optimizer, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = NCYCLES, MAXQUAD = mirtModel@Options$MAXQUAD, SEtol = mirtModel@Options$SEtol, symmetric = mirtModel@Options$technical$symmetric, removeEmptyRows = mirtModel@Options$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$MHRM_SE_draws, BURNIN = mirtModel@Options$BURNIN, SEMCYCLES = mirtModel@Options$SEMCYCLES))), silent = T)
+      
+    } else {
+      try(invisible(tempModel <- mirt::mirt(data = mirtModel@Data$data, model = i, itemtype = mirtModel@Model$itemtype, SE = F, SE.type = SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = optimizer, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = NCYCLES, MAXQUAD = mirtModel@Options$MAXQUAD, SEtol = mirtModel@Options$SEtol, symmetric = mirtModel@Options$technical$symmetric, removeEmptyRows = mirtModel@Options$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$MHRM_SE_draws, BURNIN = mirtModel@Options$BURNIN, SEMCYCLES = mirtModel@Options$SEMCYCLES))), silent = T)
+    }
+    
+    
     if(exists('tempModel')){
       if(tempModel@OptimInfo$converged){ #       if(tempModel@OptimInfo$converged && tempModel@OptimInfo$secondordertest == T){
         message(i, ' factors were converged; DIC: ', tempModel@Fit$DIC)
@@ -4023,7 +4076,14 @@ deepFAengine <- function(mirtModel, survey.weights){ # for search more factors w
   if(bestModel == 1){
     return(mirtModel)
   } else {
-    return(mirt::mirt(data = mirtModel@Data$data, model = nfact[bestModel], itemtype = mirtModel@Model$itemtype, SE = T, SE.type = SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = optimizer, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = NCYCLES, MAXQUAD = mirtModel@Options$MAXQUAD, SEtol = mirtModel@Options$SEtol, symmetric = mirtModel@Options$technical$symmetric, removeEmptyRows = mirtModel@Options$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$MHRM_SE_draws, BURNIN = mirtModel@Options$BURNIN, SEMCYCLES = mirtModel@Options$SEMCYCLES)))
+    
+    if(class(mirtModel)[1] == 'MixedClass'){
+      try(invisible(tempModel <- mirt::mixedmirt(data = mirtModel@Data$data, model = nfact[bestModel], itemtype = mirtModel@Model$itemtype, SE = F, SE.type = SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), fixed = mirtModel@Model$formulas$fixed, random = mirtModel@Model$formulas$random, lr.fixed = mirtModel@Model$formulas$lr.fixed, lr.random = mirtModel@Model$formulas$lr.random, optimizer = optimizer, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = NCYCLES, MAXQUAD = mirtModel@Options$MAXQUAD, SEtol = mirtModel@Options$SEtol, symmetric = mirtModel@Options$technical$symmetric, removeEmptyRows = mirtModel@Options$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$MHRM_SE_draws, BURNIN = mirtModel@Options$BURNIN, SEMCYCLES = mirtModel@Options$SEMCYCLES))), silent = T)
+      
+    } else {
+      return(mirt::mirt(data = mirtModel@Data$data, model = nfact[bestModel], itemtype = mirtModel@Model$itemtype, SE = T, SE.type = SE.type, covdata = attr(mirtModel@ParObjects$lrPars, 'df'), formula = attr(mirtModel@ParObjects$lrPars, 'formula')[[1]], method = method, optimizer = optimizer, accelerate = mirtModel@Options$accelerate, verbose = F, technical = list(NCYCLES = NCYCLES, MAXQUAD = mirtModel@Options$MAXQUAD, SEtol = mirtModel@Options$SEtol, symmetric = mirtModel@Options$technical$symmetric, removeEmptyRows = mirtModel@Options$removeEmptyRows, MHRM_SE_draws = mirtModel@Options$MHRM_SE_draws, BURNIN = mirtModel@Options$BURNIN, SEMCYCLES = mirtModel@Options$SEMCYCLES)))
+      
+    }
   }
 }
 
@@ -4982,7 +5042,7 @@ rotateEMEIRT <- function(EMEIRTmodel, rotate = 'bifactorQ', suppress = 0){
   # recursive formula
   message(EMEIRTmodel@Model$model)
   MLM_rotate_formula_mod <- mirt::mirt(data = EMEIRTmodel@Data$data, model = EMEIRTmodel@Model$model, itemtype = EMEIRTmodel@Model$itemtype, pars = 'values')
-  MLM_rotate_formula_mod_original <- mod2values(EMEIRTmodel)
+  MLM_rotate_formula_mod_original <- mirt::mod2values(EMEIRTmodel)
   if(sum(MLM_rotate_formula_mod_original$name == '(Intercept)') != 0){
     MLM_rotate_formula_mod_original <- MLM_rotate_formula_mod_original[!MLM_rotate_formula_mod_original$name == '(Intercept)',]
     
