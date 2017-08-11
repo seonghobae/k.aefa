@@ -3314,10 +3314,10 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         MixedModelFlag <- T
         
         surveyFixMod <- mirt::mirt(data = surveyFixMod@Data$data, model = surveyFixMod@Model$model,
-                              itemtype = surveyFixMod@Model$itemtype, pars = MLM_rotate_formula_mod, method = 'QMCEM',
-                              GenRandomPars = GenRandomPars,
-                              calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws),
-                              survey.weights = survey.weights)
+                                   itemtype = surveyFixMod@Model$itemtype, pars = MLM_rotate_formula_mod, method = 'QMCEM',
+                                   GenRandomPars = GenRandomPars,
+                                   calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws),
+                                   survey.weights = survey.weights)
         
       } else {
         MixedModelFlag <- F
@@ -5367,7 +5367,7 @@ sequentialFA <- function(data, minTestLength = 3, SE.type = 'Oakes', forceUIRT =
   return(seqModels)
 }
 
-  
+
 
 fitMLIRT <- function(dat = NULL, model = 1, itemtype = 'nominal', covdata, fixed = ~1, random = NULL, lr.fixed = ~1, lr.random = NULL, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, GenRandomPars = T){
   combine <- function (x, y) {
@@ -5401,7 +5401,7 @@ fitMLIRT <- function(dat = NULL, model = 1, itemtype = 'nominal', covdata, fixed
   for(i in 1:max(res)){
     pb$tick()
     try(invisible(gc()))
-    try(invisible(modMIXED <- mirt::mixedmirt(data = dat, model = model, itemtype = itemtype, covdata = covdata, fixed = fixed, random = eval(parse(text=res1[i])), lr.fixed = lr.fixed, lr.random = eval(parse(text=res2[i])), verbose = F, GenRandomPars = GenRandomPars, technical = list(NCYCLES = NCYCLES, BURNIN = BURNIN, SEMCYCLES = SEMCYCLES), SE = F)), silent = T)
+    try(suppressMessages(invisible(modMIXED <- mirt::mixedmirt(data = dat, model = model, itemtype = itemtype, covdata = covdata, fixed = fixed, random = eval(parse(text=res1[i])), lr.fixed = lr.fixed, lr.random = eval(parse(text=res2[i])), verbose = F, GenRandomPars = GenRandomPars, technical = list(NCYCLES = NCYCLES, BURNIN = BURNIN, SEMCYCLES = SEMCYCLES), SE = F))), silent = T)
     if(exists('modMIXED')){
       
       if(modMIXED@OptimInfo$converged){
@@ -5418,6 +5418,6 @@ fitMLIRT <- function(dat = NULL, model = 1, itemtype = 'nominal', covdata, fixed
   
   pb$tick()
   
-  try(invisible(modMIXED <- mirt::mixedmirt(data = dat, model = model, itemtype = itemtype, covdata = covdata, fixed = fixed, random = eval(parse(text=res1[which(DIC == min(DIC, na.rm = T))])), lr.fixed = lr.fixed, lr.random = eval(parse(text=res2[which(DIC == min(DIC, na.rm = T))])), verbose = F, GenRandomPars = GenRandomPars, technical = list(NCYCLES = NCYCLES, BURNIN = BURNIN, SEMCYCLES = SEMCYCLES))), silent = T)
+  try(suppressMessages(invisible(modMIXED <- mirt::mixedmirt(data = dat, model = model, itemtype = itemtype, covdata = covdata, fixed = fixed, random = eval(parse(text=res1[which(DIC == min(DIC, na.rm = T))])), lr.fixed = lr.fixed, lr.random = eval(parse(text=res2[which(DIC == min(DIC, na.rm = T))])), verbose = F, GenRandomPars = GenRandomPars, technical = list(NCYCLES = NCYCLES, BURNIN = BURNIN, SEMCYCLES = SEMCYCLES)))), silent = T)
   return(modMIXED)
 }
