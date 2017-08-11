@@ -5368,6 +5368,7 @@ sequentialFA <- function(data, minTestLength = 3, SE.type = 'Oakes', forceUIRT =
 }
 
   
+
 fitMLIRT <- function(dat = NULL, model = 1, itemtype = 'nominal', covdata, fixed = ~1, random = NULL, lr.fixed = ~1, lr.random = NULL, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, GenRandomPars = T){
   combine <- function (x, y) {
     combn (y, x, paste, collapse = ", ")
@@ -5400,7 +5401,7 @@ fitMLIRT <- function(dat = NULL, model = 1, itemtype = 'nominal', covdata, fixed
   for(i in 1:max(res)){
     pb$tick()
     try(invisible(gc()))
-    try(invisible(modMIXED <- mirt::mixedmirt(data = dat, model = model, itemtype = itemtype, covdata = covdata, fixed = fixed, random = eval(parse(text=res1[i])), lr.fixed = lr.fixed, lr.random = eval(parse(text=res2[i])), verbose = F, GenRandomPars = GenRandomPars, technical = list(NCYCLES = NCYCLES, BURNIN = BURNIN, SEMCYCLES = SEMCYCLES))), silent = T)
+    try(invisible(modMIXED <- mirt::mixedmirt(data = dat, model = model, itemtype = itemtype, covdata = covdata, fixed = fixed, random = eval(parse(text=res1[i])), lr.fixed = lr.fixed, lr.random = eval(parse(text=res2[i])), verbose = F, GenRandomPars = GenRandomPars, technical = list(NCYCLES = NCYCLES, BURNIN = BURNIN, SEMCYCLES = SEMCYCLES), SE = F)), silent = T)
     if(exists('modMIXED')){
       
       if(modMIXED@OptimInfo$converged){
