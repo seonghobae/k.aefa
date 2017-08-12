@@ -4830,7 +4830,7 @@ getmode <- function(v) {
   uniqv[which.max(tabulate(match(v, uniqv)))]
 }
 
-findLatentClass <- function(data = ..., nruns = 1, maxClasses = NULL, covdata = NULL, formula = NULL, SE.type = 'sandwich', checkSecondOrderTest = T, empiricalhist = T){
+findLatentClass <- function(data = ..., nruns = 1, maxClasses = NULL, covdata = NULL, formula = NULL, SE.type = 'sandwich', checkSecondOrderTest = T, empiricalhist = T, turnOnMIRTcluster = F){
   if(!require('mirt')){
     install.packages('mirt')
     library('mirt')
@@ -4841,8 +4841,12 @@ findLatentClass <- function(data = ..., nruns = 1, maxClasses = NULL, covdata = 
     library('progress')
   }
   
-  try(mirtCluster(remove = T))
-  try(mirtCluster(spec = round(parallel::detectCores()/2)))
+  
+  if(turnOnMIRTcluster){
+    try(mirtCluster(remove = T))
+    try(mirtCluster(spec = round(parallel::detectCores()/2)))
+  }
+
   modelFit <- list()
   if(is.null(maxClasses)){
     maxClasses <- round(ncol(data)/5)
@@ -5382,5 +5386,5 @@ fitMLIRT <- function(dat = NULL, model = 1, itemtype = 'nominal',
   } else{
     stop('No convergence')
   }
-
+  
 }
