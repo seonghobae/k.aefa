@@ -3144,6 +3144,10 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         rotMat <- GPArotation::geominQ(modTEMP@Fit$F, maxit = 1e+5)$loadings
       }
       
+      if(MixedModelFlag){
+        modTEMP <- modTEMP_MIXED
+      }
+      
       if(modTEMP@Fit$DIC > modOLD@Fit$DIC | modTEMP@OptimInfo$converged == F | sum(round(modTEMP@Fit$h2, 3) >= .999) != 0){ # modTEMP@Fit$AICc > modOLD@Fit$AICc | 
         message('optimal factor numbers: ', paste0(i-1))
         return(modOLD)
@@ -3157,11 +3161,12 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
     if(exists('modTEMP') == T){
       if(MixedModelFlag){
         modOLD <- (modTEMP_MIXED)
-        try(rm(modTEMP_MIXED))
+        try(rm(modTEMP_MIXED), silent = T)
+        try(rm(modTEMP), silent = T)
         
       } else {
         modOLD <- modTEMP
-        try(rm(modTEMP))
+        try(rm(modTEMP), silent = T)
       }
       
     } else {
