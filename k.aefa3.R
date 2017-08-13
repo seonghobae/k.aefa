@@ -3107,8 +3107,8 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
       
       modTEMP_MIXED <- modTEMP
       
-      modTEMP <- mirt::mirt(data = surveyFixMod@Data$data, model = surveyFixMod@Model$model,
-                            itemtype = surveyFixMod@Model$itemtype, pars = MLM_rotate_formula_mod, method = 'QMCEM',
+      modTEMP <- mirt::mirt(data = modTEMP@Data$data, model = modTEMP@Model$model,
+                            itemtype = modTEMP@Model$itemtype, pars = MLM_rotate_formula_mod, method = 'QMCEM',
                             GenRandomPars = GenRandomPars,
                             calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws),
                             survey.weights = survey.weights)
@@ -4846,7 +4846,7 @@ findLatentClass <- function(data = ..., nruns = 1, maxClasses = NULL, covdata = 
     try(mirtCluster(remove = T))
     try(mirtCluster(spec = round(parallel::detectCores()/2)))
   }
-
+  
   modelFit <- list()
   if(is.null(maxClasses)){
     maxClasses <- round(ncol(data)/5)
