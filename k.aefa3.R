@@ -1503,16 +1503,47 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
       # forceRasch (dichotomous)
       if(forceRasch == T){
         message('\nMIRT model: Rasch')
-        
-        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD,
+        if(NROW(random) != 0 | NROW(lr.random) != 0){
+          try(modTEMP_MIXED <- fitMLIRT(dat = x, model = i, itemtype = 'Rasch',
+                                        covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
+                                        GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                        accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
+                                        removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
+        }
+        try(modTEMP <- mirt::mirt(data = x, model = i, method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = 'Rasch',
                                   accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = F,
-                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
-        try(invisible(mirt::mirtCluster(remove = T)), silent = T)
+                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+        if(exists('modTEMP')){
+          if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+            rm(modTEMP)
+          }
+        }
+        if(exists('modTEMP_MIXED')){
+          if(modTEMP_MIXED@OptimInfo$converged == F | modTEMP_MIXED@OptimInfo$secondordertest == F){
+            rm(modTEMP_MIXED)
+          }
+        }
+        if(exists('modTEMP') && exists('modTEMP_MIXED')){
+          if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+            modTEMP <- modTEMP_MIXED
+            rm(modTEMP_MIXED)
+          }
+        }
+        if(!exists('modTEMP') && exists('modTEMP_MIXED')){
+          modTEMP <- modTEMP_MIXED
+          rm(modTEMP_MIXED)
+        }
         
-        try(return(modTEMP))
+        # try(invisible(mirt::mirtCluster(remove = T)), silent = T)
+        
+        if(exists('modTEMP')){
+          try(return(modTEMP))
+        } else {
+          stop('Rasch model is inappropriate with this data. turn off the forceRasch = T option.')
+        }
       }
       
       # if(nrow(x) >= 50){
@@ -2567,16 +2598,49 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
       
       # forceRasch (PCM)
       if(forceRasch == T){
-        message('\nMIRT model: Partial Credit')
         
-        try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD,
+        message('\nMIRT model: Rasch')
+        if(NROW(random) != 0 | NROW(lr.random) != 0){
+          try(modTEMP_MIXED <- fitMLIRT(dat = x, model = i, itemtype = 'Rasch',
+                                        covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
+                                        GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                        accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
+                                        removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
+        }
+        try(modTEMP <- mirt::mirt(data = x, model = i, method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = 'Rasch',
                                   accelerate = accelerateINPUT, calcNull = T,
                                   technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
-                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = F,
-                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
-        try(invisible(mirt::mirtCluster(remove = T)), silent = T)
-        try(return(modTEMP))
+                                  formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
+                                  SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
+        if(exists('modTEMP')){
+          if(modTEMP@OptimInfo$converged == F | modTEMP@OptimInfo$secondordertest == F){
+            rm(modTEMP)
+          }
+        }
+        if(exists('modTEMP_MIXED')){
+          if(modTEMP_MIXED@OptimInfo$converged == F | modTEMP_MIXED@OptimInfo$secondordertest == F){
+            rm(modTEMP_MIXED)
+          }
+        }
+        if(exists('modTEMP') && exists('modTEMP_MIXED')){
+          if(modTEMP_MIXED@Fit$DIC < modTEMP@Fit$DIC){
+            modTEMP <- modTEMP_MIXED
+            rm(modTEMP_MIXED)
+          }
+        }
+        if(!exists('modTEMP') && exists('modTEMP_MIXED')){
+          modTEMP <- modTEMP_MIXED
+          rm(modTEMP_MIXED)
+        }
+        
+        # try(invisible(mirt::mirtCluster(remove = T)), silent = T)
+        
+        if(exists('modTEMP')){
+          try(return(modTEMP))
+        } else {
+          stop('Rasch model is inappropriate with this data. turn off the forceRasch = T option.')
+        }
       }
       
       # forceGRSM (polytomous)
