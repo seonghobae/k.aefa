@@ -1132,7 +1132,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
                      forceMHRM = F, forceNormalEM = T, itemkeys = NULL, survey.weights = NULL, allowMixedResponse = T,
                      forceUIRT = F, skipIdealPoint = F, MHRM_SE_draws = 1e+4, forceNRM = F,
                      diagnosis = F, forceDefalutAccelerater = F, forceDefaultOptimizer = F, EnableFMHRM = F, testlets = NULL, plotOn = T, GenRandomPars = T,
-                     fixed = ~1, random = NULL, lr.fixed = ~1, lr.random = NULL, ...){
+                     fixed = ~1, random = NULL, lr.fixed = ~1, lr.random = NULL, MH_BURNIN = 1500, MH_SEMCYCLES = 1000, ...){
   
   if(!require('mirt')){
     install.packages('mirt')
@@ -1506,13 +1506,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(NROW(random) != 0 | NROW(lr.random) != 0){
           try(modTEMP_MIXED <- fitMLIRT(dat = x, model = i, itemtype = 'Rasch',
                                         covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                        GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                        GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                         accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                         removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
         }
         try(modTEMP <- mirt::mirt(data = x, model = i, method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = 'Rasch',
                                   accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                  technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1556,14 +1556,14 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = doBfactor2mod(x, ActualTestlets), itemtype = '4PL',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = '4PL',
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1598,14 +1598,14 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = doBfactor2mod(x, ActualTestlets), itemtype = '3PLu',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = '3PLu',
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1637,7 +1637,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = 'PC3PL',
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1669,13 +1669,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = doBfactor2mod(x, ActualTestlets), itemtype = '3PL',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = '3PL',
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1710,13 +1710,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = doBfactor2mod(x, ActualTestlets), itemtype = '2PL',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = '2PL',
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1747,7 +1747,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Partially compensatory 2PL')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = 'PC2PL',
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1779,13 +1779,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = doBfactor2mod(x, ActualTestlets), itemtype = 'ideal',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = 'ideal',
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1817,13 +1817,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = doBfactor2mod(x, ActualTestlets), itemtype = 'Rasch',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = 'Rasch',
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1862,7 +1862,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           
           try(modTEMP <- mirt::bfactor(data = x, ActualTestlets, itemtype = '4PL',
                                        lerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                       technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                        formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                        SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1879,7 +1879,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Compensatory 3PL with upper asymptote (slip) estimated')
           try(modTEMP <- mirt::bfactor(data = x, ActualTestlets, itemtype = '3PLu',
                                        accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                       technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                        formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                        SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1895,7 +1895,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Partially compensatory 3PL')
           try(modTEMP <- mirt::bfactor(data = x, ActualTestlets, itemtype = 'PC3PL',
                                        accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                       technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                        formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                        SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1911,7 +1911,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Compensatory 3PL')
           try(modTEMP <- mirt::bfactor(data = x, ActualTestlets, itemtype = '3PL',
                                        accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                       technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                        formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                        SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1930,7 +1930,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Compensatory 2PL')
           try(modTEMP <- mirt::bfactor(data = x, ActualTestlets, itemtype = '2PL',
                                        accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                       technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                        formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                        SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1946,7 +1946,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Partially compensatory 2PL')
           try(modTEMP <- mirt::bfactor(data = x, ActualTestlets, itemtype = 'PC2PL',
                                        accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                       technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                        formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                        SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1961,7 +1961,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: ideal point')
           try(modTEMP <- mirt::bfactor(data = x, ActualTestlets, itemtype = 'ideal',
                                        accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                       technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                        formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                        SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1977,7 +1977,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Rasch')
           try(modTEMP <- mirt::bfactor(data = x, ActualTestlets, itemtype = 'Rasch',
                                        accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                       technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                        formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                        SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -1995,13 +1995,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = i, itemtype = '4PL',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -2034,13 +2034,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = i, itemtype = '3PLu',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PLu', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -2071,7 +2071,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Partially compensatory 3PL')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'PC3PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -2103,13 +2103,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = i, itemtype = '3PL',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -2143,13 +2143,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = i, itemtype = '2PL',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '2PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -2180,7 +2180,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Partially compensatory 2PL')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'PC2PL', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -2212,13 +2212,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = i, itemtype = 'ideal',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'ideal', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -2251,13 +2251,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = i, itemtype = 'Rasch',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -2296,7 +2296,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'spline', method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                  technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -2322,7 +2322,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         message('\nMIRT model: Compensatory 4PL Nominal response')
         try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = '4PLNRM', 
                                   key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                  technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -2335,7 +2335,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Compensatory 3PL Nominal response')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = '3PLNRM', 
                                     key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -2350,7 +2350,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Compensatory 3PL Nominal response with upper asymptote estimated')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = '3PLuNRM', 
                                     key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -2365,7 +2365,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Compensatory 2PL Nominal response')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = '2PLNRM', 
                                     key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -2378,7 +2378,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Nominal response without keys')
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = 'nominal', 
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, key = NULL, ...), silent = F)
@@ -2394,7 +2394,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         message('\nMIRT model: Compensatory 4PL Nominal response')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '4PLNRM', method = estimationMETHOD,
                                   key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                  technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -2407,7 +2407,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Compensatory 3PL Nominal response')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PLNRM', method = estimationMETHOD,
                                     key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -2422,7 +2422,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Compensatory 3PL Nominal response with upper asymptote estimated')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '3PLuNRM', method = estimationMETHOD,
                                     key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -2437,7 +2437,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Compensatory 2PL Nominal response')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = '2PLNRM', method = estimationMETHOD,
                                     key = itemkeys, accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -2450,7 +2450,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Nominal response without keys')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'nominal', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, key = NULL, ...), silent = F)
@@ -2487,7 +2487,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: nominal response + ', paste0(dichotomous_type))
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = itemtype_mixed, method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 20000000000, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 20000000000, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = 20000), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -2517,7 +2517,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: nominal response + ', paste0(dichotomous_type), ' (automatically set by sample size)')
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = itemtype_mixed, method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 20000000000, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 20000000000, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = 20000), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -2547,7 +2547,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         message('\nMIRT model: Generalized partial credit + ideal or 3-4PL')
         try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = itemtype_mixed, method = estimationMETHOD,
                                   accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                  technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -2574,7 +2574,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         }
         message('\nMIRT model: Graded response + ideal or 3-4PL')
         try(modTEMP <- mirt::mirt(data = x, model = i, method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = itemtype_mixed, accelerate = accelerateINPUT,
-                                  calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
+                                  calcNull = T, technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
                                                                  SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
                                   TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
                                   optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
@@ -2603,13 +2603,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(NROW(random) != 0 | NROW(lr.random) != 0){
           try(modTEMP_MIXED <- fitMLIRT(dat = x, model = i, itemtype = 'Rasch',
                                         covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                        GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                        GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                         accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                         removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
         }
         try(modTEMP <- mirt::mirt(data = x, model = i, method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = 'Rasch',
                                   accelerate = accelerateINPUT, calcNull = T,
-                                  technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                  technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                    removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                   formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                   SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ... = ...), silent = T)
@@ -2678,7 +2678,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsmIRT', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -2698,7 +2698,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsm', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -2732,13 +2732,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = doBfactor2mod(x, ActualTestlets), itemtype = 'nominal',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = 'nominal',
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -2770,13 +2770,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = doBfactor2mod(x, ActualTestlets), itemtype = 'gpcm',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, itemtype = 'gpcm',
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -2808,12 +2808,12 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = doBfactor2mod(x, ActualTestlets), itemtype = 'graded',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           try(modTEMP <- mirt::mirt(data = x, model = doBfactor2mod(x, ActualTestlets), method = estimationMETHOD, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
-                                    calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
+                                    calcNull = T, technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
                                                                    SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
                                     TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
                                     optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
@@ -2854,7 +2854,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: nominal response')
           try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'nominal',
                                        accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                       technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                        formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                        SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -2868,7 +2868,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           message('\nMIRT model: Generalized partial credit')
           try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, itemtype = 'gpcm',
                                        accelerate = accelerateINPUT, calcNull = T,
-                                       technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                       technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                         removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                        formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                        SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -2881,7 +2881,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         if(exists('modTEMP') == F && forceNRM == F){
           message('\nMIRT model: Graded response')
           try(modTEMP <- mirt::bfactor(data = x, model = ActualTestlets, accelerate = accelerateINPUT,
-                                       calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
+                                       calcNull = T, technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
                                                                       SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
                                        TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
                                        optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
@@ -2897,13 +2897,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = i, itemtype = 'nominal',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'nominal', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -2935,13 +2935,13 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = i, itemtype = 'gpcm',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'gpcm', method = estimationMETHOD,
                                     accelerate = accelerateINPUT, calcNull = T,
-                                    technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
+                                    technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT, SEtol = SEtolINPUT,
                                                      removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES), TOL = TOLINPUT, covdata = covdataINPUT,
                                     formula = formulaINPUT, optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
                                     SE.type = SE.type, survey.weights = survey.weights, empiricalhist = empiricalhist, ...), silent = F)
@@ -2973,12 +2973,12 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = i, itemtype = 'graded',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           try(modTEMP <- mirt::mirt(data = x, model = i, method = estimationMETHOD, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
-                                    calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
+                                    calcNull = T, technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
                                                                    SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
                                     TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
                                     optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
@@ -3013,12 +3013,12 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
             if(NROW(random) != 0 | NROW(lr.random) != 0){
               try(modTEMP_MIXED <- fitMLIRT(dat = x, model = i, itemtype = 'grsmIRT',
                                             covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                            GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                            GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                             accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                             removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
             }
             try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsmIRT', method = estimationMETHOD, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
-                                      calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
+                                      calcNull = T, technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
                                                                      SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
                                       TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
                                       optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
@@ -3027,12 +3027,12 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
             if(NROW(random) != 0 | NROW(lr.random) != 0){
               try(modTEMP_MIXED <- fitMLIRT(dat = x, model = i, itemtype = 'grsm',
                                             covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                            GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                            GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                             accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                             removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
             }
             try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'grsm', method = estimationMETHOD, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
-                                      calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
+                                      calcNull = T, technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
                                                                      SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
                                       TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
                                       optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
@@ -3067,12 +3067,12 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = i, itemtype = 'Rasch',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'Rasch', method = estimationMETHOD, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
-                                    calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
+                                    calcNull = T, technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
                                                                    SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
                                     TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
                                     optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
@@ -3106,12 +3106,12 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
           if(NROW(random) != 0 | NROW(lr.random) != 0){
             try(modTEMP_MIXED <- fitMLIRT(dat = x, model = i, itemtype = 'rsm',
                                           covdata = covdataINPUT, fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random,
-                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = 1500, SEMCYCLES = 1000, symmetric = symmetricINPUT,
+                                          GenRandomPars = GenRandomPars, NCYCLES = 4000, BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, symmetric = symmetricINPUT,
                                           accelerate = accelerateINPUT, MHRM_SE_draws = MHRM_SE_draws, survey.weights = survey.weights,
                                           removeEmptyRows = removeEmptyRowsConf, SEtol = SEtolINPUT))
           }
           try(modTEMP <- mirt::mirt(data = x, model = i, itemtype = 'rsm', method = estimationMETHOD, GenRandomPars = GenRandomPars, accelerate = accelerateINPUT,
-                                    calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
+                                    calcNull = T, technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws, symmetric = symmetricINPUT,
                                                                    SEtol = SEtolINPUT, removeEmptyRows = removeEmptyRowsConf, NCYCLES = NCYCLES),
                                     TOL = TOLINPUT, covdata = covdataINPUT, formula = formulaINPUT,
                                     optimizer = optimINPUT, solnp_args = optimCTRL, SE = SE,
@@ -3174,7 +3174,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
       modTEMP <- mirt::mirt(data = modTEMP@Data$data, model = modTEMP@Model$model,
                             itemtype = modTEMP@Model$itemtype, pars = MLM_rotate_formula_mod, method = 'QMCEM',
                             GenRandomPars = GenRandomPars,
-                            calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws),
+                            calcNull = T, technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws),
                             survey.weights = survey.weights)
       
     } else {
@@ -3250,7 +3250,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
                      bifactorSolution = T, skipS_X2 = F, forceNRM = F, needGlobalOptimal = T,
                      pilotTestMode = F, forceConsiderPositiveZh = F, forceDefalutAccelerater = F, forceDefaultOptimizer = F, EnableFMHRM = F, testlets = NULL,
                      minimumLeftItems = 3, plotOn = T, forceCTTmode = F, GenRandomPars = T, coefAlwaysBePositive = T,
-                     fixed = ~1, random = NULL, lr.fixed = ~1, lr.random = NULL, ...) {
+                     fixed = ~1, random = NULL, lr.fixed = ~1, lr.random = NULL, MH_BURNIN = 1500, MH_SEMCYCLES = 1000, ...) {
   message('---------------------------------------------------------')
   message(' k.aefa: kwangwoon automated exploratory factor analysis ')
   message('---------------------------------------------------------\n')
@@ -3285,7 +3285,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
                              itemkeys = itemkeys, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse,
                              autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM,
                              forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = testlets, GenRandomPars = GenRandomPars,
-                             fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
+                             fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, MH_BURNIN = MH_BURNIN, MH_SEMCYCLES = MH_SEMCYCLES, ...)
   }
   
   workKeys <- itemkeys
@@ -3319,7 +3319,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         surveyFixMod <- mirt::mirt(data = surveyFixMod@Data$data, model = surveyFixMod@Model$model,
                                    itemtype = surveyFixMod@Model$itemtype, pars = MLM_rotate_formula_mod, method = 'QMCEM',
                                    GenRandomPars = GenRandomPars,
-                                   calcNull = T, technical = list(BURNIN = 1500, SEMCYCLES = 1000, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws),
+                                   calcNull = T, technical = list(BURNIN = MH_BURNIN, SEMCYCLES = MH_SEMCYCLES, MAXQUAD = 2000000, delta = 1e-20, MHRM_SE_draws = MHRM_SE_draws),
                                    survey.weights = survey.weights)
         
       } else {
@@ -3425,7 +3425,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                    forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
-                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, MH_BURNIN = MH_BURNIN, MH_SEMCYCLES = MH_SEMCYCLES, ...)
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
           }
@@ -3438,7 +3438,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(vec2[,1]) == vec2[,1])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                    forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
-                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, MH_BURNIN = MH_BURNIN, MH_SEMCYCLES = MH_SEMCYCLES, ...)
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
           }
@@ -3451,7 +3451,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         workTestlets <- workTestlets[-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                  forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
-                                 fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
+                                 fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, MH_BURNIN = MH_BURNIN, MH_SEMCYCLES = MH_SEMCYCLES, ...)
         if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
           try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
         }
@@ -3464,7 +3464,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                  forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
-                                 fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
+                                 fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, MH_BURNIN = MH_BURNIN, MH_SEMCYCLES = MH_SEMCYCLES, ...)
         if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
           try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
         }
@@ -3479,7 +3479,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(abs(ZeroRange[ZeroList])) == abs(ZeroRange))], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                  forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
-                                 fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
+                                 fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, MH_BURNIN = MH_BURNIN, MH_SEMCYCLES = MH_SEMCYCLES, ...)
         if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
           try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
         }
@@ -3494,7 +3494,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
         
         surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(min(vec2[,1]) == vec2[,1])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                  forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
-                                 fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
+                                 fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, MH_BURNIN = MH_BURNIN, MH_SEMCYCLES = MH_SEMCYCLES, ...)
         if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
           try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
         }
@@ -3507,7 +3507,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           workTestlets <- workTestlets[-which(max(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])]
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$Zh[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                    forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
-                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, MH_BURNIN = MH_BURNIN, MH_SEMCYCLES = MH_SEMCYCLES, ...)
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
           }
@@ -3533,7 +3533,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(is.na(surveyFixMod_itemFit$df.S_X2) == TRUE)], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                    forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
-                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, MH_BURNIN = MH_BURNIN, MH_SEMCYCLES = MH_SEMCYCLES, ...)
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
           }
@@ -3548,7 +3548,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(surveyFixMod_itemFit$df.S_X2 == 0)], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                    forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
-                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, MH_BURNIN = MH_BURNIN, MH_SEMCYCLES = MH_SEMCYCLES, ...)
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
           }
@@ -3563,7 +3563,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(is.na(surveyFixMod_itemFit$p.S_X2) == TRUE)], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                    forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
-                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, MH_BURNIN = MH_BURNIN, MH_SEMCYCLES = MH_SEMCYCLES, ...)
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
           }
@@ -3578,7 +3578,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                    forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
-                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, MH_BURNIN = MH_BURNIN, MH_SEMCYCLES = MH_SEMCYCLES, ...)
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
           }
@@ -3593,7 +3593,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-which(max(surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems]) == surveyFixMod_itemFit$S_X2[1:surveyFixMod@Data$nitems]/surveyFixMod_itemFit$df.S_X2[1:surveyFixMod@Data$nitems])], itemkeys = workKeys, covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                    forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM, testlets = workTestlets, GenRandomPars = GenRandomPars,
-                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, MH_BURNIN = MH_BURNIN, MH_SEMCYCLES = MH_SEMCYCLES, ...)
           if(needGlobalOptimal == T && forceUIRT == F && length(testlets) == 0){
             try(surveyFixMod <- deepFA(surveyFixMod, survey.weights))
           }
@@ -3614,7 +3614,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(which(max(abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])) == abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])))],
                                    itemkeys = itemkeys[,-c(which(max(abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])) == abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                    forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM,
-                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, MH_BURNIN = MH_BURNIN, MH_SEMCYCLES = MH_SEMCYCLES, ...)
           
         } else if(length(which(abs(surveyFixMod_itemFit$z.infit[1:surveyFixMod@Data$nitems]) > 2)) != 0){
           
@@ -3622,7 +3622,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
           surveyFixMod <- fastFIFA(surveyFixModRAW[,-c(which(max(abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])) == abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])))],
                                    itemkeys = itemkeys[,-c(which(max(abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])) == abs(surveyFixMod_itemFit$z.outfit[1:surveyFixMod@Data$nitems])))], covdata = surveyFixModCOV, formula = formula, SE = SE, SE.type = SE.type, skipNominal = skipNominal, forceGRSM = forceGRSM, assumingFake = assumingFake, masterThesis = masterThesis, forceRasch = forceRasch, unstable = unstable, forceMHRM = forceMHRM, survey.weights = survey.weights, allowMixedResponse = allowMixedResponse, autofix = autofix, forceUIRT = forceUIRT, skipIdealPoint = skipIdealPoint, forceNRM = forceNRM, forceNormalEM = forceNormalEM, 
                                    forceDefalutAccelerater = forceDefalutAccelerater, forceDefaultOptimizer = forceDefaultOptimizer, EnableFMHRM = EnableFMHRM,
-                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, ...)
+                                   fixed = fixed, random = random, lr.fixed = lr.fixed, lr.random = lr.random, MH_BURNIN = MH_BURNIN, MH_SEMCYCLES = MH_SEMCYCLES, ...)
           
         } else {
           itemFitDone <- TRUE
@@ -3649,7 +3649,7 @@ surveyFA <- function(data = ..., covdata = NULL, formula = NULL, SE = T,
     }
   } # the end of while loop
   
-  if(autofix == T){
+  if(autofix == T){ # GET RID OF ASAP
     # 
     # message('\nChecking aberrant responses')
     # iteration_num <- iteration_num + 1
