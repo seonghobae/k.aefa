@@ -204,10 +204,10 @@ findM2 <- function(mirtModel, increase = 15000, iterations = 1000, ...){
 fixTYPO <- function(cleaningData){
   if((length(which(median(psych::describe(cleaningData)$rnage) != psych::describe(cleaningData)$range)) != 0) | length(which(median(psych::describe(cleaningData)$max) != psych::describe(cleaningData)$max)) != 0){
     for(ii in which(describe(cleaningData)$max > median(describe(cleaningData)$max))){
-      cleaningData[,ii] <- mapvalues(cleaningData[,ii], describe(cleaningData[,which(describe(cleaningData)$max > median(describe(cleaningData)$max))])$max, NA)
+      cleaningData[,ii] <-plyr::mapvalues(cleaningData[,ii],psych::describe(cleaningData[,which(describe(cleaningData)$max > median(describe(cleaningData)$max))])$max, NA)
     }
     for(ii in which(describe(cleaningData)$min < median(describe(cleaningData)$min))){
-      cleaningData[,ii] <- mapvalues(cleaningData[,ii], describe(cleaningData[,which(describe(cleaningData)$min < median(describe(cleaningData)$min))])$min, NA)
+      cleaningData[,ii] <-plyr::mapvalues(cleaningData[,ii],psych::describe(cleaningData[,which(describe(cleaningData)$min < median(describe(cleaningData)$min))])$min, NA)
     }
   }
   return(cleaningData)
@@ -236,7 +236,7 @@ k.recode <- function(dname, target, scale) {
 k.dichotomous <- function(dframe, start, end) {
   for(i in start:end) {
     dframe[,i] <- dframe[,i] >= median(dframe[,i],na.rm=T)
-    dframe[,i] <- mapvalues(dframe[,i], c(TRUE, FALSE), c(1, 0))
+    dframe[,i] <-plyr::mapvalues(dframe[,i], c(TRUE, FALSE), c(1, 0))
     dframe[,i] <- as.integer(dframe[,i])
   }
   dframe <- data.frame(dframe)
@@ -2654,7 +2654,7 @@ fastFIFA <- function(x, covdata = NULL, formula = NULL, SE = T, SE.type = "sandw
         
         if(length(which(describe(x)$max > median(describe(x)$max))) != 0){ # preventing weird input (e.g: 6 in 5 point scale)
           for(ii in which(describe(x)$max > median(describe(x)$max))){
-            x[,ii] <- mapvalues(x[,ii], describe(x[,which(describe(x)$max > median(describe(x)$max))])$max, NA)
+            x[,ii] <-plyr::mapvalues(x[,ii],psych::describe(x[,which(describe(x)$max > median(describe(x)$max))])$max, NA)
           }
         }
         
